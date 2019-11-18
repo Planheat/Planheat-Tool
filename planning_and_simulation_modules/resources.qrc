@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/plugins/planning_and_simulation_modules" >
+        	<file>icon.png</file>
+    	   	<file>city/images/building.png</file>	
+			<file>city/images/calculator.png</file>
+    		<file>city/images/coal.png</file>
+    		<file>city/images/heating.png</file>
+    		<file>city/images/naturalGas.png</file>
+    		<file>city/images/biomass.png</file>
+    		<file>PlanHeatPrincipal.png</file>
+    </qresource>
+</RCC>

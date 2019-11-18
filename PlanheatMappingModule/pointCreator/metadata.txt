@@ -1,0 +1,44 @@
+# This file contains metadata for your plugin. Since 
+# version 2.0 of QGIS this is the proper way to supply 
+# information about a plugin. The old method of 
+# embedding metadata in __init__.py will 
+# is no longer supported since version 2.0.
+
+# This file should be included when you package your plugin.# Mandatory items:
+
+[general]
+name=shapeCreator
+qgisMinimumVersion=3.00
+description=Simple plugin to select a polygon and add it as layer. 
+version=1.1
+author=Lorenz
+email=.
+
+about=
+    Simple plugin to select a polygon and add it as layer.
+    How to use: 
+    1. Activate plugin by clicking its icon.
+    2. left click on map to add points to polygon.
+    3. right click to finish and add selection as a vector layer.
+
+tracker=
+repository=
+# End of mandatory metadata
+
+# Recommended items:
+
+# Uncomment the following line and add your changelog:
+# changelog=
+
+# Tags are comma separated with spaces allowed
+tags=python, vito, shape
+
+homepage=
+category=Vector
+icon=icon.png
+# experimental flag
+experimental=False
+
+# deprecated flag (applies to the whole plugin, not just a single version)
+deprecated=False
+

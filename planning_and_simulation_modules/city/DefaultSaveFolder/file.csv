@@ -1,0 +1,52 @@
+ID KPI_tableWidget_10,['', 'EN_1', '', '', '', '', '', 'EN_3', '', '', '', '', 'EN_4', '', '', '', '', 'EN_5', '', '', '', '', 'EN_6', '', '', '', '', 'EN_7', '', '', '', '', 'EN_13', '', 'EN_14', '']
+KPI related _tableWidget_10,['', 'EN_1.1: PEC base tot\n', 'EN_1.2: SPEC base tot', 'EN_1.3: PEC fut tot ', 'EN_1.4: SPEC fut tot', 'EN_1.5: PEC var tot', 'EN_1.6: PEC sav tot', 'EN_3.1: UED base tot', 'EN_3.2: SUED base tot', 'EN_3.3: UED fut tot', 'EN_3.4: SUED fut tot', 'EN_3.5: UED var tot', 'EN_4.1: RES base tot', 'EN_4.2: RES % base tot', 'EN_4.3: RES fut tot', 'EN_4.4: RES % fut tot ', 'EN_4.5: RES var tot ', 'EN_5.1: WH base tot', 'EN_5.2: WH % base tot', 'EN_5.3: WH fut tot', 'EN_5.4: WH % fut tot', 'EN_5.5: WH var tot', 'EN_6.1: CF base tot', 'EN_6.2: CF % base tot', 'EN_6.3: CF fut tot', 'EN_6.4: CF % fut tot', 'EN_6.5: CF var tot', 'EN_7.1: EL base tot', 'EN_7.2: EL % base tot', 'EN_7.3: EL fut tot', 'EN_7.4: EL % fut tot', 'EN_7.5: EL var tot', 'EN_13.2.1: DHN loss fut ', 'EN_13.2.2: DCN loss fut', 'EN_14.2.1: DHN hd fut', 'EN_14.2.2: DCN hd fut']
+UoM_tableWidget_10,['', 'MWh/year', 'MWh/m2/year', 'MWh/year', 'MWh/m2/year', '%', 'MWh/year', 'MWh/year', 'MWh/m2/y', 'MWh/y', 'MWh/m2/y', '%', 'MWh/m/y', '%', 'MWh/m/y', '%', '%', 'MWh/m/y', '%', 'MWh/m/y', '%', '%', 'MWh/m/y', '%', 'MWh/m/y', '%', '% ', 'MWh/m/y', '%', 'MWh/m/y', '%', '%', 'MWh/m/y', 'MWh/m/y', 'MWh/m/y', 'MWh/m/y']
+Baseline
+RES_tableWidget_10,['', '39705.0', '3970500.0', '', '', '', '', '602', '602.0', '', '', '', '252.0', '0.63', '', '', '', '50.0', '0.13', '', '', '', '450.0', '1.13', '', '', '', '625.0', '1.57', '', '', '', '', '', '', '']
+Baseline
+TER_tableWidget_10,['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
+Targets
+Tot_tableWidget_10,['', '', '', '5', '5266', '25', '5266', '', '', '52525', '52525', '52', '', '', '52525', '52', '52', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
+Future
+RES_tableWidget_10,['', '', '', '5784477.12', '28922.39', '-578447712', '-5784477', '', '', '16424.64', '82.12', '-1642464.0', '', '', '3130627.8', '0', '0.0', '', '', '-1377167.4', '-23.81', '0.0', '', '', '2207032.92', '38.15', '0.0', '', '', '', '2653849.32', '45.88', '0.0', '30366.72', '19110.0', '0.0']
+Future
+TER_tableWidget_10,['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
+ID KPI_tableWidget_5,['', 'ENV1:', '', '', '', '', '', '', '']
+KPI related _tableWidget_5,['', 'ENV_1.1 CO2 var tot', 'ENV_1.2 CO2 sav tot', 'ENV_1.3 NOx var tot', 'ENV_1.4 NOx sav tot', 'ENV_1.5 SOx var tot', 'ENV_1.6 SOx sav tot', 'ENV_1.7 PM10 var tot', 'ENV_1.8 PM10 sav tot']
+UoM_tableWidget_5,['', 'tCO2/year', 'tCO2/PECbase/year', 'tCO2/P ECfut/ year ', '%', 'tCO2/year', 'tNOx/year', 'tNOx/PECbase/year', 'tNOx/P ECfut/ year']
+Baseline
+RES_tableWidget_5,['', '', '', '', '', '', '', '', '']
+Baseline 
+TER_tableWidget_5,['', '', '', '', '', '', '', '', '']
+Targets
+Tot_tableWidget_5,['', '', '', '', '', '', '', '', '']
+Future
+RES_tableWidget_5,['', '-578447712.0', '0', '-578447712.0', '0', '-578447712.0', '0', '-578447712.0', '0']
+Future
+TER_tableWidget_5,['', '', '', '', '', '', '', '', '']
+ID KPI_tableWidget_7,['', 'SO_1', '', '', 'SO_2', '', '', 'SO_3', '', '']
+KPI related _tableWidget_7,['', 'SO_1.1 Enpov base', 'SO_1.2 Enpov fut', 'SO_1.3 Enpov var  base', 'SO_2.1 Job base', 'SO_2.2 Job fut', 'SO_2.3 Job var  base', 'SO_3.1 security of supply base', 'SO_3.2 security of supply fut', 'SO_3.3 security of supply var  base']
+UoM_tableWidget_7,['', '', '', '%', '', '', '%', '', '', '%']
+Baseline scenario:
+RES_tableWidget_7,['', '', '', '', '', '', '', '', '', '']
+Baseline scenario:
+TER_tableWidget_7,['', '', '', '', '', '', '', '', '', '']
+Targets 
+Tot_tableWidget_7,['', '', '', '', '', '', '', '', '', '']
+Future scenario: 
+RES_tableWidget_7,['', '', '', '', '', '', '', '', '', '']
+Future scenario:
+TER_tableWidget_7,['', '', '', '', '', '', '', '', '', '']
+ID KPI_tableWidget_6,['', 'ECO_1', '', '', '', 'ECO_2', '', '', 'ECO_3', 'ECO_4']
+KPI related _tableWidget_6,['', 'ECO_1.1PBP', 'ECO_1.2 NPV', 'ECO_1.3 IRR', 'ECO_1.4 Investment cost* ', 'ECO_2.1 OPEXbase', 'ECO_2.2 OPEX fut', 'ECO_2.3 OPEX var base', 'ECO_3.1 LCOH', 'ECO_4.1 CO2 sav']
+UoM_tableWidget_6,['', 'y', '€', '/', '€', '€/ year', '€/ year', '%', '€/MWh', '€/tCO2']
+Baseline scenario: 
+RES_tableWidget_6,['', '', '', '', '', '', '', '', '', '']
+Baseline scenario:
+TER_tableWidget_6,['', '', '', '', '', '', '', '', '', '']
+Targets
+Tot_tableWidget_6,['', '', '', '', '', '', '', '', '', '']
+Future scenario:
+RES_tableWidget_6,['', '', '', '', '', '', '', '', '', '']
+Future scenario: 
+TER_tableWidget_6,['', '', '', '', '', '', '', '', '', '']

@@ -1,0 +1,16 @@
+<RCC>
+  <qresource prefix="/plugins/planheat/ui/">
+    <file>images/chevrons.png</file>
+    <file>images/chevrons_d.png</file>
+    <file>images/chevrons_l.png</file>
+    <file>images/chevrons_u.png</file>
+    <file>icon.png</file>
+    <file>images/EHPcong-PLANHEAT.png</file>
+    <file>images/download-outline.png</file>
+    <file>images/copy-outline.png</file>
+    <file>images/plus-circle-outline.png</file>
+    <file>images/trash-2-outline.png</file>
+    <file>images/upload-outline.png</file>
+	<file>images/bulb-outline.png</file>
+  </qresource>
+</RCC>

@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/plugins/planheat/PlanheatMappingModule/PLANHEAT" >
+        <file>icon.png</file>
+        <file>plus-circle.svg</file>
+        <file>copy.svg</file>
+        <file>download.svg</file>
+        <file>trash-alt.svg</file>
+        <file>PlanHeatPrincipal.png</file>
+    </qresource>
+</RCC>

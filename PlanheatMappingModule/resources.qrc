@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/plugins/PlanheatMappingModule">
+        <file>icon.png</file>
+        <file>cmm.png</file>
+        <file>dmm.png</file>
+        <file>supply.png</file>
+        <file>PLANHEAT/PlanHeatPrincipal.png</file>
+        <file>shapeCreator/icon.png</file>
+        <file>pointCreator/icon.png</file>
+    </qresource>
+</RCC>

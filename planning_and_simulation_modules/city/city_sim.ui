@@ -1,0 +1,4666 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>city</class>
+ <widget class="QDockWidget" name="city">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1198</width>
+    <height>929</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>City Simulation Module</string>
+  </property>
+  <widget class="QWidget" name="dockWidgetContents">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>1</number>
+      </property>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>Data Calculation</string>
+       </attribute>
+       <widget class="QTabWidget" name="tabWidget_4">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>10</y>
+          <width>1191</width>
+          <height>871</height>
+         </rect>
+        </property>
+        <property name="currentIndex">
+         <number>1</number>
+        </property>
+        <widget class="QWidget" name="tab_7">
+         <attribute name="title">
+          <string>Single Building Solutions</string>
+         </attribute>
+         <widget class="QTabWidget" name="tabWidget_2">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>10</y>
+            <width>1191</width>
+            <height>831</height>
+           </rect>
+          </property>
+          <property name="currentIndex">
+           <number>1</number>
+          </property>
+          <widget class="QWidget" name="tab_3">
+           <attribute name="title">
+            <string>Heating + DHW </string>
+           </attribute>
+           <widget class="QTableWidget" name="sim_sbs_hdhw_Source">
+            <property name="geometry">
+             <rect>
+              <x>20</x>
+              <y>110</y>
+              <width>1151</width>
+              <height>611</height>
+             </rect>
+            </property>
+            <attribute name="horizontalHeaderDefaultSectionSize">
+             <number>158</number>
+            </attribute>
+            <attribute name="horizontalHeaderMinimumSectionSize">
+             <number>45</number>
+            </attribute>
+            <attribute name="verticalHeaderMinimumSectionSize">
+             <number>15</number>
+            </attribute>
+            <row>
+             <property name="text">
+              <string/>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Electricity</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Heaters</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Air HP</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Waste heat HP</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Geothermal HP</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Natural gas</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Boiler</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Comb. Heat &amp; Pow</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Air source GAHP</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Waste heat GAHP </string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Geothermal GAHP </string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Biomass</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Boiler</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Comb. Heat &amp; Pow</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Waste heat</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Heat Exchanger only</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Geothermal</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Heat Exchangers pnly</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Heating oil</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Boiler</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Coal/Peat</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Boilers</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Solar</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Flat plate solar 
+thermal collectors</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Evacuated tube Solar 
+thermal collectors (ETC)</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Other</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Other</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Total</string>
+             </property>
+            </row>
+            <column>
+             <property name="text">
+              <string>Useful energy demand 
+(SBS only)
+Future scenario
+[MWh/y]</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Average efficiency/
+COP per technology 
+category</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Utilization factor
+(for CHP only)</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Temperature levels
+</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Final energy 
+consumption per 
+technology [MWh/y]</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>energy consumption 
+from environment 
+per HP </string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+           </widget>
+           <widget class="QPushButton" name="btn_fec">
+            <property name="geometry">
+             <rect>
+              <x>1020</x>
+              <y>10</y>
+              <width>141</width>
+              <height>61</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Calculate Fec 
+and 
+Energy consumption</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_8">
+             <item>
+              <widget class="QSpinBox" name="sbs_heat_h"/>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="sbs_dhw_h"/>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="sbs_cool_h"/>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="verticalLayoutWidget_9">
+            <property name="geometry">
+             <rect>
+              <x>560</x>
+              <y>10</y>
+              <width>151</width>
+              <height>51</height>
+             </rect>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_9">
+             <item>
+              <widget class="QLabel" name="label_16">
+               <property name="text">
+                <string>Depreciation period [y]</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_29">
+               <property name="text">
+                <string>Discount rate</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="verticalLayoutWidget_10">
+            <property name="geometry">
+             <rect>
+              <x>720</x>
+              <y>10</y>
+              <width>121</width>
+              <height>53</height>
+             </rect>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_10">
+             <item>
+              <widget class="QSpinBox" name="period"/>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="rate"/>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="verticalLayoutWidget_5">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>10</y>
+              <width>91</width>
+              <height>51</height>
+             </rect>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_5">
+             <item>
+              <widget class="QLabel" name="label_7">
+               <property name="text">
+                <string>Share Heating</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_8">
+               <property name="text">
+                <string>Share DHW</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="verticalLayoutWidget_6">
+            <property name="geometry">
+             <rect>
+              <x>110</x>
+              <y>10</y>
+              <width>121</width>
+              <height>53</height>
+             </rect>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_6">
+             <item>
+              <widget class="QSpinBox" name="sbs_heat"/>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="sbs_dhw"/>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="verticalLayoutWidget_7">
+            <property name="geometry">
+             <rect>
+              <x>250</x>
+              <y>10</y>
+              <width>171</width>
+              <height>81</height>
+             </rect>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_7">
+             <item>
+              <widget class="QLabel" name="label_9">
+               <property name="text">
+                <string>Seasonal heating hours</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_10">
+               <property name="text">
+                <string>Seasonal DHW hours</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_13">
+               <property name="text">
+                <string>Seasonal cooling hours</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="verticalLayoutWidget_8">
+            <property name="geometry">
+             <rect>
+              <x>430</x>
+              <y>10</y>
+              <width>121</width>
+              <height>82</height>
+             </rect>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_8">
+             <item>
+              <widget class="QSpinBox" name="sbs_heat_h"/>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="sbs_dhw_h"/>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="sbs_cool_h"/>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="verticalLayoutWidget_9">
+            <property name="geometry">
+             <rect>
+              <x>560</x>
+              <y>10</y>
+              <width>151</width>
+              <height>51</height>
+             </rect>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_9">
+             <item>
+              <widget class="QLabel" name="label_16">
+               <property name="text">
+                <string>Depreciation period [y]</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_29">
+               <property name="text">
+                <string>Discount rate</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="verticalLayoutWidget_10">
+            <property name="geometry">
+             <rect>
+              <x>720</x>
+              <y>10</y>
+              <width>121</width>
+              <height>53</height>
+             </rect>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_10">
+             <item>
+              <widget class="QSpinBox" name="period"/>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="rate"/>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+          <widget class="QWidget" name="tab_6">
+           <attribute name="title">
+            <string>Cooling</string>
+           </attribute>
+           <widget class="QTableWidget" name="sim_sbs_cool_source">
+            <property name="geometry">
+             <rect>
+              <x>20</x>
+              <y>60</y>
+              <width>1061</width>
+              <height>701</height>
+             </rect>
+            </property>
+            <property name="columnCount">
+             <number>4</number>
+            </property>
+            <attribute name="horizontalHeaderDefaultSectionSize">
+             <number>190</number>
+            </attribute>
+            <attribute name="horizontalHeaderMinimumSectionSize">
+             <number>60</number>
+            </attribute>
+            <attribute name="verticalHeaderDefaultSectionSize">
+             <number>40</number>
+            </attribute>
+            <attribute name="verticalHeaderMinimumSectionSize">
+             <number>35</number>
+            </attribute>
+            <row>
+             <property name="text">
+              <string/>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Electricity</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Compression Chillers - Air </string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Compression Chillers - Waste heat </string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Compression Chillers - Ground source</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Natural gas</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Absorption Chillers - Air </string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Absorption Chillers - Waste heat </string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Absorption Chillers - Ground source</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Waste heat</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Heat Exchangers only</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Geothermal</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Heat Exchangers only</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Other</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Other </string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Total</string>
+             </property>
+            </row>
+            <column>
+             <property name="text">
+              <string>Useful energy demand
+ (SBS only)
+Future scenario[MWh/y]</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Average efficiency/COP 
+per technology category</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Final energy consumption 
+per technology [MWh/y]</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Additional final energy 
+consumption per HP </string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+           </widget>
+           <widget class="QPushButton" name="btn_fec_afec">
+            <property name="geometry">
+             <rect>
+              <x>860</x>
+              <y>10</y>
+              <width>201</width>
+              <height>28</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Calculate FEC and AFEC</string>
+            </property>
+           </widget>
+          </widget>
+         </widget>
+        </widget>
+        <widget class="QWidget" name="tab_8">
+         <attribute name="title">
+          <string>DH and DCs categories</string>
+         </attribute>
+         <widget class="QTabWidget" name="tabWidget_5">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>20</y>
+            <width>1161</width>
+            <height>831</height>
+           </rect>
+          </property>
+          <property name="currentIndex">
+           <number>1</number>
+          </property>
+          <widget class="QWidget" name="tab_9">
+           <attribute name="title">
+            <string>District Network(Heating + DHW)</string>
+           </attribute>
+           <widget class="QTableWidget" name="dist_heat_source">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>100</y>
+              <width>1151</width>
+              <height>681</height>
+             </rect>
+            </property>
+            <attribute name="horizontalHeaderDefaultSectionSize">
+             <number>135</number>
+            </attribute>
+            <attribute name="horizontalHeaderMinimumSectionSize">
+             <number>45</number>
+            </attribute>
+            <attribute name="verticalHeaderDefaultSectionSize">
+             <number>34</number>
+            </attribute>
+            <attribute name="verticalHeaderMinimumSectionSize">
+             <number>15</number>
+            </attribute>
+            <row>
+             <property name="text">
+              <string/>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Electricity</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Heaters</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Air HP</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Waste heat HP</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Geothermal HP</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Natural gas</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Boiler</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Comb. Heat &amp; Pow</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Air source GAHP</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Waste heat GAHP </string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Geothermal GAHP </string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Biomass</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Boiler</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Comb. Heat &amp; Pow</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Waste heat</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Heat Exchanger only</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Geothermal</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Heat Exchangers pnly</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Heating oil</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Boiler</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Coal/Peat</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Boilers</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Solar</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Flat plate solar 
+thermal collectors</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Evacuated tube Solar 
+thermal collectors (ETC)</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Other</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Other</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Total</string>
+             </property>
+            </row>
+            <column>
+             <property name="text">
+              <string>Useful energy demand
+(SBS only)
+Future scenario
+[MWh/y]</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>6</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Average efficiency/
+COP per technology 
+category</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>6</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Utilization factor
+(for CHP only)</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>6</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Temperature levels
+</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>6</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Final energy 
+consumption per
+ technology [MWh/y]</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>6</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Additional final 
+energy consumption
+ per HP </string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>6</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>DH network losses
+[MWh/y]</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>6</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+           </widget>
+           <widget class="QWidget" name="horizontalLayoutWidget_2">
+            <property name="geometry">
+             <rect>
+              <x>280</x>
+              <y>50</y>
+              <width>221</width>
+              <height>31</height>
+             </rect>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <item>
+              <widget class="QLabel" name="label_2">
+               <property name="text">
+                <string>Grid lenght[Km]</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="leng">
+               <property name="maximum">
+                <number>9999</number>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="horizontalLayoutWidget_3">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>10</y>
+              <width>231</width>
+              <height>31</height>
+             </rect>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <item>
+              <widget class="QLabel" name="label_3">
+               <property name="text">
+                <string>Share Heating[%]</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="share_heat"/>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="horizontalLayoutWidget_4">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>50</y>
+              <width>231</width>
+              <height>31</height>
+             </rect>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_4">
+             <item>
+              <widget class="QLabel" name="label_4">
+               <property name="text">
+                <string>Share DHW[%]</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="share"/>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="horizontalLayoutWidget">
+            <property name="geometry">
+             <rect>
+              <x>280</x>
+              <y>10</y>
+              <width>221</width>
+              <height>31</height>
+             </rect>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout">
+             <item>
+              <widget class="QLabel" name="label">
+               <property name="text">
+                <string>Gride efficency[%]</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="eff"/>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QPushButton" name="DHCN_heating_fec">
+            <property name="geometry">
+             <rect>
+              <x>770</x>
+              <y>20</y>
+              <width>201</width>
+              <height>41</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Calculate Fec and Additional 
+final energy consumption</string>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="DHCN_net_losses">
+            <property name="geometry">
+             <rect>
+              <x>990</x>
+              <y>20</y>
+              <width>161</width>
+              <height>41</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Calculate DH network
+ losses</string>
+            </property>
+           </widget>
+          </widget>
+          <widget class="QWidget" name="tab_10">
+           <attribute name="title">
+            <string>District Network(Cooling)</string>
+           </attribute>
+           <widget class="QTableWidget" name="dist_cool_net">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>90</y>
+              <width>1141</width>
+              <height>611</height>
+             </rect>
+            </property>
+            <property name="columnCount">
+             <number>5</number>
+            </property>
+            <attribute name="horizontalHeaderDefaultSectionSize">
+             <number>168</number>
+            </attribute>
+            <attribute name="horizontalHeaderMinimumSectionSize">
+             <number>55</number>
+            </attribute>
+            <row>
+             <property name="text">
+              <string/>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Electricity</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Compression Chillers - Air </string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Compression Chillers - Waste heat </string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Compression Chillers - Ground source</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Natural gas</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Absorption Chillers - Air </string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Absorption Chillers - Waste heat </string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Absorption Chillers - Ground source</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Waste heat</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Heat Exchangers only</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Geothermal</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Heat Exchangers only</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Other</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Other </string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Total</string>
+             </property>
+            </row>
+            <column>
+             <property name="text">
+              <string>Useful energy demand 
+(SBS only)
+Future scenario [MWh/y]</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>6</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Average efficiency/COP 
+per technology category</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>6</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Final energy consumption 
+per technology [MWh/y]</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>6</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Additional final energy 
+consumption per HP[MWh/y]</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>6</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Network losses 
+[MWh/y]</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>6</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+           </widget>
+           <widget class="QWidget" name="horizontalLayoutWidget_5">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>10</y>
+              <width>221</width>
+              <height>31</height>
+             </rect>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_5">
+             <item>
+              <widget class="QLabel" name="label_5">
+               <property name="text">
+                <string>Gride efficency[%]</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="btn_eff"/>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="horizontalLayoutWidget_6">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>50</y>
+              <width>221</width>
+              <height>31</height>
+             </rect>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_6">
+             <item>
+              <widget class="QLabel" name="label_6">
+               <property name="text">
+                <string>Grid lenght[Km]</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="btn_len">
+               <property name="maximum">
+                <number>9999</number>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QPushButton" name="dh_loss_dist">
+            <property name="geometry">
+             <rect>
+              <x>950</x>
+              <y>20</y>
+              <width>191</width>
+              <height>41</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Calculate DH network losses</string>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="fec_cool_dist">
+            <property name="geometry">
+             <rect>
+              <x>730</x>
+              <y>20</y>
+              <width>201</width>
+              <height>41</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Calculate Fec and Additional 
+final energy consumption</string>
+            </property>
+           </widget>
+          </widget>
+         </widget>
+        </widget>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>Local sources availability verification</string>
+       </attribute>
+       <widget class="QTableWidget" name="table_source">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>30</y>
+          <width>741</width>
+          <height>271</height>
+         </rect>
+        </property>
+        <attribute name="horizontalHeaderDefaultSectionSize">
+         <number>180</number>
+        </attribute>
+        <attribute name="horizontalHeaderMinimumSectionSize">
+         <number>60</number>
+        </attribute>
+        <attribute name="verticalHeaderDefaultSectionSize">
+         <number>45</number>
+        </attribute>
+        <attribute name="verticalHeaderMinimumSectionSize">
+         <number>45</number>
+        </attribute>
+        <row>
+         <property name="text">
+          <string/>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string/>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string/>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string/>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string/>
+         </property>
+        </row>
+        <column>
+         <property name="text">
+          <string>Local source</string>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>7</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>source availability 
+from SMM[MWh/y]</string>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>7</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>source utilization 
+future [MWh/y]</string>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>7</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>check result</string>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>7</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+        </column>
+        <item row="0" column="0">
+         <property name="text">
+          <string>Biomass</string>
+         </property>
+        </item>
+        <item row="0" column="1">
+         <property name="text">
+          <string/>
+         </property>
+        </item>
+        <item row="1" column="0">
+         <property name="text">
+          <string>Waste Heat</string>
+         </property>
+        </item>
+        <item row="2" column="0">
+         <property name="text">
+          <string>Geothermal</string>
+         </property>
+        </item>
+        <item row="3" column="0">
+         <property name="text">
+          <string>Solar</string>
+         </property>
+        </item>
+        <item row="4" column="0">
+         <property name="text">
+          <string> Waste heat industry </string>
+         </property>
+        </item>
+       </widget>
+       <widget class="QTableWidget" name="table_sutil">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>370</y>
+          <width>741</width>
+          <height>271</height>
+         </rect>
+        </property>
+        <attribute name="horizontalHeaderDefaultSectionSize">
+         <number>180</number>
+        </attribute>
+        <attribute name="horizontalHeaderMinimumSectionSize">
+         <number>55</number>
+        </attribute>
+        <attribute name="verticalHeaderDefaultSectionSize">
+         <number>45</number>
+        </attribute>
+        <attribute name="verticalHeaderMinimumSectionSize">
+         <number>45</number>
+        </attribute>
+        <row>
+         <property name="text">
+          <string/>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string/>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string/>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string/>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string/>
+         </property>
+        </row>
+        <column>
+         <property name="text">
+          <string>Local source</string>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>7</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Local source utilization
+EN12.2</string>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>7</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>source utilization baseline 
+[MWh/y]</string>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>7</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>source utilization variation
+EN 12.3</string>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>7</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+        </column>
+        <item row="0" column="0">
+         <property name="text">
+          <string>Biomass</string>
+         </property>
+        </item>
+        <item row="0" column="1">
+         <property name="text">
+          <string/>
+         </property>
+        </item>
+        <item row="1" column="0">
+         <property name="text">
+          <string>Waste heat</string>
+         </property>
+        </item>
+        <item row="1" column="1">
+         <property name="text">
+          <string/>
+         </property>
+        </item>
+        <item row="2" column="0">
+         <property name="text">
+          <string>Geothermal</string>
+         </property>
+        </item>
+        <item row="2" column="1">
+         <property name="text">
+          <string/>
+         </property>
+        </item>
+        <item row="3" column="0">
+         <property name="text">
+          <string>Solar</string>
+         </property>
+        </item>
+        <item row="3" column="1">
+         <property name="text">
+          <string/>
+         </property>
+        </item>
+        <item row="4" column="0">
+         <property name="text">
+          <string> Waste heat industry </string>
+         </property>
+        </item>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="tab_4">
+       <attribute name="title">
+        <string>Supply Energy Sources</string>
+       </attribute>
+       <widget class="QTableWidget" name="sourcesTable">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>10</y>
+          <width>861</width>
+          <height>281</height>
+         </rect>
+        </property>
+        <attribute name="horizontalHeaderDefaultSectionSize">
+         <number>135</number>
+        </attribute>
+        <row>
+         <property name="text">
+          <string/>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>Biomass Forestry</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>Geothermal</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>Waste heat</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>Waste heat industry</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>Solar</string>
+         </property>
+        </row>
+        <column>
+         <property name="text">
+          <string>Primary energy 
+factor</string>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>7</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>CO2 Emision
+ factor</string>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>7</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>NOx Emision
+factor</string>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>7</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>SOx Emission
+factor</string>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>7</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>PM10 Emision 
+factor</string>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>7</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+        </column>
+        <item row="1" column="0">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="flags">
+          <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+         </property>
+        </item>
+        <item row="3" column="0">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="flags">
+          <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+         </property>
+        </item>
+        <item row="4" column="0">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="flags">
+          <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+         </property>
+        </item>
+        <item row="5" column="0">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="flags">
+          <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+         </property>
+        </item>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="tab_2">
+       <attribute name="title">
+        <string>KPIs calculation and targets verification</string>
+       </attribute>
+       <widget class="QWidget" name="verticalLayoutWidget_3">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>10</y>
+          <width>180</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <widget class="QLabel" name="label_14">
+           <property name="text">
+            <string>Total gross floor area[m^2]</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="verticalLayoutWidget_4">
+        <property name="geometry">
+         <rect>
+          <x>200</x>
+          <y>10</y>
+          <width>141</width>
+          <height>24</height>
+         </rect>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_4">
+         <item>
+          <widget class="QSpinBox" name="spinBox_9">
+           <property name="maximum">
+            <number>9999</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QTabWidget" name="tabWidget_3">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>50</y>
+          <width>1061</width>
+          <height>501</height>
+         </rect>
+        </property>
+        <property name="currentIndex">
+         <number>3</number>
+        </property>
+        <widget class="QWidget" name="tab_11">
+         <attribute name="title">
+          <string>Energy</string>
+         </attribute>
+         <widget class="QTableWidget" name="tableWidget_10">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>1041</width>
+            <height>471</height>
+           </rect>
+          </property>
+          <property name="lineWidth">
+           <number>3</number>
+          </property>
+          <property name="midLineWidth">
+           <number>1</number>
+          </property>
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
+          <property name="alternatingRowColors">
+           <bool>true</bool>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::MultiSelection</enum>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectRows</enum>
+          </property>
+          <property name="gridStyle">
+           <enum>Qt::SolidLine</enum>
+          </property>
+          <attribute name="horizontalHeaderCascadingSectionResizes">
+           <bool>true</bool>
+          </attribute>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <column>
+           <property name="text">
+            <string>ID KPI</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>KPI related </string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>UoM</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Baseline
+RES</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Baseline
+TER</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Targets
+Tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Future
+RES</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Future
+TER</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+          </column>
+          <item row="1" column="0">
+           <property name="text">
+            <string>EN_1</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="1" column="1">
+           <property name="text">
+            <string>EN_1.1: PEC base tot
+</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="1" column="2">
+           <property name="text">
+            <string>MWh/year</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="2" column="0">
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item row="2" column="1">
+           <property name="text">
+            <string>EN_1.2: SPEC base tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="2" column="2">
+           <property name="text">
+            <string>MWh/m2/year</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="3" column="0">
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item row="3" column="1">
+           <property name="text">
+            <string>EN_1.3: PEC fut tot </string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="3" column="2">
+           <property name="text">
+            <string>MWh/year</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="4" column="0">
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item row="4" column="1">
+           <property name="text">
+            <string>EN_1.4: SPEC fut tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="4" column="2">
+           <property name="text">
+            <string>MWh/m2/year</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="5" column="0">
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item row="5" column="1">
+           <property name="text">
+            <string>EN_1.5: PEC var tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="5" column="2">
+           <property name="text">
+            <string>%</string>
+           </property>
+          </item>
+          <item row="6" column="0">
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item row="6" column="1">
+           <property name="text">
+            <string>EN_1.6: PEC sav tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="6" column="2">
+           <property name="text">
+            <string>MWh/year</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="7" column="0">
+           <property name="text">
+            <string>EN_3</string>
+           </property>
+          </item>
+          <item row="7" column="1">
+           <property name="text">
+            <string>EN_3.1: UED base tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="7" column="2">
+           <property name="text">
+            <string>MWh/year</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="8" column="0">
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item row="8" column="1">
+           <property name="text">
+            <string>EN_3.2: SUED base tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="8" column="2">
+           <property name="text">
+            <string>MWh/m2/y</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="9" column="0">
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item row="9" column="1">
+           <property name="text">
+            <string>EN_3.3: UED fut tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="9" column="2">
+           <property name="text">
+            <string>MWh/y</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="10" column="0">
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item row="10" column="1">
+           <property name="text">
+            <string>EN_3.4: SUED fut tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="10" column="2">
+           <property name="text">
+            <string>MWh/m2/y</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="11" column="0">
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item row="11" column="1">
+           <property name="text">
+            <string>EN_3.5: UED var tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="11" column="2">
+           <property name="text">
+            <string>%</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="12" column="0">
+           <property name="text">
+            <string>EN_4</string>
+           </property>
+          </item>
+          <item row="12" column="1">
+           <property name="text">
+            <string>EN_4.1: RES base tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="12" column="2">
+           <property name="text">
+            <string>MWh/m/y</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="13" column="0">
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item row="13" column="1">
+           <property name="text">
+            <string>EN_4.2: RES % base tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="13" column="2">
+           <property name="text">
+            <string>%</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="14" column="0">
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item row="14" column="1">
+           <property name="text">
+            <string>EN_4.3: RES fut tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="14" column="2">
+           <property name="text">
+            <string>MWh/m/y</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="15" column="0">
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item row="15" column="1">
+           <property name="text">
+            <string>EN_4.4: RES % fut tot </string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="15" column="2">
+           <property name="text">
+            <string>%</string>
+           </property>
+          </item>
+          <item row="16" column="0">
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item row="16" column="1">
+           <property name="text">
+            <string>EN_4.5: RES var tot </string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="16" column="2">
+           <property name="text">
+            <string>%</string>
+           </property>
+          </item>
+          <item row="17" column="0">
+           <property name="text">
+            <string>EN_5</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="17" column="1">
+           <property name="text">
+            <string>EN_5.1: WH base tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="17" column="2">
+           <property name="text">
+            <string>MWh/m/y</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="18" column="1">
+           <property name="text">
+            <string>EN_5.2: WH % base tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="18" column="2">
+           <property name="text">
+            <string>%</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="19" column="1">
+           <property name="text">
+            <string>EN_5.3: WH fut tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="19" column="2">
+           <property name="text">
+            <string>MWh/m/y</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="20" column="1">
+           <property name="text">
+            <string>EN_5.4: WH % fut tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="20" column="2">
+           <property name="text">
+            <string>%</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="21" column="1">
+           <property name="text">
+            <string>EN_5.5: WH var tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="21" column="2">
+           <property name="text">
+            <string>%</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="22" column="0">
+           <property name="text">
+            <string>EN_6</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="22" column="1">
+           <property name="text">
+            <string>EN_6.1: CF base tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="22" column="2">
+           <property name="text">
+            <string>MWh/m/y</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="23" column="1">
+           <property name="text">
+            <string>EN_6.2: CF % base tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="23" column="2">
+           <property name="text">
+            <string>%</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="24" column="1">
+           <property name="text">
+            <string>EN_6.3: CF fut tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="24" column="2">
+           <property name="text">
+            <string>MWh/m/y</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="25" column="1">
+           <property name="text">
+            <string>EN_6.4: CF % fut tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="25" column="2">
+           <property name="text">
+            <string>%</string>
+           </property>
+          </item>
+          <item row="26" column="1">
+           <property name="text">
+            <string>EN_6.5: CF var tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="26" column="2">
+           <property name="text">
+            <string>% </string>
+           </property>
+          </item>
+          <item row="27" column="0">
+           <property name="text">
+            <string>EN_7</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="27" column="1">
+           <property name="text">
+            <string>EN_7.1: EL base tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="27" column="2">
+           <property name="text">
+            <string>MWh/m/y</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="28" column="1">
+           <property name="text">
+            <string>EN_7.2: EL % base tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="28" column="2">
+           <property name="text">
+            <string>%</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="29" column="1">
+           <property name="text">
+            <string>EN_7.3: EL fut tot</string>
+           </property>
+          </item>
+          <item row="29" column="2">
+           <property name="text">
+            <string>MWh/m/y</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="30" column="1">
+           <property name="text">
+            <string>EN_7.4: EL % fut tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="30" column="2">
+           <property name="text">
+            <string>%</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="31" column="1">
+           <property name="text">
+            <string>EN_7.5: EL var tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="31" column="2">
+           <property name="text">
+            <string>%</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="32" column="0">
+           <property name="text">
+            <string>EN_13</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="32" column="1">
+           <property name="text">
+            <string>EN_13.2.1: DHN loss fut </string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="32" column="2">
+           <property name="text">
+            <string>MWh/m/y</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="33" column="1">
+           <property name="text">
+            <string>EN_13.2.2: DCN loss fut</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="33" column="2">
+           <property name="text">
+            <string>MWh/m/y</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="34" column="0">
+           <property name="text">
+            <string>EN_14</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="34" column="1">
+           <property name="text">
+            <string>EN_14.2.1: DHN hd fut</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="34" column="2">
+           <property name="text">
+            <string>MWh/m/y</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="35" column="1">
+           <property name="text">
+            <string>EN_14.2.2: DCN hd fut</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="35" column="2">
+           <property name="text">
+            <string>MWh/m/y</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+         </widget>
+        </widget>
+        <widget class="QWidget" name="tab_12">
+         <attribute name="title">
+          <string>Enviromental</string>
+         </attribute>
+         <widget class="QTableWidget" name="tableWidget_5">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>20</y>
+            <width>1011</width>
+            <height>391</height>
+           </rect>
+          </property>
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
+          <property name="alternatingRowColors">
+           <bool>true</bool>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::MultiSelection</enum>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectRows</enum>
+          </property>
+          <property name="gridStyle">
+           <enum>Qt::SolidLine</enum>
+          </property>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <column>
+           <property name="text">
+            <string>ID KPI</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>KPI related </string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>UoM</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Baseline
+RES</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Baseline 
+TER</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Targets
+Tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Future
+RES</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Future
+TER</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+          </column>
+          <item row="1" column="0">
+           <property name="text">
+            <string>ENV1:</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="1" column="1">
+           <property name="text">
+            <string>ENV_1.1 CO2 var tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="1" column="2">
+           <property name="text">
+            <string>tCO2/year</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="2" column="1">
+           <property name="text">
+            <string>ENV_1.2 CO2 sav tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="2" column="2">
+           <property name="text">
+            <string>tCO2/PECbase/year</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="3" column="1">
+           <property name="text">
+            <string>ENV_1.3 NOx var tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="3" column="2">
+           <property name="text">
+            <string>tCO2/P ECfut/ year </string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="4" column="1">
+           <property name="text">
+            <string>ENV_1.4 NOx sav tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="4" column="2">
+           <property name="text">
+            <string>%</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="5" column="1">
+           <property name="text">
+            <string>ENV_1.5 SOx var tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="5" column="2">
+           <property name="text">
+            <string>tCO2/year</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="6" column="0">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="6" column="1">
+           <property name="text">
+            <string>ENV_1.6 SOx sav tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="6" column="2">
+           <property name="text">
+            <string>tNOx/year</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="7" column="1">
+           <property name="text">
+            <string>ENV_1.7 PM10 var tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="7" column="2">
+           <property name="text">
+            <string>tNOx/PECbase/year</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="8" column="1">
+           <property name="text">
+            <string>ENV_1.8 PM10 sav tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="8" column="2">
+           <property name="text">
+            <string>tNOx/P ECfut/ year</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+         </widget>
+        </widget>
+        <widget class="QWidget" name="tab_14">
+         <attribute name="title">
+          <string>Social</string>
+         </attribute>
+         <widget class="QTableWidget" name="tableWidget_7">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>30</y>
+            <width>1021</width>
+            <height>431</height>
+           </rect>
+          </property>
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
+          <property name="alternatingRowColors">
+           <bool>true</bool>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::MultiSelection</enum>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectRows</enum>
+          </property>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <column>
+           <property name="text">
+            <string>ID KPI</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>KPI related </string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>UoM</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Baseline scenario:
+RES</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Baseline scenario:
+TER</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Targets 
+Tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Future scenario: 
+RES</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Future scenario:
+TER</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+          </column>
+          <item row="1" column="0">
+           <property name="text">
+            <string>SO_1</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="1" column="1">
+           <property name="text">
+            <string>SO_1.1 Enpov base</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="1" column="2">
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item row="2" column="1">
+           <property name="text">
+            <string>SO_1.2 Enpov fut</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="2" column="2">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="3" column="1">
+           <property name="text">
+            <string>SO_1.3 Enpov var  base</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="3" column="2">
+           <property name="text">
+            <string>%</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="4" column="0">
+           <property name="text">
+            <string>SO_2</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="4" column="1">
+           <property name="text">
+            <string>SO_2.1 Job base</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="5" column="1">
+           <property name="text">
+            <string>SO_2.2 Job fut</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="6" column="1">
+           <property name="text">
+            <string>SO_2.3 Job var  base</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="6" column="2">
+           <property name="text">
+            <string>%</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="7" column="0">
+           <property name="text">
+            <string>SO_3</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="7" column="1">
+           <property name="text">
+            <string>SO_3.1 security of supply base</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="8" column="1">
+           <property name="text">
+            <string>SO_3.2 security of supply fut</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="9" column="1">
+           <property name="text">
+            <string>SO_3.3 security of supply var  base</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="9" column="2">
+           <property name="text">
+            <string>%</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+         </widget>
+        </widget>
+        <widget class="QWidget" name="tab_13">
+         <attribute name="title">
+          <string>Economic</string>
+         </attribute>
+         <widget class="QTableWidget" name="tableWidget_6">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>30</y>
+            <width>1021</width>
+            <height>431</height>
+           </rect>
+          </property>
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
+          <property name="alternatingRowColors">
+           <bool>true</bool>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::MultiSelection</enum>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectRows</enum>
+          </property>
+          <property name="textElideMode">
+           <enum>Qt::ElideNone</enum>
+          </property>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
+          <column>
+           <property name="text">
+            <string>ID KPI</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>KPI related </string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>UoM</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Baseline scenario: 
+RES</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Baseline scenario:
+TER</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Targets
+Tot</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Future scenario:
+RES</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Future scenario: 
+TER</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+          </column>
+          <item row="0" column="0">
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item row="1" column="0">
+           <property name="text">
+            <string>ECO_1</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="1" column="1">
+           <property name="text">
+            <string>ECO_1.1PBP</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="1" column="2">
+           <property name="text">
+            <string>y</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="2" column="1">
+           <property name="text">
+            <string>ECO_1.2 NPV</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="2" column="2">
+           <property name="text">
+            <string>€</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="3" column="1">
+           <property name="text">
+            <string>ECO_1.3 IRR</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="3" column="2">
+           <property name="text">
+            <string>/</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="4" column="1">
+           <property name="text">
+            <string>ECO_1.4 Investment cost* </string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="4" column="2">
+           <property name="text">
+            <string>€</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="5" column="0">
+           <property name="text">
+            <string>ECO_2</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="5" column="1">
+           <property name="text">
+            <string>ECO_2.1 OPEXbase</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="5" column="2">
+           <property name="text">
+            <string>€/ year</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="6" column="1">
+           <property name="text">
+            <string>ECO_2.2 OPEX fut</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="6" column="2">
+           <property name="text">
+            <string>€/ year</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="7" column="1">
+           <property name="text">
+            <string>ECO_2.3 OPEX var base</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="7" column="2">
+           <property name="text">
+            <string>%</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="8" column="0">
+           <property name="text">
+            <string>ECO_3</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="8" column="1">
+           <property name="text">
+            <string>ECO_3.1 LCOH</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="8" column="2">
+           <property name="text">
+            <string>€/MWh</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="9" column="0">
+           <property name="text">
+            <string>ECO_4</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="9" column="1">
+           <property name="text">
+            <string>ECO_4.1 CO2 sav</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+          <item row="9" column="2">
+           <property name="text">
+            <string>€/tCO2</string>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+          </item>
+         </widget>
+        </widget>
+       </widget>
+       <widget class="QScrollArea" name="scrollArea">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>570</y>
+          <width>941</width>
+          <height>221</height>
+         </rect>
+        </property>
+        <property name="widgetResizable">
+         <bool>true</bool>
+        </property>
+        <widget class="QWidget" name="scrollAreaWidgetContents">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>939</width>
+           <height>219</height>
+          </rect>
+         </property>
+         <widget class="QLabel" name="label_17">
+          <property name="geometry">
+           <rect>
+            <x>20</x>
+            <y>10</y>
+            <width>171</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Parameter panel&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="textFormat">
+           <enum>Qt::AutoText</enum>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_18">
+          <property name="geometry">
+           <rect>
+            <x>20</x>
+            <y>60</y>
+            <width>101</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Envelope factor&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_19">
+          <property name="geometry">
+           <rect>
+            <x>130</x>
+            <y>60</y>
+            <width>55</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>NG %</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_20">
+          <property name="geometry">
+           <rect>
+            <x>200</x>
+            <y>60</y>
+            <width>71</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Biomass %</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_21">
+          <property name="geometry">
+           <rect>
+            <x>280</x>
+            <y>60</y>
+            <width>71</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Electricity %</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_22">
+          <property name="geometry">
+           <rect>
+            <x>360</x>
+            <y>60</y>
+            <width>91</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Waste heat %</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_23">
+          <property name="geometry">
+           <rect>
+            <x>450</x>
+            <y>40</y>
+            <width>71</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Technology</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_24">
+          <property name="geometry">
+           <rect>
+            <x>530</x>
+            <y>60</y>
+            <width>71</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Tot Capex€</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_25">
+          <property name="geometry">
+           <rect>
+            <x>610</x>
+            <y>60</y>
+            <width>131</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Specific Opex €/MWh</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_26">
+          <property name="geometry">
+           <rect>
+            <x>740</x>
+            <y>60</y>
+            <width>91</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>  penetration %</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_27">
+          <property name="geometry">
+           <rect>
+            <x>450</x>
+            <y>60</y>
+            <width>81</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>efficiency %</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_28">
+          <property name="geometry">
+           <rect>
+            <x>750</x>
+            <y>40</y>
+            <width>91</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Solar thermal</string>
+          </property>
+         </widget>
+         <widget class="QWidget" name="horizontalLayoutWidget_11">
+          <property name="geometry">
+           <rect>
+            <x>20</x>
+            <y>150</y>
+            <width>801</width>
+            <height>61</height>
+           </rect>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_11">
+           <item>
+            <widget class="QDial" name="dial">
+             <property name="invertedAppearance">
+              <bool>false</bool>
+             </property>
+             <property name="invertedControls">
+              <bool>false</bool>
+             </property>
+             <property name="wrapping">
+              <bool>false</bool>
+             </property>
+             <property name="notchTarget">
+              <double>20.699999999999999</double>
+             </property>
+             <property name="notchesVisible">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDial" name="dial_2">
+             <property name="notchTarget">
+              <double>19.699999999999999</double>
+             </property>
+             <property name="notchesVisible">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDial" name="dial_3">
+             <property name="notchTarget">
+              <double>20.699999999999999</double>
+             </property>
+             <property name="notchesVisible">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDial" name="dial_4">
+             <property name="notchTarget">
+              <double>20.699999999999999</double>
+             </property>
+             <property name="notchesVisible">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDial" name="dial_5">
+             <property name="notchTarget">
+              <double>20.699999999999999</double>
+             </property>
+             <property name="notchesVisible">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDial" name="dial_6">
+             <property name="notchTarget">
+              <double>20.699999999999999</double>
+             </property>
+             <property name="notchesVisible">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDial" name="dial_7">
+             <property name="notchTarget">
+              <double>20.699999999999999</double>
+             </property>
+             <property name="notchesVisible">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDial" name="dial_8">
+             <property name="notchTarget">
+              <double>20.699999999999999</double>
+             </property>
+             <property name="notchesVisible">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDial" name="dial_9">
+             <property name="notchTarget">
+              <double>20.699999999999999</double>
+             </property>
+             <property name="notchesVisible">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="horizontalLayoutWidget_12">
+          <property name="geometry">
+           <rect>
+            <x>20</x>
+            <y>100</y>
+            <width>801</width>
+            <height>41</height>
+           </rect>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_12">
+           <item>
+            <widget class="QLineEdit" name="lineEdit_1"/>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEdit_2"/>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEdit_3"/>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEdit_4"/>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEdit_5"/>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEdit_6"/>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEdit_7"/>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEdit_8"/>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEdit_9"/>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QPushButton" name="btn_refershKPI">
+          <property name="geometry">
+           <rect>
+            <x>770</x>
+            <y>0</y>
+            <width>161</width>
+            <height>28</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>RicalcoloKPI</string>
+          </property>
+         </widget>
+        </widget>
+       </widget>
+       <widget class="QPushButton" name="btn_ok">
+        <property name="geometry">
+         <rect>
+          <x>970</x>
+          <y>570</y>
+          <width>93</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>ok</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btn_KPIsFuture">
+        <property name="geometry">
+         <rect>
+          <x>910</x>
+          <y>20</y>
+          <width>131</width>
+          <height>28</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Calculate KPIs</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btn_save">
+        <property name="geometry">
+         <rect>
+          <x>970</x>
+          <y>630</y>
+          <width>93</width>
+          <height>28</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Save</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btnExport">
+        <property name="geometry">
+         <rect>
+          <x>970</x>
+          <y>670</y>
+          <width>93</width>
+          <height>28</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Export to csv</string>
+        </property>
+       </widget>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

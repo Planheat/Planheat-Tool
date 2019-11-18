@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PlanningModuleDialogBase</class>
+ <widget class="QDialog" name="PlanningModuleDialogBase">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>514</width>
+    <height>383</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>District Workflow</string>
+  </property>
+  <widget class="QPushButton" name="step1btn">
+   <property name="geometry">
+    <rect>
+     <x>70</x>
+     <y>130</y>
+     <width>391</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Step1: Baseline scenario definition</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="step2btn">
+   <property name="geometry">
+    <rect>
+     <x>70</x>
+     <y>170</y>
+     <width>391</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Step2: Baseline scenario simulation</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="step0btn">
+   <property name="geometry">
+    <rect>
+     <x>70</x>
+     <y>90</y>
+     <width>391</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Step0: import and visualization of relevant information from DMM</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="step3btn">
+   <property name="geometry">
+    <rect>
+     <x>70</x>
+     <y>210</y>
+     <width>391</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Step3: Selection of planning criteria and KPIs</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="step4btn">
+   <property name="geometry">
+    <rect>
+     <x>70</x>
+     <y>250</y>
+     <width>391</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Step4: Future scenario definition</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>20</y>
+     <width>171</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="resources.qrc">:/plugins/planning_and_simulation_modules/PlanHeatPrincipal.png</pixmap>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

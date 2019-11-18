@@ -1,0 +1,7 @@
+.idea/
+DHCOptimizer/ipython.html
+*/__pycache__/
+*.pyc
+optimizer/automatic_design/results/
+optimizer/manual_design/results/
+deps/

@@ -1,0 +1,3 @@
+
+class ThreadException(Exception):
+    pass
