@@ -1,0 +1,616 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>767</width>
+    <height>711</height>
+   </rect>
+  </property>
+  <property name="font">
+   <font>
+    <family>MS Shell Dlg 2</family>
+    <pointsize>10</pointsize>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
+  <widget class="QTabWidget" name="tabWidgetFinal">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>751</width>
+     <height>691</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="toolTip">
+    <string/>
+   </property>
+   <property name="toolTipDuration">
+    <number>-1</number>
+   </property>
+   <property name="currentIndex">
+    <number>1</number>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>24</width>
+     <height>24</height>
+    </size>
+   </property>
+   <property name="tabsClosable">
+    <bool>false</bool>
+   </property>
+   <property name="movable">
+    <bool>false</bool>
+   </property>
+   <widget class="QWidget" name="widget">
+    <attribute name="icon">
+     <iconset>
+      <activeon>:/images/finalEnegyConsumption.png</activeon>
+     </iconset>
+    </attribute>
+    <attribute name="title">
+     <string>Final energy consumption</string>
+    </attribute>
+    <widget class="QTabWidget" name="tabWidgetCOOLING">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>741</width>
+       <height>481</height>
+      </rect>
+     </property>
+     <property name="currentIndex">
+      <number>1</number>
+     </property>
+     <widget class="QWidget" name="tab">
+      <attribute name="icon">
+       <iconset>
+        <activeon>:/images/heatingDHW.png</activeon>
+       </iconset>
+      </attribute>
+      <attribute name="title">
+       <string>HEATING+DHW</string>
+      </attribute>
+      <widget class="QTableWidget" name="tableWidgetHEATING_DHW">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>741</width>
+         <height>451</height>
+        </rect>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="icon">
+       <iconset>
+        <activeon>:/images/cooler.png</activeon>
+       </iconset>
+      </attribute>
+      <attribute name="title">
+       <string>COOLING</string>
+      </attribute>
+      <widget class="QTableWidget" name="tableWidgetCOOLING">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>741</width>
+         <height>451</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Segoe UI</family>
+         <pointsize>8</pointsize>
+         <weight>50</weight>
+         <italic>false</italic>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+      </widget>
+     </widget>
+    </widget>
+    <widget class="QPushButton" name="pushButtonCalculator">
+     <property name="geometry">
+      <rect>
+       <x>420</x>
+       <y>540</y>
+       <width>151</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Calculation Sum</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButtonCancel">
+     <property name="geometry">
+      <rect>
+       <x>580</x>
+       <y>540</y>
+       <width>151</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Delete </string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_4">
+    <attribute name="icon">
+     <iconset>
+      <activeon>:/images/usefulEnergyDemand.png</activeon>
+     </iconset>
+    </attribute>
+    <attribute name="title">
+     <string>Useful energy demand</string>
+    </attribute>
+    <widget class="QTabWidget" name="tabWidget_2">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>751</width>
+       <height>651</height>
+      </rect>
+     </property>
+     <property name="currentIndex">
+      <number>1</number>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>18</width>
+       <height>18</height>
+      </size>
+     </property>
+     <widget class="QWidget" name="tab_3">
+      <attribute name="icon">
+       <iconset>
+        <activeon>:/images/heatingDHW.png</activeon>
+       </iconset>
+      </attribute>
+      <attribute name="title">
+       <string>HEATING+DHW</string>
+      </attribute>
+      <widget class="QTreeWidget" name="treeWidgetHEATING_DHW">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>751</width>
+         <height>461</height>
+        </rect>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>41</width>
+         <height>41</height>
+        </size>
+       </property>
+       <column>
+        <property name="text">
+         <string notr="true">1</string>
+        </property>
+       </column>
+      </widget>
+      <widget class="QGroupBox" name="GroupBoxBaselineUsefulDemand_HEATING">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>470</y>
+         <width>561</width>
+         <height>141</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>MS Shell Dlg 2</family>
+         <pointsize>11</pointsize>
+         <underline>true</underline>
+        </font>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QGroupBox{
+	border: 2px solid black;
+	border-radius: 5px;
+	margin-top: 1ex; /* leave space at the top for the title */
+}
+
+GroupBox::title {
+	subcontrol-origin: margin;
+	subcontrol-position: center; /* position at the top center */
+	 padding: 0 5px;
+}</string>
+       </property>
+       <property name="title">
+        <string>Baseline Useful Demand Assessment [MWh/y]</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+       <property name="flat">
+        <bool>false</bool>
+       </property>
+       <widget class="QLineEdit" name="lineEditTotal_HEATING_SBS_DHN">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>80</y>
+          <width>121</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <family>MS Shell Dlg 2</family>
+         </font>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_7">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>30</y>
+          <width>141</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <family>MS Shell Dlg 2</family>
+         </font>
+        </property>
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#ff0000;&quot;&gt;Total for both SBS and DHN solutions&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEditTotal_HEATING_SBS">
+        <property name="geometry">
+         <rect>
+          <x>210</x>
+          <y>80</y>
+          <width>131</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEditTotal_HEATING_DHN">
+        <property name="geometry">
+         <rect>
+          <x>400</x>
+          <y>80</y>
+          <width>131</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+       <widget class="QLabel" name="labelSBS_4">
+        <property name="geometry">
+         <rect>
+          <x>210</x>
+          <y>30</y>
+          <width>131</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <family>MS Shell Dlg 2</family>
+         </font>
+        </property>
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#ff0000;&quot;&gt;HEATING and DHW solution for SBS&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::RichText</enum>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_8">
+        <property name="geometry">
+         <rect>
+          <x>400</x>
+          <y>30</y>
+          <width>141</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <family>MS Shell Dlg 2</family>
+         </font>
+        </property>
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#ff0000;&quot;&gt;HEATING and DHW solution for DHN&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QPushButton" name="pushButtonExport">
+       <property name="geometry">
+        <rect>
+         <x>610</x>
+         <y>470</y>
+         <width>121</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="toolTip">
+        <string notr="true">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Export Useful Energy Demand data (both HEATING+DHW and COOLING) in the project folder (if it's set, otherwise in the the &amp;quot;DafaultSaveFolder&amp;quot; folder inside the plugin). Data will automatically be passed to the CPM (City Planning Module).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="toolTipDuration">
+        <number>15000</number>
+       </property>
+       <property name="text">
+        <string>Export</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="tab_5">
+      <attribute name="icon">
+       <iconset>
+        <activeon>:/images/cooler.png</activeon>
+       </iconset>
+      </attribute>
+      <attribute name="title">
+       <string>COOLING</string>
+      </attribute>
+      <widget class="QTreeWidget" name="treeWidgetCOOLING">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>751</width>
+         <height>461</height>
+        </rect>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>41</width>
+         <height>41</height>
+        </size>
+       </property>
+       <column>
+        <property name="text">
+         <string notr="true">1</string>
+        </property>
+       </column>
+      </widget>
+      <widget class="QGroupBox" name="GroupBoxBaselineUsefulDemand_COOLING">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>470</y>
+         <width>561</width>
+         <height>141</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>MS Shell Dlg 2</family>
+         <pointsize>11</pointsize>
+         <underline>true</underline>
+        </font>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QGroupBox{
+	border: 2px solid black;
+	border-radius: 5px;
+	margin-top: 1ex; /* leave space at the top for the title */
+}
+
+GroupBox::title {
+	subcontrol-origin: margin;
+	subcontrol-position: center; /* position at the top center */
+	 padding: 0 5px;
+}</string>
+       </property>
+       <property name="title">
+        <string>Baseline Useful Demand Assessment [MWh/y]</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+       <property name="flat">
+        <bool>false</bool>
+       </property>
+       <widget class="QLineEdit" name="lineEditTotal_COOLING_SBS_DCN">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>80</y>
+          <width>121</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <family>MS Shell Dlg 2</family>
+         </font>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_9">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>30</y>
+          <width>141</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <family>MS Shell Dlg 2</family>
+         </font>
+        </property>
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0055ff;&quot;&gt;Total for both SBS and DCN solutions&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEditCOOLING_SBS">
+        <property name="geometry">
+         <rect>
+          <x>210</x>
+          <y>80</y>
+          <width>131</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEditCOOLING_DCN">
+        <property name="geometry">
+         <rect>
+          <x>400</x>
+          <y>80</y>
+          <width>131</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+       <widget class="QLabel" name="labelSBS_5">
+        <property name="geometry">
+         <rect>
+          <x>210</x>
+          <y>30</y>
+          <width>131</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <family>MS Shell Dlg 2</family>
+         </font>
+        </property>
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0055ff;&quot;&gt;COOLING solution for SBS&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::RichText</enum>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_10">
+        <property name="geometry">
+         <rect>
+          <x>400</x>
+          <y>30</y>
+          <width>131</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <family>MS Shell Dlg 2</family>
+         </font>
+        </property>
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0055ff;&quot;&gt;COOLING solution for DHN&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QPushButton" name="pushButtonExport_2">
+       <property name="geometry">
+        <rect>
+         <x>610</x>
+         <y>470</y>
+         <width>121</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="toolTip">
+        <string notr="true">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Export Useful Energy Demand data (both HEATING+DHW and COOLING) in the project folder (if it's set, otherwise in the the &amp;quot;DafaultSaveFolder&amp;quot; folder inside the plugin). Data will automatically be passed to the CPM (City Planning Module).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="toolTipDuration">
+        <number>15000</number>
+       </property>
+       <property name="text">
+        <string>Export</string>
+       </property>
+      </widget>
+     </widget>
+    </widget>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

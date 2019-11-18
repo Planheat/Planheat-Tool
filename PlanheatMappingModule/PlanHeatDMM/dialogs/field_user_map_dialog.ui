@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>fieldUserMapDialog</class>
+ <widget class="QDialog" name="fieldUserMapDialog">
+  <property name="windowModality">
+   <enum>Qt::WindowModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>600</width>
+    <height>380</height>
+   </rect>
+  </property>
+  <property name="font">
+   <font>
+    <pointsize>10</pointsize>
+   </font>
+  </property>
+  <property name="mouseTracking">
+   <bool>false</bool>
+  </property>
+  <property name="windowTitle">
+   <string>Shape Field Map</string>
+  </property>
+  <property name="modal">
+   <bool>true</bool>
+  </property>
+  <widget class="QDialogButtonBox" name="buttonBox">
+   <property name="geometry">
+    <rect>
+     <x>200</x>
+     <y>332</y>
+     <width>161</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Save or discard changes</string>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
+   </property>
+  </widget>
+  <widget class="QTableWidget" name="fieldUserMapTable">
+   <property name="geometry">
+    <rect>
+     <x>55</x>
+     <y>12</y>
+     <width>530</width>
+     <height>261</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
+   </property>
+   <property name="mouseTracking">
+    <bool>true</bool>
+   </property>
+   <property name="editTriggers">
+    <set>QAbstractItemView::NoEditTriggers</set>
+   </property>
+   <property name="selectionBehavior">
+    <enum>QAbstractItemView::SelectRows</enum>
+   </property>
+  </widget>
+  <widget class="QToolButton" name="refreshToolButton">
+   <property name="geometry">
+    <rect>
+     <x>8</x>
+     <y>50</y>
+     <width>36</width>
+     <height>36</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Refresh all records</string>
+   </property>
+   <property name="text">
+    <string>+</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>24</width>
+     <height>24</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="QToolButton" name="deleteToolButton">
+   <property name="geometry">
+    <rect>
+     <x>8</x>
+     <y>124</y>
+     <width>36</width>
+     <height>36</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Reset selected record</string>
+   </property>
+   <property name="text">
+    <string>-</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>24</width>
+     <height>24</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="QToolButton" name="deleteAllToolButton">
+   <property name="geometry">
+    <rect>
+     <x>8</x>
+     <y>200</y>
+     <width>36</width>
+     <height>36</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Reset all records</string>
+   </property>
+   <property name="text">
+    <string>x</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>24</width>
+     <height>24</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="userSHPFieldMapCheckBox">
+   <property name="geometry">
+    <rect>
+     <x>55</x>
+     <y>288</y>
+     <width>121</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Add Shape Fields </string>
+   </property>
+  </widget>
+  <widget class="QToolButton" name="addFieldsToolButton">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>276</y>
+     <width>36</width>
+     <height>36</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Reset all records</string>
+   </property>
+   <property name="text">
+    <string>&lt;</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>24</width>
+     <height>24</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="addAllFieldsButton">
+   <property name="geometry">
+    <rect>
+     <x>360</x>
+     <y>280</y>
+     <width>231</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Add all fields 
+(Recommended for planning module)</string>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>fieldUserMapTable</tabstop>
+  <tabstop>refreshToolButton</tabstop>
+  <tabstop>deleteToolButton</tabstop>
+  <tabstop>deleteAllToolButton</tabstop>
+  <tabstop>userSHPFieldMapCheckBox</tabstop>
+  <tabstop>addFieldsToolButton</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>fieldUserMapDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>fieldUserMapDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

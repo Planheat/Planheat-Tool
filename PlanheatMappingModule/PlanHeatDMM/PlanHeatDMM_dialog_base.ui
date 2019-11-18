@@ -1,0 +1,1295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PlanHeatDMMDialogBase</class>
+ <widget class="QDialog" name="PlanHeatDMMDialogBase">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>650</width>
+    <height>680</height>
+   </rect>
+  </property>
+  <property name="font">
+   <font>
+    <pointsize>10</pointsize>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>DMM PlanHeat</string>
+  </property>
+  <widget class="QLabel" name="projectNameLabel">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>10</y>
+     <width>91</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="toolTip">
+    <string>Name of the project</string>
+   </property>
+   <property name="locale">
+    <locale language="Spanish" country="Spain"/>
+   </property>
+   <property name="text">
+    <string>Project Name</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="areaLabel">
+   <property name="geometry">
+    <rect>
+     <x>8</x>
+     <y>35</y>
+     <width>113</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="toolTip">
+    <string>Name of the area under study</string>
+   </property>
+   <property name="locale">
+    <locale language="Spanish" country="Spain"/>
+   </property>
+   <property name="text">
+    <string>Area Under Study</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="projectLineEdit">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>10</y>
+     <width>291</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Enter project name</string>
+   </property>
+   <property name="maxLength">
+    <number>100</number>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="areaLineEdit">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>35</y>
+     <width>291</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Enter area name or district</string>
+   </property>
+   <property name="maxLength">
+    <number>100</number>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="countryComboBox">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>62</y>
+     <width>191</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Select country</string>
+   </property>
+   <property name="editable">
+    <bool>false</bool>
+   </property>
+   <property name="currentText">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QLabel" name="countryLabel">
+   <property name="geometry">
+    <rect>
+     <x>60</x>
+     <y>64</y>
+     <width>59</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="toolTip">
+    <string>Country</string>
+   </property>
+   <property name="locale">
+    <locale language="Spanish" country="Spain"/>
+   </property>
+   <property name="text">
+    <string>Country</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="lidarCheckBox">
+   <property name="geometry">
+    <rect>
+     <x>12</x>
+     <y>141</y>
+     <width>121</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Use DTM and DSM files</string>
+   </property>
+   <property name="layoutDirection">
+    <enum>Qt::RightToLeft</enum>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>LIDAR     </string>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="DTMLineEdit">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>163</y>
+     <width>331</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Path to DTM files</string>
+   </property>
+   <property name="maxLength">
+    <number>1024</number>
+   </property>
+   <property name="readOnly">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="DSMLineEdit">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>188</y>
+     <width>331</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Path to DSM files</string>
+   </property>
+   <property name="maxLength">
+    <number>1024</number>
+   </property>
+   <property name="readOnly">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="DTMLabel">
+   <property name="geometry">
+    <rect>
+     <x>70</x>
+     <y>163</y>
+     <width>51</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="toolTip">
+    <string>Path DTM files *.asc</string>
+   </property>
+   <property name="locale">
+    <locale language="Spanish" country="Spain"/>
+   </property>
+   <property name="text">
+    <string>DTM</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="DSMLabel">
+   <property name="geometry">
+    <rect>
+     <x>70</x>
+     <y>188</y>
+     <width>51</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="toolTip">
+    <string>Path DSM files *.asc</string>
+   </property>
+   <property name="locale">
+    <locale language="Spanish" country="Spain"/>
+   </property>
+   <property name="text">
+    <string>DSM</string>
+   </property>
+  </widget>
+  <widget class="QToolButton" name="DTMToolButton">
+   <property name="geometry">
+    <rect>
+     <x>451</x>
+     <y>163</y>
+     <width>30</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Select DTM folder</string>
+   </property>
+   <property name="text">
+    <string>...</string>
+   </property>
+  </widget>
+  <widget class="QToolButton" name="DSMToolButton">
+   <property name="geometry">
+    <rect>
+     <x>451</x>
+     <y>188</y>
+     <width>30</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Select DSM folder</string>
+   </property>
+   <property name="text">
+    <string>...</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="useMappingLabel">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>414</y>
+     <width>81</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="toolTip">
+    <string>User building use mapping with DMM building use</string>
+   </property>
+   <property name="locale">
+    <locale language="Spanish" country="Spain"/>
+   </property>
+   <property name="text">
+    <string>Building Use Matching</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="protectionMappingLabel">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>508</y>
+     <width>71</width>
+     <height>71</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="toolTip">
+    <string>User protection degree mapping with DMM protection level</string>
+   </property>
+   <property name="locale">
+    <locale language="Spanish" country="Spain"/>
+   </property>
+   <property name="text">
+    <string>Protection Degree Matching</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="processButton">
+   <property name="geometry">
+    <rect>
+     <x>214</x>
+     <y>610</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Process data and generate output files</string>
+   </property>
+   <property name="text">
+    <string>Process</string>
+   </property>
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="flat">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="detailFileCheckBox">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>52</x>
+     <y>244</y>
+     <width>161</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Generate hourly demand file</string>
+   </property>
+   <property name="layoutDirection">
+    <enum>Qt::RightToLeft</enum>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Hourly demand data file</string>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="closeButton">
+   <property name="geometry">
+    <rect>
+     <x>344</x>
+     <y>610</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Close plugin</string>
+   </property>
+   <property name="statusTip">
+    <string/>
+   </property>
+   <property name="text">
+    <string>Close</string>
+   </property>
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="default">
+    <bool>true</bool>
+   </property>
+   <property name="flat">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QToolButton" name="buildUseAddToolButton">
+   <property name="geometry">
+    <rect>
+     <x>550</x>
+     <y>414</y>
+     <width>36</width>
+     <height>36</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Open building use mapping dialog</string>
+   </property>
+   <property name="text">
+    <string>+</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>24</width>
+     <height>24</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="QLabel" name="fieldMappingLabel">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>306</y>
+     <width>71</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="toolTip">
+    <string>User fields mapping with DMM fields</string>
+   </property>
+   <property name="locale">
+    <locale language="Spanish" country="Spain"/>
+   </property>
+   <property name="text">
+    <string>Field User Matching</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="methodLabel">
+   <property name="geometry">
+    <rect>
+     <x>60</x>
+     <y>217</y>
+     <width>51</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="toolTip">
+    <string>Calculation method</string>
+   </property>
+   <property name="locale">
+    <locale language="Spanish" country="Spain"/>
+   </property>
+   <property name="text">
+    <string>Method</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="methodComboBox">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>215</y>
+     <width>141</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Choose calculation method</string>
+   </property>
+   <property name="editable">
+    <bool>false</bool>
+   </property>
+   <property name="currentText">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QToolButton" name="loadFileToolButton">
+   <property name="geometry">
+    <rect>
+     <x>451</x>
+     <y>91</y>
+     <width>30</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Select input shape file</string>
+   </property>
+   <property name="text">
+    <string>...</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="loadFileLineEdit">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>91</y>
+     <width>331</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Input shape file</string>
+   </property>
+   <property name="maxLength">
+    <number>1024</number>
+   </property>
+   <property name="readOnly">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="LoadFileLabel">
+   <property name="geometry">
+    <rect>
+     <x>16</x>
+     <y>92</y>
+     <width>105</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="toolTip">
+    <string>Select input shape file</string>
+   </property>
+   <property name="locale">
+    <locale language="Spanish" country="Spain"/>
+   </property>
+   <property name="text">
+    <string>Load Shape File</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="saveFileLabel">
+   <property name="geometry">
+    <rect>
+     <x>44</x>
+     <y>119</y>
+     <width>77</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="toolTip">
+    <string>Enter output file name</string>
+   </property>
+   <property name="locale">
+    <locale language="Spanish" country="Spain"/>
+   </property>
+   <property name="text">
+    <string>Output File</string>
+   </property>
+  </widget>
+  <widget class="QToolButton" name="saveFileToolButton">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>451</x>
+     <y>120</y>
+     <width>30</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Enter output files</string>
+   </property>
+   <property name="text">
+    <string>...</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="saveFileLineEdit">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>119</y>
+     <width>331</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Output file name</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="maxLength">
+    <number>1024</number>
+   </property>
+   <property name="readOnly">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="projectNameLabelState">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>420</x>
+     <y>5</y>
+     <width>32</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="text">
+    <string>text</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="areaLabelState">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>420</x>
+     <y>32</y>
+     <width>32</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="text">
+    <string>text</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="countryLabelState">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>320</x>
+     <y>56</y>
+     <width>32</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="text">
+    <string>text</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="loadFileLabelState">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>490</x>
+     <y>84</y>
+     <width>32</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="text">
+    <string>text</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="saveFileLabelState">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>490</x>
+     <y>114</y>
+     <width>32</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="text">
+    <string>text</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="DTMLabelState">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>490</x>
+     <y>160</y>
+     <width>32</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="text">
+    <string>text</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="DSMLabelState">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>490</x>
+     <y>185</y>
+     <width>32</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="text">
+    <string>text</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="methodLabelState">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>270</x>
+     <y>210</y>
+     <width>32</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="text">
+    <string>text</string>
+   </property>
+  </widget>
+  <widget class="QToolButton" name="fieldAddToolButton">
+   <property name="geometry">
+    <rect>
+     <x>550</x>
+     <y>306</y>
+     <width>36</width>
+     <height>36</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Open field mapping dialog</string>
+   </property>
+   <property name="text">
+    <string>+</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>24</width>
+     <height>24</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="QToolButton" name="protectionAddToolButton">
+   <property name="geometry">
+    <rect>
+     <x>550</x>
+     <y>524</y>
+     <width>36</width>
+     <height>36</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Open protection level mapping dialog</string>
+   </property>
+   <property name="text">
+    <string>+</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>24</width>
+     <height>24</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="QTableWidget" name="fieldUserTable">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>276</y>
+     <width>451</width>
+     <height>100</height>
+    </rect>
+   </property>
+   <property name="focusPolicy">
+    <enum>Qt::NoFocus</enum>
+   </property>
+   <property name="toolTip">
+    <string>Field user matching</string>
+   </property>
+   <property name="editTriggers">
+    <set>QAbstractItemView::NoEditTriggers</set>
+   </property>
+   <property name="selectionMode">
+    <enum>QAbstractItemView::NoSelection</enum>
+   </property>
+  </widget>
+  <widget class="QTableWidget" name="buildingUseTable">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>384</y>
+     <width>451</width>
+     <height>100</height>
+    </rect>
+   </property>
+   <property name="focusPolicy">
+    <enum>Qt::NoFocus</enum>
+   </property>
+   <property name="toolTip">
+    <string>Building use matching</string>
+   </property>
+   <property name="editTriggers">
+    <set>QAbstractItemView::NoEditTriggers</set>
+   </property>
+   <property name="alternatingRowColors">
+    <bool>false</bool>
+   </property>
+   <property name="selectionMode">
+    <enum>QAbstractItemView::NoSelection</enum>
+   </property>
+  </widget>
+  <widget class="QTableWidget" name="protectionLevelTable">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>494</y>
+     <width>451</width>
+     <height>100</height>
+    </rect>
+   </property>
+   <property name="focusPolicy">
+    <enum>Qt::NoFocus</enum>
+   </property>
+   <property name="toolTip">
+    <string>Protection level matching</string>
+   </property>
+   <property name="editTriggers">
+    <set>QAbstractItemView::NoEditTriggers</set>
+   </property>
+   <property name="selectionMode">
+    <enum>QAbstractItemView::NoSelection</enum>
+   </property>
+  </widget>
+  <widget class="QLabel" name="fieldUserMatchLabel">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>555</x>
+     <y>346</y>
+     <width>32</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="text">
+    <string>text</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="buildingUseMatchLabel">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>555</x>
+     <y>454</y>
+     <width>32</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="text">
+    <string>text</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="protectionMatchLabel">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>555</x>
+     <y>564</y>
+     <width>32</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="text">
+    <string>text</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="statusMessageLabel">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>648</y>
+     <width>400</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Sunken</enum>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QProgressBar" name="statusProgressBar">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>468</x>
+     <y>648</y>
+     <width>150</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="maximum">
+    <number>2000</number>
+   </property>
+   <property name="value">
+    <number>0</number>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="QToolButton" name="statusProcessButton">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>618</x>
+     <y>648</y>
+     <width>33</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="focusPolicy">
+    <enum>Qt::NoFocus</enum>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>32</width>
+     <height>32</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="QLabel" name="statusTimeLabel">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>401</x>
+     <y>650</y>
+     <width>64</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="layoutDirection">
+    <enum>Qt::LeftToRight</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Sunken</enum>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="openShapeFileCheckBox">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>12</x>
+     <y>612</y>
+     <width>193</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Open output shape file</string>
+   </property>
+   <property name="layoutDirection">
+    <enum>Qt::LeftToRight</enum>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Open shape file after process</string>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="retrofittedScenariosCheckBox">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>268</x>
+     <y>244</y>
+     <width>141</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Generate retrofitted scenario data</string>
+   </property>
+   <property name="layoutDirection">
+    <enum>Qt::RightToLeft</enum>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Retrofitted Scenarios</string>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QToolButton" name="retrofittedScenariosToolbutton">
+   <property name="geometry">
+    <rect>
+     <x>420</x>
+     <y>232</y>
+     <width>36</width>
+     <height>36</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Open retrofitted scenario dialog</string>
+   </property>
+   <property name="text">
+    <string>*</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>32</width>
+     <height>32</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="loadScenario">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>510</x>
+     <y>10</y>
+     <width>113</width>
+     <height>37</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Load saved scenario</string>
+   </property>
+   <property name="text">
+    <string>Load Scenario</string>
+   </property>
+  </widget>
+  <widget class="QSpinBox" name="baselineScenarioYearSpinBox">
+   <property name="geometry">
+    <rect>
+     <x>512</x>
+     <y>62</y>
+     <width>71</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="minimum">
+    <number>1900</number>
+   </property>
+   <property name="maximum">
+    <number>3000</number>
+   </property>
+   <property name="value">
+    <number>2020</number>
+   </property>
+  </widget>
+  <widget class="QLabel" name="baselineYearLabel">
+   <property name="geometry">
+    <rect>
+     <x>372</x>
+     <y>65</y>
+     <width>143</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="toolTip">
+    <string>Country</string>
+   </property>
+   <property name="locale">
+    <locale language="Spanish" country="Spain"/>
+   </property>
+   <property name="text">
+    <string>Baseline Scenario Year</string>
+   </property>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>loadScenario</tabstop>
+  <tabstop>projectLineEdit</tabstop>
+  <tabstop>areaLineEdit</tabstop>
+  <tabstop>countryComboBox</tabstop>
+  <tabstop>baselineScenarioYearSpinBox</tabstop>
+  <tabstop>loadFileLineEdit</tabstop>
+  <tabstop>loadFileToolButton</tabstop>
+  <tabstop>saveFileLineEdit</tabstop>
+  <tabstop>saveFileToolButton</tabstop>
+  <tabstop>lidarCheckBox</tabstop>
+  <tabstop>DTMLineEdit</tabstop>
+  <tabstop>DTMToolButton</tabstop>
+  <tabstop>DSMLineEdit</tabstop>
+  <tabstop>DSMToolButton</tabstop>
+  <tabstop>methodComboBox</tabstop>
+  <tabstop>detailFileCheckBox</tabstop>
+  <tabstop>retrofittedScenariosCheckBox</tabstop>
+  <tabstop>retrofittedScenariosToolbutton</tabstop>
+  <tabstop>fieldAddToolButton</tabstop>
+  <tabstop>buildUseAddToolButton</tabstop>
+  <tabstop>protectionAddToolButton</tabstop>
+  <tabstop>openShapeFileCheckBox</tabstop>
+  <tabstop>processButton</tabstop>
+  <tabstop>closeButton</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

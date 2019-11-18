@@ -1,0 +1,936 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Step0DockWidge</class>
+ <widget class="QDockWidget" name="Step0DockWidge">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1038</width>
+    <height>680</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Import and visualization of relevant information from DMM</string>
+  </property>
+  <widget class="QWidget" name="dockWidgetContents">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="2">
+     <widget class="QTabWidget" name="phases">
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+       </font>
+      </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="smmTab">
+       <attribute name="title">
+        <string>Import</string>
+       </attribute>
+       <widget class="QLabel" name="label">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>40</y>
+          <width>221</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Import .shp file baseline scenario</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_2">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>80</y>
+          <width>221</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Import .shp file future scenario</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_3">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>120</y>
+          <width>201</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Import file .scn</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_4">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>200</y>
+          <width>201</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Import SMM folder</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="ok">
+        <property name="geometry">
+         <rect>
+          <x>790</x>
+          <y>500</y>
+          <width>93</width>
+          <height>28</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Ok</string>
+        </property>
+       </widget>
+       <widget class="QProgressBar" name="progressBar">
+        <property name="geometry">
+         <rect>
+          <x>340</x>
+          <y>230</y>
+          <width>241</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="value">
+         <number>24</number>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="pname">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>470</y>
+          <width>113</width>
+          <height>22</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_6">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>450</y>
+          <width>111</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Project Name</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="areaStudy">
+        <property name="geometry">
+         <rect>
+          <x>150</x>
+          <y>470</y>
+          <width>121</width>
+          <height>22</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_7">
+        <property name="geometry">
+         <rect>
+          <x>150</x>
+          <y>450</y>
+          <width>121</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string> Area under study</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_8">
+        <property name="geometry">
+         <rect>
+          <x>290</x>
+          <y>450</y>
+          <width>55</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Country</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_9">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>160</y>
+          <width>201</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Import file .csv</string>
+        </property>
+       </widget>
+       <widget class="QWidget" name="verticalLayoutWidget">
+        <property name="geometry">
+         <rect>
+          <x>260</x>
+          <y>40</y>
+          <width>491</width>
+          <height>141</height>
+         </rect>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <widget class="QgsFileWidget" name="layerPath">
+           <property name="font">
+            <font>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="acceptDrops">
+            <bool>false</bool>
+           </property>
+           <property name="autoFillBackground">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QgsFileWidget" name="layerPath1">
+           <property name="font">
+            <font>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="acceptDrops">
+            <bool>false</bool>
+           </property>
+           <property name="autoFillBackground">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QgsFileWidget" name="layerPath2">
+           <property name="font">
+            <font>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="acceptDrops">
+            <bool>false</bool>
+           </property>
+           <property name="autoFillBackground">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QgsFileWidget" name="layerPath3">
+           <property name="font">
+            <font>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="acceptDrops">
+            <bool>false</bool>
+           </property>
+           <property name="autoFillBackground">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QLineEdit" name="folder">
+        <property name="geometry">
+         <rect>
+          <x>260</x>
+          <y>190</y>
+          <width>451</width>
+          <height>24</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QWidget" name="verticalLayoutWidget_2">
+        <property name="geometry">
+         <rect>
+          <x>770</x>
+          <y>40</y>
+          <width>111</width>
+          <height>181</height>
+         </rect>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <widget class="QPushButton" name="load4">
+           <property name="text">
+            <string>Load</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="load3">
+           <property name="text">
+            <string>Load</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="load2">
+           <property name="text">
+            <string>Load</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="load1">
+           <property name="text">
+            <string>Load</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="load">
+           <property name="text">
+            <string>Load</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="verticalLayoutWidget_3">
+        <property name="geometry">
+         <rect>
+          <x>720</x>
+          <y>190</y>
+          <width>31</width>
+          <height>37</height>
+         </rect>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <widget class="QPushButton" name="btnSmm">
+           <property name="text">
+            <string>...</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QLineEdit" name="country">
+        <property name="geometry">
+         <rect>
+          <x>290</x>
+          <y>470</y>
+          <width>121</width>
+          <height>22</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit">
+        <property name="geometry">
+         <rect>
+          <x>430</x>
+          <y>470</y>
+          <width>113</width>
+          <height>22</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_11">
+        <property name="geometry">
+         <rect>
+          <x>430</x>
+          <y>450</y>
+          <width>55</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Anno</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_2">
+        <property name="geometry">
+         <rect>
+          <x>570</x>
+          <y>470</y>
+          <width>113</width>
+          <height>22</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_12">
+        <property name="geometry">
+         <rect>
+          <x>570</x>
+          <y>450</y>
+          <width>121</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Demo factor</string>
+        </property>
+       </widget>
+       <widget class="QGroupBox" name="groupBox">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>260</y>
+          <width>561</width>
+          <height>171</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <weight>50</weight>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="title">
+         <string>Load existing saved work</string>
+        </property>
+        <widget class="QComboBox" name="comboBox">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>60</y>
+           <width>281</width>
+           <height>31</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pushButton_5">
+         <property name="geometry">
+          <rect>
+           <x>300</x>
+           <y>60</y>
+           <width>121</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Load</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_13">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>30</y>
+           <width>241</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Select file:</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="delete_file">
+         <property name="geometry">
+          <rect>
+           <x>430</x>
+           <y>60</y>
+           <width>121</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Delete File</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>icons/garbage.png</normaloff>icons/garbage.png</iconset>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="save_plugin">
+         <property name="geometry">
+          <rect>
+           <x>300</x>
+           <y>120</y>
+           <width>251</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Save Plugin state</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="input_file_description">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>100</y>
+           <width>281</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_2">
+        <property name="geometry">
+         <rect>
+          <x>610</x>
+          <y>259</y>
+          <width>371</width>
+          <height>171</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Loaded project version</string>
+        </property>
+        <widget class="QLabel" name="project_version">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>30</y>
+           <width>341</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>No file loaded.</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="project_creation_date">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>60</y>
+           <width>351</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+        <widget class="QLabel" name="project_load_date">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>90</y>
+           <width>351</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="pmTab">
+       <attribute name="title">
+        <string>Attribute Table</string>
+       </attribute>
+       <widget class="QTreeWidget" name="pmTree">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>40</y>
+          <width>1001</width>
+          <height>231</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
+        <attribute name="headerDefaultSectionSize">
+         <number>130</number>
+        </attribute>
+        <column>
+         <property name="text">
+          <string>BuildingId</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>AHeatDem [kW]</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>AHeatDemM2 [kW]</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>ACoolDem [kW]</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>ACoolDemM2 [kW]</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>ADHWDem [kW]</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>ADHWDemDM2 [kW]</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>MaxHeatDem [kW]</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>MaxCoolDem [kW]</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>MaxDHWDem [kW]</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Use</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>GrossFloorArea [m^2]</string>
+         </property>
+        </column>
+       </widget>
+       <widget class="QTreeWidget" name="pmTree2">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>300</y>
+          <width>1001</width>
+          <height>231</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
+        <attribute name="headerDefaultSectionSize">
+         <number>130</number>
+        </attribute>
+        <column>
+         <property name="text">
+          <string>BuildingId</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>AHeatDem [kW]</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>AHeatDemM2 [kW]</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>ACoolDem [kW]</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>ACoolDemM2 [kW]</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>ADHWDem [kW]</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>ADHWDemDM2 [kW]</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>MaxHeatDem [kW]</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>MaxCoolDem [kW]</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>MaxDHWDem [kW]</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Use</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>GrossFloorArea [m^2]</string>
+         </property>
+        </column>
+       </widget>
+       <widget class="QLabel" name="label_5">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>20</y>
+          <width>131</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Baseline scenario</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_10">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>280</y>
+          <width>121</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Future scenario</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="District">
+       <attribute name="title">
+        <string>District</string>
+       </attribute>
+       <widget class="QPushButton" name="ok2">
+        <property name="geometry">
+         <rect>
+          <x>630</x>
+          <y>497</y>
+          <width>251</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string notr="true">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Jump to the baseline assessment. Be sure everithing is Ok before continue.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="text">
+         <string>Next Step</string>
+        </property>
+       </widget>
+       <widget class="QListWidget" name="listWidget">
+        <property name="geometry">
+         <rect>
+          <x>630</x>
+          <y>20</y>
+          <width>251</width>
+          <height>471</height>
+         </rect>
+        </property>
+        <item>
+         <property name="text">
+          <string>item1</string>
+         </property>
+         <property name="checkState">
+          <enum>Checked</enum>
+         </property>
+        </item>
+       </widget>
+       <widget class="QPushButton" name="pushButton">
+        <property name="geometry">
+         <rect>
+          <x>200</x>
+          <y>450</y>
+          <width>181</width>
+          <height>28</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Add Current Selection</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButton_2">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>450</y>
+          <width>181</width>
+          <height>28</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Override Current Selection</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButton_3">
+        <property name="geometry">
+         <rect>
+          <x>430</x>
+          <y>450</y>
+          <width>181</width>
+          <height>28</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Invert Checked</string>
+        </property>
+       </widget>
+       <widget class="QTableWidget" name="sources_available">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>20</y>
+          <width>611</width>
+          <height>421</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QComboBox" name="comboLayer">
+        <property name="geometry">
+         <rect>
+          <x>50</x>
+          <y>500</y>
+          <width>371</width>
+          <height>21</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btnSourcesAvailability">
+        <property name="geometry">
+         <rect>
+          <x>430</x>
+          <y>500</y>
+          <width>141</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string notr="true">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This functionality will scan the source availability calculated in the SMM (Supply Mapping Module) taking in account only the sources available within the bounds define by the selected vector layer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="toolTipDuration">
+         <number>14000</number>
+        </property>
+        <property name="text">
+         <string>Sources Availability</string>
+        </property>
+       </widget>
+       <widget class="QProgressBar" name="pbar_Download">
+        <property name="geometry">
+         <rect>
+          <x>70</x>
+          <y>580</y>
+          <width>321</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="value">
+         <number>24</number>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="cancel">
+        <property name="geometry">
+         <rect>
+          <x>410</x>
+          <y>580</y>
+          <width>61</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Cancel</string>
+        </property>
+       </widget>
+       <widget class="QgsFileWidget" name="layerPath_streets">
+        <property name="geometry">
+         <rect>
+          <x>50</x>
+          <y>540</y>
+          <width>371</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <weight>50</weight>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="acceptDrops">
+         <bool>false</bool>
+        </property>
+        <property name="autoFillBackground">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="load_streets">
+        <property name="geometry">
+         <rect>
+          <x>430</x>
+          <y>540</y>
+          <width>141</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Download streets</string>
+        </property>
+       </widget>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QgsFileWidget</class>
+   <extends>QWidget</extends>
+   <header>qgsfilewidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

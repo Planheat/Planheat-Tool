@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PlanningModuleDialogBase</class>
+ <widget class="QDialog" name="PlanningModuleDialogBase">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>514</width>
+    <height>383</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>PlanningModule</string>
+  </property>
+  <widget class="QPushButton" name="btn_step01">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>100</y>
+     <width>411</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Step 0: Import and data visualization </string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btn_step2">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>150</y>
+     <width>411</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Step 1: Future useful energy demand calculation</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btn_step3">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>200</y>
+     <width>411</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Step 2: Future scenarios technology characterization</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>20</y>
+     <width>171</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="../resources.qrc">:/plugins/planning_and_simulation_modules/PlanHeatPrincipal.png</pixmap>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

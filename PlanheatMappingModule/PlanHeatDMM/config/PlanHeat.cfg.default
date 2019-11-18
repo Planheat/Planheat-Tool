@@ -1,0 +1,68 @@
+
+; '30' String numbers 20.8 float numbers
+; List Example CSV_IN_HEADER_PARAMS=[ProjectID,AreaID,CountryID,Reference,Centroid,TotalHeight,NumberOfFloors,GrossFloorArea,RoofArea,TotalEnvelopeArea,ExteriorEnvelopeArea,AdjoiningEnvelopeArea,NorthExteriorEnvelopeArea,SouthExteriorEnvelopeArea,WestExteriorEnvelopeArea,EastExteriorEnvelopeArea,YearOfConstruction,Use,ProtectionDegree,Refurbished,WindowPercentage,ParcelID,DistrictCentroID]
+
+
+[LOG]
+
+LOG_LEVELS={"CRITICAL":50,"ERROR":40,"WARNING":30,"INFO":20,"DEBUG":10,"NOTSET":0}
+LOG_PARAMS = {"logName" : "PlanHeat","logExt" : "log","loggingLevel": 20,"path" : "log"}
+
+
+; Remove old log files days
+DAYS_REMOVE_OLD_LOGS = 30
+
+
+[DATABASE]
+	
+DB_PARAMS = {"databaseName" : "PlanHeat.db","path" : "db"}
+	  
+
+[NOA]
+; use noa api data Y=YES N=NO , Default Y
+USE_NOA_DATA=Y
+
+NOA_URL = http://snf-652558.vm.okeanos.grnet.gr/planheat/proxy.php?action=getCHEntities
+
+; NOA API Rest Response Codes  
+HTTP_RESPONSE_OK=200  
+
+; timeout seconds
+NOA_TIMEOUT=30 
+
+
+[SHAPE]
+
+EPSG_URL = http://prj2epsg.org/search.json
+
+SHAPE_TYPE_FILE={"0":"NULL","1":"POINT","3":"POLYLINE","5":"POLYGON","8":"MULTIPOINT","11":"POINTZ","13":"POLYLINEZ","15":"POLYGONZ","18":"MULTIPOINTZ","21":"POINTM","23":"POLYLINEM","25":"POLYGONM","28":"MULTIPOINTM","31":"MULTIPATCH"}
+
+[CSV]
+; Output CSV files decimal point comma Y=YES N=NO , Default Y
+DECIMAL_POINT_IS_COMMA=Y
+
+[GENERAL]
+;DTM & DSM File Extension Search
+LIDAR_FILE_EXT=asc 
+
+;Java cadastre Jar File
+;JAR_FILE_PARAMS= {"jarFileName" : "test.jar", "path" : "java"}
+JAR_FILE_PARAMS= {"jarFileName" : "PlanHeatOpenSourceInternoTecnalia.jar", "path" : "java"}
+
+INTERMEDIATE_FILE_CSV=xmlResultado.csv
+
+
+COUNTRY_DEFAULT=None
+
+; Thread Priority  - Will be ignored on systems without that do not support thread priorities like Linux
+;LowPriority		2	scheduled less often than NormalPriority.
+;NormalPriority	    3	the default priority of the operating system.
+;HighPriority	    4	scheduled more often than NormalPriority.
+;HighestPriority	5	scheduled more often than HighPriority.
+
+PROCCESS_THREAD_PRIORITY = 4
+
+; Seconds Waiting for kill the Process Thread
+PROCCESS_WAIT_TO_KILL=5 
+
+

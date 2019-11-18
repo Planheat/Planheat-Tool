@@ -1,0 +1,1669 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>city</class>
+ <widget class="QDockWidget" name="city">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1100</width>
+    <height>962</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>City Simulation Module</string>
+  </property>
+  <widget class="QWidget" name="dockWidgetContents">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>Data Calculation</string>
+       </attribute>
+       <widget class="QTabWidget" name="tabWidget_4">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>10</y>
+          <width>1071</width>
+          <height>871</height>
+         </rect>
+        </property>
+        <property name="currentIndex">
+         <number>1</number>
+        </property>
+        <widget class="QWidget" name="tab_7">
+         <attribute name="title">
+          <string>Single Building Solutions</string>
+         </attribute>
+         <widget class="QTabWidget" name="tabWidget_2">
+          <property name="geometry">
+           <rect>
+            <x>-10</x>
+            <y>20</y>
+            <width>1081</width>
+            <height>821</height>
+           </rect>
+          </property>
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
+          <widget class="QWidget" name="tab_3">
+           <attribute name="title">
+            <string>Heating + DHW </string>
+           </attribute>
+           <widget class="QTableWidget" name="sbs_hdhw_Source">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>190</y>
+              <width>1041</width>
+              <height>601</height>
+             </rect>
+            </property>
+            <attribute name="horizontalHeaderDefaultSectionSize">
+             <number>140</number>
+            </attribute>
+            <attribute name="horizontalHeaderMinimumSectionSize">
+             <number>45</number>
+            </attribute>
+            <attribute name="verticalHeaderMinimumSectionSize">
+             <number>15</number>
+            </attribute>
+            <row>
+             <property name="text">
+              <string/>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Electricity</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Heaters</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Air HP</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Waste heat HP</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Geothermal HP</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Natural gas</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Boiler</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Comb. Heat &amp; Pow</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Air source GAHP</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Waste heat GAHP </string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Geothermal GAHP </string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Biomass</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Boiler</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Comb. Heat &amp; Pow</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Waste heat</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Heat Exchanger only</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Geothermal</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Heat Exchangers pnly</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Heating oil</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Boiler</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Coal/Peat</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Boilers</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Solar</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Flat plate solar 
+thermal collectors</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Evacuated tube Solar 
+thermal collectors (ETC)</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Other</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Other</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string/>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Total</string>
+             </property>
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <column>
+             <property name="text">
+              <string>Useful energy demand 
+(SBS only)
+Future scenario
+[MWh/y]</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Average efficiency/
+COP per technology 
+category</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Utilization factor
+(for CHP only)</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Temperature levels
+</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Final energy 
+consumption per 
+technology [MWh/y]</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>energy consumption 
+from environment 
+per HP </string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+           </widget>
+           <widget class="QTableWidget" name="sbs_perc_hdhw">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>20</y>
+              <width>361</width>
+              <height>151</height>
+             </rect>
+            </property>
+            <attribute name="horizontalHeaderDefaultSectionSize">
+             <number>240</number>
+            </attribute>
+            <row>
+             <property name="text">
+              <string/>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Share Heating</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Share DHW</string>
+             </property>
+            </row>
+            <column>
+             <property name="text">
+              <string>%</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+           </widget>
+          </widget>
+          <widget class="QWidget" name="tab_6">
+           <attribute name="title">
+            <string>Cooling</string>
+           </attribute>
+           <widget class="QTableWidget" name="sbs_cool_source">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>160</y>
+              <width>1001</width>
+              <height>581</height>
+             </rect>
+            </property>
+            <property name="columnCount">
+             <number>4</number>
+            </property>
+            <attribute name="horizontalHeaderDefaultSectionSize">
+             <number>175</number>
+            </attribute>
+            <attribute name="horizontalHeaderMinimumSectionSize">
+             <number>60</number>
+            </attribute>
+            <attribute name="verticalHeaderDefaultSectionSize">
+             <number>40</number>
+            </attribute>
+            <attribute name="verticalHeaderMinimumSectionSize">
+             <number>35</number>
+            </attribute>
+            <row>
+             <property name="text">
+              <string/>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Electricity</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Compression Chillers - Air </string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Compression Chillers - Waste heat </string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Compression Chillers - Ground source</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Natural gas</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Absorption Chillers - Air </string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Absorption Chillers - Waste heat </string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Absorption Chillers - Ground source</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Waste heat</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Heat Exchangers only</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Geothermal</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Heat Exchangers only</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Other</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Other </string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string/>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Total</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <column>
+             <property name="text">
+              <string>Useful energy demand
+ (SBS only)
+Future scenario[MWh/y]</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Average efficiency/COP 
+per technology category</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Final energy consumption 
+per technology [MWh/y]</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Additional final energy 
+consumption per HP </string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+           </widget>
+           <widget class="QTableWidget" name="sbs_perc_cool">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>10</y>
+              <width>361</width>
+              <height>141</height>
+             </rect>
+            </property>
+            <attribute name="horizontalHeaderDefaultSectionSize">
+             <number>240</number>
+            </attribute>
+            <row>
+             <property name="text">
+              <string/>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Share Heating</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Share DHW</string>
+             </property>
+            </row>
+            <column>
+             <property name="text">
+              <string>%</string>
+             </property>
+            </column>
+           </widget>
+          </widget>
+         </widget>
+        </widget>
+        <widget class="QWidget" name="tab_8">
+         <attribute name="title">
+          <string>DH and DCs categories</string>
+         </attribute>
+         <widget class="QTabWidget" name="tabWidget_5">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>20</y>
+            <width>1091</width>
+            <height>831</height>
+           </rect>
+          </property>
+          <property name="currentIndex">
+           <number>1</number>
+          </property>
+          <widget class="QWidget" name="tab_9">
+           <attribute name="title">
+            <string>District Network(Heating + DHW)</string>
+           </attribute>
+           <widget class="QTableWidget" name="dist_perc_hdhw_2">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>10</y>
+              <width>311</width>
+              <height>181</height>
+             </rect>
+            </property>
+            <property name="autoScrollMargin">
+             <number>18</number>
+            </property>
+            <attribute name="horizontalHeaderDefaultSectionSize">
+             <number>200</number>
+            </attribute>
+            <attribute name="verticalHeaderDefaultSectionSize">
+             <number>30</number>
+            </attribute>
+            <attribute name="verticalHeaderMinimumSectionSize">
+             <number>30</number>
+            </attribute>
+            <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+             <bool>true</bool>
+            </attribute>
+            <row>
+             <property name="text">
+              <string/>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Share Heating</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Share DHW</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Gride efficency</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Grid lenght</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <column>
+             <property name="text">
+              <string>%</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+            <item row="0" column="0">
+             <property name="text">
+              <string/>
+             </property>
+            </item>
+           </widget>
+           <widget class="QTableWidget" name="dist_hdhw_source_2">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>210</y>
+              <width>1041</width>
+              <height>551</height>
+             </rect>
+            </property>
+            <attribute name="horizontalHeaderDefaultSectionSize">
+             <number>140</number>
+            </attribute>
+            <attribute name="horizontalHeaderMinimumSectionSize">
+             <number>45</number>
+            </attribute>
+            <attribute name="verticalHeaderMinimumSectionSize">
+             <number>15</number>
+            </attribute>
+            <row>
+             <property name="text">
+              <string/>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Electricity</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Heaters</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Air HP</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Waste heat HP</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Geothermal HP</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Natural gas</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Boiler</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Comb. Heat &amp; Pow</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Air source GAHP</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Waste heat GAHP </string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Geothermal GAHP </string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Biomass</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Boiler</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Comb. Heat &amp; Pow</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Waste heat</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Heat Exchanger only</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Geothermal</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Heat Exchangers pnly</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Heating oil</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Boiler</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Coal/Peat</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Boilers</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Solar</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Flat plate solar 
+thermal collectors</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Evacuated tube Solar 
+thermal collectors (ETC)</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Other</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Other</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string/>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Total</string>
+             </property>
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <column>
+             <property name="text">
+              <string>Useful energy demand
+(SBS only)
+Future scenario
+[MWh/y]</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Average efficiency/
+COP per technology 
+category</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Utilization factor
+(for CHP only)</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Temperature levels
+</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Final energy 
+consumption per
+ technology [MWh/y]</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Additional final 
+energy consumption
+ per HP </string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+           </widget>
+          </widget>
+          <widget class="QWidget" name="tab_10">
+           <attribute name="title">
+            <string>District Network(Cooling)</string>
+           </attribute>
+           <widget class="QTableWidget" name="dist_perc_cool_2">
+            <property name="geometry">
+             <rect>
+              <x>20</x>
+              <y>10</y>
+              <width>311</width>
+              <height>121</height>
+             </rect>
+            </property>
+            <property name="autoScrollMargin">
+             <number>18</number>
+            </property>
+            <attribute name="horizontalHeaderDefaultSectionSize">
+             <number>200</number>
+            </attribute>
+            <attribute name="verticalHeaderDefaultSectionSize">
+             <number>30</number>
+            </attribute>
+            <attribute name="verticalHeaderMinimumSectionSize">
+             <number>30</number>
+            </attribute>
+            <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+             <bool>true</bool>
+            </attribute>
+            <row>
+             <property name="text">
+              <string/>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Gride efficency</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Grid lenght</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <column>
+             <property name="text">
+              <string>%</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+            <item row="0" column="0">
+             <property name="text">
+              <string/>
+             </property>
+            </item>
+           </widget>
+           <widget class="QTableWidget" name="dist_cool_source_2">
+            <property name="geometry">
+             <rect>
+              <x>20</x>
+              <y>140</y>
+              <width>981</width>
+              <height>611</height>
+             </rect>
+            </property>
+            <property name="columnCount">
+             <number>4</number>
+            </property>
+            <attribute name="horizontalHeaderDefaultSectionSize">
+             <number>170</number>
+            </attribute>
+            <attribute name="horizontalHeaderMinimumSectionSize">
+             <number>55</number>
+            </attribute>
+            <row>
+             <property name="text">
+              <string/>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Electricity</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Compression Chillers - Air </string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Compression Chillers - Waste heat </string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Compression Chillers - Ground source</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Natural gas</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Absorption Chillers - Air </string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Absorption Chillers - Waste heat </string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Absorption Chillers - Ground source</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Waste heat</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Heat Exchangers only</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Geothermal</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Heat Exchangers only</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Other</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Other </string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string/>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Total</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </row>
+            <column>
+             <property name="text">
+              <string>Useful energy demand 
+(SBS only)
+Future scenario [MWh/y]</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Average efficiency/COP 
+per technology category</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Final energy consumption 
+per technology [MWh/y]</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Additional final energy 
+consumption per HP[MWh/y]</string>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+            </column>
+           </widget>
+           <widget class="QPushButton" name="pushButton_2">
+            <property name="geometry">
+             <rect>
+              <x>812</x>
+              <y>760</y>
+              <width>171</width>
+              <height>28</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>ok</string>
+            </property>
+           </widget>
+          </widget>
+         </widget>
+        </widget>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>Local sources availability verification</string>
+       </attribute>
+       <widget class="QTableWidget" name="tableWidget">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>30</y>
+          <width>701</width>
+          <height>231</height>
+         </rect>
+        </property>
+        <attribute name="horizontalHeaderDefaultSectionSize">
+         <number>170</number>
+        </attribute>
+        <attribute name="horizontalHeaderMinimumSectionSize">
+         <number>55</number>
+        </attribute>
+        <attribute name="verticalHeaderDefaultSectionSize">
+         <number>45</number>
+        </attribute>
+        <attribute name="verticalHeaderMinimumSectionSize">
+         <number>45</number>
+        </attribute>
+        <row>
+         <property name="text">
+          <string/>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string/>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string/>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string/>
+         </property>
+        </row>
+        <column>
+         <property name="text">
+          <string>Local source</string>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>7</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>source availability 
+from SMM[MWh/y]</string>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>7</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>source utilization 
+future [MWh/y]</string>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>7</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>check result</string>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>7</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+        </column>
+        <item row="0" column="0">
+         <property name="text">
+          <string>Biomass</string>
+         </property>
+        </item>
+        <item row="1" column="0">
+         <property name="text">
+          <string>Waste Heat</string>
+         </property>
+        </item>
+        <item row="2" column="0">
+         <property name="text">
+          <string>Geothermal</string>
+         </property>
+        </item>
+        <item row="3" column="0">
+         <property name="text">
+          <string>Solar</string>
+         </property>
+        </item>
+       </widget>
+       <widget class="QTableWidget" name="tableWidget_2">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>320</y>
+          <width>701</width>
+          <height>231</height>
+         </rect>
+        </property>
+        <attribute name="horizontalHeaderDefaultSectionSize">
+         <number>170</number>
+        </attribute>
+        <attribute name="horizontalHeaderMinimumSectionSize">
+         <number>55</number>
+        </attribute>
+        <attribute name="verticalHeaderDefaultSectionSize">
+         <number>45</number>
+        </attribute>
+        <attribute name="verticalHeaderMinimumSectionSize">
+         <number>45</number>
+        </attribute>
+        <row>
+         <property name="text">
+          <string/>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string/>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string/>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string/>
+         </property>
+        </row>
+        <column>
+         <property name="text">
+          <string>Local source</string>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>7</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Local source utilization
+EN12.2</string>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>7</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>source utilization baseline 
+[MWh/y]</string>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>7</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>source utilization variation
+EN 12.3</string>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>7</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+        </column>
+        <item row="0" column="0">
+         <property name="text">
+          <string>Biomass</string>
+         </property>
+        </item>
+        <item row="0" column="1">
+         <property name="text">
+          <string/>
+         </property>
+        </item>
+        <item row="1" column="0">
+         <property name="text">
+          <string>Waste heat</string>
+         </property>
+        </item>
+        <item row="1" column="1">
+         <property name="text">
+          <string/>
+         </property>
+        </item>
+        <item row="2" column="0">
+         <property name="text">
+          <string>Geothermal</string>
+         </property>
+        </item>
+        <item row="2" column="1">
+         <property name="text">
+          <string/>
+         </property>
+        </item>
+        <item row="3" column="0">
+         <property name="text">
+          <string>Solar</string>
+         </property>
+        </item>
+        <item row="3" column="1">
+         <property name="text">
+          <string/>
+         </property>
+        </item>
+       </widget>
+       <widget class="QPushButton" name="pushButton">
+        <property name="geometry">
+         <rect>
+          <x>840</x>
+          <y>650</y>
+          <width>93</width>
+          <height>28</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>ok</string>
+        </property>
+       </widget>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

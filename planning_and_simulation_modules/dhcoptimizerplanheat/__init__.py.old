@@ -1,0 +1,14 @@
+# -*- coding: utf-8 -*-
+
+import dhcoptimizerplanheat.optimizer
+
+# noinspection PyPep8Naming
+def classFactory(iface):  # pylint: disable=invalid-name
+    """Load DHCOptimizerPlanheat class from file DHCOptimizerPlanheat.
+
+    :param iface: A QGIS interface instance.
+    :type iface: QgsInterface
+    """
+    #
+    from .dhcoptimizer_planheat import DHCOptimizerPlanheat
+    return DHCOptimizerPlanheat(iface)

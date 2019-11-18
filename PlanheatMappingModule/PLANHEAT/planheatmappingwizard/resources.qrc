@@ -1,0 +1,47 @@
+<RCC>
+  <qresource prefix="images">
+		<file>zoom.png</file>
+		<file>export_excel.png</file>
+		<file>draw_eraser.png</file>
+		<file>calculator.png</file>
+		<file>temperature_cold.png</file>
+		<file>temperature_hot.png</file>
+		<file>save_as.png</file>
+		<file>open_file.png</file>
+		<file>refresh.png</file>
+		<file>copy.png</file>
+		<file>ice.png</file>
+		<file>technology.png</file>
+		<file>edit.png</file>
+		<file>lightbulb.png</file>
+		<file>add.png</file>
+		<file>delete.png</file>
+		<file>heating.png</file>
+		<file>heatingDHW.png</file>
+		<file>hot_water.png</file>
+		<file>cooler.png</file>
+		<file>building.png</file>
+		<file>networking.png</file>
+		<file>PlanHeat_rgb.png</file>
+		<file>networking_green.png</file>
+		<file>planning.png</file>
+		<file>wizard.png</file>
+		<file>icon.png</file>
+		<file>highVector.png</file>  
+		<file>mediumVector.png</file>  
+		<file>lowVector.png</file>  
+		<file>finalEnegyConsumption.png</file>  
+		<file>usefulEnergyDemand.png</file> 
+		<file>naturalGas.png</file>  	
+		<file>biomass.png</file>  
+		<file>wasteHeat.png</file>  
+		<file>coal.png</file> 
+		<file>geotermal.png</file>  
+		<file>heatingOil.png</file> 
+		<file>radiobutton_checked.png</file> 
+		<file>radiobutton_unchecked.png</file> 
+		<file>solar.png</file>
+		<file>iconaPlanning.png</file>
+	</qresource>
+	
+</RCC>

@@ -1,0 +1,120 @@
+{
+    "treeWidgetHEATING_DHW": {
+        "widgetType": "QTreeWidget",
+        "0_0": {
+            "data": [
+                "Electricity"
+            ],
+            "Qt.UserRole": [
+                "None"
+            ]
+        },
+        "0_1": {
+            "data": [
+                "Natural gas"
+            ],
+            "Qt.UserRole": [
+                "None"
+            ],
+            "1_0": {
+                "data": [
+                    "Boiler",
+                    "25.0",
+                    "0.0",
+                    "0.0",
+                    "100.0"
+                ],
+                "Qt.UserRole": [
+                    "None",
+                    "None",
+                    "None",
+                    "None",
+                    "None"
+                ]
+            }
+        },
+        "0_2": {
+            "data": [
+                "Biomass"
+            ],
+            "Qt.UserRole": [
+                "None"
+            ]
+        },
+        "0_3": {
+            "data": [
+                "Waste heat"
+            ],
+            "Qt.UserRole": [
+                "None"
+            ]
+        },
+        "0_4": {
+            "data": [
+                "Geothermal"
+            ],
+            "Qt.UserRole": [
+                "None"
+            ]
+        },
+        "0_5": {
+            "data": [
+                "Heating oil"
+            ],
+            "Qt.UserRole": [
+                "None"
+            ]
+        },
+        "0_6": {
+            "data": [
+                "Coal"
+            ],
+            "Qt.UserRole": [
+                "None"
+            ]
+        },
+        "0_7": {
+            "data": [
+                "Solar"
+            ],
+            "Qt.UserRole": [
+                "None"
+            ]
+        }
+    },
+    "treeWidgetCOOLING": {
+        "widgetType": "QTreeWidget",
+        "0_0": {
+            "data": [
+                "Electricity"
+            ],
+            "Qt.UserRole": [
+                "None"
+            ]
+        },
+        "0_1": {
+            "data": [
+                "Natural gas"
+            ],
+            "Qt.UserRole": [
+                "None"
+            ]
+        },
+        "0_2": {
+            "data": [
+                "Waste heat"
+            ],
+            "Qt.UserRole": [
+                "None"
+            ]
+        },
+        "0_3": {
+            "data": [
+                "Geothermal"
+            ],
+            "Qt.UserRole": [
+                "None"
+            ]
+        }
+    }
+}

@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>frmPag1</class>
+ <widget class="QWidget" name="frmPag1">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>736</width>
+    <height>568</height>
+   </rect>
+  </property>
+  <property name="font">
+   <font>
+    <family>MS Shell Dlg 2</family>
+    <pointsize>8</pointsize>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>:/images/wizard.png</normaloff>:/images/wizard.png</iconset>
+  </property>
+  <widget class="QTreeWidget" name="treeWidgetSolutionsAndSources">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>30</y>
+     <width>341</width>
+     <height>401</height>
+    </rect>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>16</width>
+     <height>16</height>
+    </size>
+   </property>
+   <property name="columnCount">
+    <number>1</number>
+   </property>
+   <column>
+    <property name="text">
+     <string notr="true">1</string>
+    </property>
+   </column>
+  </widget>
+  <widget class="QGroupBox" name="groupBoxTotBasUsefulDem">
+   <property name="geometry">
+    <rect>
+     <x>370</x>
+     <y>10</y>
+     <width>341</width>
+     <height>421</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="title">
+    <string>General Summary - Results to be mapped</string>
+   </property>
+   <widget class="QTreeWidget" name="treeViewResults">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>20</y>
+      <width>391</width>
+      <height>401</height>
+     </rect>
+    </property>
+    <property name="contextMenuPolicy">
+     <enum>Qt::DefaultContextMenu</enum>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>16</width>
+      <height>16</height>
+     </size>
+    </property>
+    <property name="rootIsDecorated">
+     <bool>true</bool>
+    </property>
+    <property name="allColumnsShowFocus">
+     <bool>true</bool>
+    </property>
+    <property name="headerHidden">
+     <bool>false</bool>
+    </property>
+    <property name="expandsOnDoubleClick">
+     <bool>true</bool>
+    </property>
+    <property name="columnCount">
+     <number>1</number>
+    </property>
+    <attribute name="headerVisible">
+     <bool>true</bool>
+    </attribute>
+    <attribute name="headerStretchLastSection">
+     <bool>true</bool>
+    </attribute>
+    <column>
+     <property name="text">
+      <string notr="true">1</string>
+     </property>
+    </column>
+   </widget>
+  </widget>
+  <widget class="QPushButton" name="pushButtonSaveTreeToJson">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>440</y>
+     <width>91</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Dumps current tree to JSON</string>
+   </property>
+   <property name="text">
+    <string>Save</string>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>:/images/save_as.png</normaloff>:/images/save_as.png</iconset>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButtonLoadScenario">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>440</y>
+     <width>91</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Loads a JSON dump</string>
+   </property>
+   <property name="text">
+    <string>Load</string>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>:/images/open_file.png</normaloff>:/images/open_file.png</iconset>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButtonUpdateAllResults">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>370</x>
+     <y>440</y>
+     <width>181</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Updates all calculations</string>
+   </property>
+   <property name="text">
+    <string>Calculate overall results</string>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>:/images/calculator.png</normaloff>:/images/calculator.png</iconset>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButtonClearTree">
+   <property name="geometry">
+    <rect>
+     <x>250</x>
+     <y>440</y>
+     <width>91</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Clears current tree</string>
+   </property>
+   <property name="text">
+    <string>Clear</string>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>:/images/draw_eraser.png</normaloff>:/images/draw_eraser.png</iconset>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButtonShowDetails">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>560</x>
+     <y>440</y>
+     <width>151</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Show complete results</string>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>:/images/zoom.png</normaloff>:/images/zoom.png</iconset>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButtonFinish">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>390</x>
+     <y>520</y>
+     <width>151</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Finish</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButtonCancel">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>570</x>
+     <y>520</y>
+     <width>141</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Cancel</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButtonExportResults">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>630</x>
+     <y>470</y>
+     <width>81</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Export results</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

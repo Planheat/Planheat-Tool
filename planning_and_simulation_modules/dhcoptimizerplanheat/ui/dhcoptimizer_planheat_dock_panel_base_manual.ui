@@ -1,0 +1,892 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DockWidget</class>
+ <widget class="QDockWidget" name="DockWidget">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>421</width>
+    <height>862</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>PlanHeat DHC Optimizer</string>
+  </property>
+  <widget class="QWidget" name="dockWidgetContents">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>100</width>
+     <height>100</height>
+    </size>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="1">
+     <widget class="QScrollArea" name="scrollArea_2">
+      <property name="frameShape">
+       <enum>QFrame::NoFrame</enum>
+      </property>
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="scrollAreaWidgetContents_2">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>403</width>
+         <height>822</height>
+        </rect>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_3">
+        <property name="leftMargin">
+         <number>1</number>
+        </property>
+        <property name="topMargin">
+         <number>1</number>
+        </property>
+        <property name="rightMargin">
+         <number>1</number>
+        </property>
+        <property name="bottomMargin">
+         <number>1</number>
+        </property>
+        <item row="0" column="0">
+         <widget class="QTabWidget" name="tabWidget">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>350</width>
+            <height>775</height>
+           </size>
+          </property>
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
+          <widget class="QWidget" name="input_tab">
+           <attribute name="title">
+            <string>Input data</string>
+           </attribute>
+           <layout class="QGridLayout" name="gridLayout_2">
+            <property name="leftMargin">
+             <number>1</number>
+            </property>
+            <property name="topMargin">
+             <number>1</number>
+            </property>
+            <property name="rightMargin">
+             <number>1</number>
+            </property>
+            <property name="bottomMargin">
+             <number>1</number>
+            </property>
+            <item row="0" column="0">
+             <widget class="QWidget" name="widget" native="true">
+              <widget class="QWidget" name="verticalLayoutWidget">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>10</y>
+                 <width>371</width>
+                 <height>781</height>
+                </rect>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout">
+                <item>
+                 <widget class="QGroupBox" name="geography_group">
+                  <property name="title">
+                   <string>Geography</string>
+                  </property>
+                  <layout class="QGridLayout" name="gridLayout_8">
+                   <item row="0" column="0">
+                    <layout class="QVBoxLayout" name="verticalLayout_3">
+                     <item>
+                      <widget class="QLabel" name="label_buildingsShapefile_2">
+                       <property name="text">
+                        <string>District shapefile:</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <layout class="QHBoxLayout" name="horizontalLayout_11">
+                       <item>
+                        <widget class="QLineEdit" name="lineEdit_districtShapefile"/>
+                       </item>
+                       <item>
+                        <widget class="QToolButton" name="toolButton_districtShapeFile">
+                         <property name="text">
+                          <string>...</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                     <item>
+                      <widget class="QLabel" name="label_buildingsShapefile">
+                       <property name="text">
+                        <string>Buildings shapefile:</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <layout class="QHBoxLayout" name="horizontalLayout_10">
+                       <item>
+                        <widget class="QLineEdit" name="lineEdit_buildingsShapefile"/>
+                       </item>
+                       <item>
+                        <widget class="QToolButton" name="toolButton_buildingsShapefile">
+                         <property name="text">
+                          <string>...</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                     <item>
+                      <layout class="QHBoxLayout" name="horizontalLayout_9">
+                       <item>
+                        <widget class="QPushButton" name="download_street_button">
+                         <property name="text">
+                          <string>Download streets from OSM</string>
+                         </property>
+                         <property name="icon">
+                          <iconset resource="resources.qrc">
+                           <normaloff>:/plugins/dhcoptimizer_planheat/ui/icons/download-outline.png</normaloff>:/plugins/dhcoptimizer_planheat/ui/icons/download-outline.png</iconset>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QPushButton" name="show_buildings_button">
+                         <property name="text">
+                          <string>Load buildings</string>
+                         </property>
+                         <property name="icon">
+                          <iconset resource="resources.qrc">
+                           <normaloff>:/plugins/dhcoptimizer_planheat/ui/icons/download-outline.png</normaloff>:/plugins/dhcoptimizer_planheat/ui/icons/download-outline.png</iconset>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                    </layout>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QGroupBox" name="scope_groupBox">
+                  <property name="title">
+                   <string>Scope</string>
+                  </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_5">
+                   <item>
+                    <widget class="QGroupBox" name="buildings_groupBox">
+                     <property name="title">
+                      <string>Buildings</string>
+                     </property>
+                     <layout class="QGridLayout" name="gridLayout_6">
+                      <property name="bottomMargin">
+                       <number>5</number>
+                      </property>
+                      <item row="0" column="0">
+                       <layout class="QVBoxLayout" name="verticalLayout_4">
+                        <item>
+                         <layout class="QHBoxLayout" name="horizontalLayout_16">
+                          <item>
+                           <widget class="QPushButton" name="include_buildings_button">
+                            <property name="enabled">
+                             <bool>false</bool>
+                            </property>
+                            <property name="text">
+                             <string>Include buildings</string>
+                            </property>
+                            <property name="icon">
+                             <iconset resource="resources.qrc">
+                              <normaloff>:/plugins/dhcoptimizer_planheat/ui/icons/plus-outline.png</normaloff>:/plugins/dhcoptimizer_planheat/ui/icons/plus-outline.png</iconset>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="exclude_buildings_button">
+                            <property name="enabled">
+                             <bool>false</bool>
+                            </property>
+                            <property name="text">
+                             <string>Exclude buildings</string>
+                            </property>
+                            <property name="icon">
+                             <iconset resource="resources.qrc">
+                              <normaloff>:/plugins/dhcoptimizer_planheat/ui/icons/minus-outline.png</normaloff>:/plugins/dhcoptimizer_planheat/ui/icons/minus-outline.png</iconset>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </item>
+                        <item>
+                         <layout class="QHBoxLayout" name="horizontalLayout_3">
+                          <item>
+                           <widget class="QLabel" name="nb_buildings_label">
+                            <property name="text">
+                             <string>Number of buildings to connect:</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QLabel" name="nb_buildings_int_label">
+                            <property name="text">
+                             <string>0</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <spacer name="horizontalSpacer_12">
+                            <property name="orientation">
+                             <enum>Qt::Horizontal</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>1</width>
+                              <height>20</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                         </layout>
+                        </item>
+                       </layout>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QGroupBox" name="streets_groupBox">
+                     <property name="title">
+                      <string>Streets</string>
+                     </property>
+                     <layout class="QGridLayout" name="gridLayout_7">
+                      <item row="0" column="0" rowspan="2">
+                       <layout class="QVBoxLayout" name="verticalLayout_6">
+                        <property name="spacing">
+                         <number>6</number>
+                        </property>
+                        <item>
+                         <layout class="QVBoxLayout" name="verticalLayout_7">
+                          <property name="spacing">
+                           <number>4</number>
+                          </property>
+                          <item>
+                           <layout class="QHBoxLayout" name="horizontalLayout_39">
+                            <item>
+                             <widget class="QPushButton" name="include_streets_button">
+                              <property name="enabled">
+                               <bool>false</bool>
+                              </property>
+                              <property name="text">
+                               <string>Include streets</string>
+                              </property>
+                              <property name="icon">
+                               <iconset resource="resources.qrc">
+                                <normaloff>:/plugins/dhcoptimizer_planheat/ui/icons/plus-outline.png</normaloff>:/plugins/dhcoptimizer_planheat/ui/icons/plus-outline.png</iconset>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QPushButton" name="exclude_streets_button">
+                              <property name="enabled">
+                               <bool>false</bool>
+                              </property>
+                              <property name="text">
+                               <string>Exclude streets</string>
+                              </property>
+                              <property name="icon">
+                               <iconset resource="resources.qrc">
+                                <normaloff>:/plugins/dhcoptimizer_planheat/ui/icons/minus-outline.png</normaloff>:/plugins/dhcoptimizer_planheat/ui/icons/minus-outline.png</iconset>
+                              </property>
+                             </widget>
+                            </item>
+                           </layout>
+                          </item>
+                          <item>
+                           <layout class="QHBoxLayout" name="horizontalLayout_6">
+                            <property name="sizeConstraint">
+                             <enum>QLayout::SetDefaultConstraint</enum>
+                            </property>
+                            <item>
+                             <widget class="QLabel" name="nb_streets_label">
+                              <property name="text">
+                               <string>Number of included streets:</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QLabel" name="nb_streets_int_label">
+                              <property name="text">
+                               <string>0</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <spacer name="horizontalSpacer_17">
+                              <property name="orientation">
+                               <enum>Qt::Horizontal</enum>
+                              </property>
+                              <property name="sizeHint" stdset="0">
+                               <size>
+                                <width>40</width>
+                                <height>20</height>
+                               </size>
+                              </property>
+                             </spacer>
+                            </item>
+                           </layout>
+                          </item>
+                          <item>
+                           <layout class="QHBoxLayout" name="horizontalLayout_7">
+                            <property name="spacing">
+                             <number>6</number>
+                            </property>
+                            <property name="sizeConstraint">
+                             <enum>QLayout::SetDefaultConstraint</enum>
+                            </property>
+                            <item>
+                             <widget class="QLabel" name="nb_excluded_streets_label">
+                              <property name="text">
+                               <string>Number of excluded streets:</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QLabel" name="nb_excluded_streets_int_label">
+                              <property name="text">
+                               <string>0</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <spacer name="horizontalSpacer_25">
+                              <property name="orientation">
+                               <enum>Qt::Horizontal</enum>
+                              </property>
+                              <property name="sizeHint" stdset="0">
+                               <size>
+                                <width>40</width>
+                                <height>20</height>
+                               </size>
+                              </property>
+                             </spacer>
+                            </item>
+                           </layout>
+                          </item>
+                         </layout>
+                        </item>
+                        <item>
+                         <layout class="QVBoxLayout" name="verticalLayout_2">
+                          <property name="spacing">
+                           <number>4</number>
+                          </property>
+                          <item>
+                           <widget class="QPushButton" name="leastcost_streets_button">
+                            <property name="enabled">
+                             <bool>false</bool>
+                            </property>
+                            <property name="text">
+                             <string>Include reduced cost streets </string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <layout class="QHBoxLayout" name="horizontalLayout">
+                            <property name="spacing">
+                             <number>10</number>
+                            </property>
+                            <item>
+                             <widget class="QLabel" name="label_rate_leastcost">
+                              <property name="text">
+                               <string>Cost reduction rate (%)</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QSpinBox" name="spinBox_leastcost_coef"/>
+                            </item>
+                            <item>
+                             <spacer name="horizontalSpacer_9">
+                              <property name="orientation">
+                               <enum>Qt::Horizontal</enum>
+                              </property>
+                              <property name="sizeHint" stdset="0">
+                               <size>
+                                <width>40</width>
+                                <height>20</height>
+                               </size>
+                              </property>
+                             </spacer>
+                            </item>
+                           </layout>
+                          </item>
+                          <item>
+                           <layout class="QHBoxLayout" name="horizontalLayout_17">
+                            <item>
+                             <widget class="QLabel" name="nb_leastcost_streets_label">
+                              <property name="text">
+                               <string>Number of reduced cost streets:</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QLabel" name="nb_leastcost_streets_int_label">
+                              <property name="text">
+                               <string>0</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <spacer name="horizontalSpacer_18">
+                              <property name="orientation">
+                               <enum>Qt::Horizontal</enum>
+                              </property>
+                              <property name="sizeHint" stdset="0">
+                               <size>
+                                <width>40</width>
+                                <height>20</height>
+                               </size>
+                              </property>
+                             </spacer>
+                            </item>
+                           </layout>
+                          </item>
+                         </layout>
+                        </item>
+                       </layout>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                  </layout>
+                  <zorder>streets_groupBox</zorder>
+                  <zorder>buildings_groupBox</zorder>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QgsCollapsibleGroupBox" name="Extension_mGroupBox">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="toolTip">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If a DHC network already exists, the optimizer can take into account the existing facilities by selecting streets and buildings considered as already existing. Buildings and streets layers have to be defined to access the controls.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
+                  <property name="title">
+                   <string>Extension mode: setting an existing network</string>
+                  </property>
+                  <property name="collapsed">
+                   <bool>true</bool>
+                  </property>
+                  <property name="saveCollapsedState">
+                   <bool>true</bool>
+                  </property>
+                  <layout class="QGridLayout" name="gridLayout_5">
+                   <item row="0" column="0">
+                    <layout class="QVBoxLayout" name="extension_mode_layout">
+                     <item>
+                      <widget class="QGroupBox" name="manual_input_extension_group">
+                       <property name="enabled">
+                        <bool>true</bool>
+                       </property>
+                       <property name="minimumSize">
+                        <size>
+                         <width>0</width>
+                         <height>90</height>
+                        </size>
+                       </property>
+                       <property name="title">
+                        <string>Option 1: Manual input</string>
+                       </property>
+                       <widget class="QWidget" name="horizontalLayoutWidget">
+                        <property name="geometry">
+                         <rect>
+                          <x>10</x>
+                          <y>20</y>
+                          <width>311</width>
+                          <height>31</height>
+                         </rect>
+                        </property>
+                        <layout class="QHBoxLayout" name="horizontalLayout_37">
+                         <item>
+                          <widget class="QPushButton" name="add_old_buildings_button">
+                           <property name="enabled">
+                            <bool>true</bool>
+                           </property>
+                           <property name="text">
+                            <string>Add buildings</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QPushButton" name="add_old_streets_button">
+                           <property name="enabled">
+                            <bool>true</bool>
+                           </property>
+                           <property name="text">
+                            <string>Add streets</string>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </widget>
+                       <widget class="QWidget" name="horizontalLayoutWidget_2">
+                        <property name="geometry">
+                         <rect>
+                          <x>10</x>
+                          <y>50</y>
+                          <width>311</width>
+                          <height>31</height>
+                         </rect>
+                        </property>
+                        <layout class="QHBoxLayout" name="horizontalLayout_4">
+                         <item>
+                          <widget class="QPushButton" name="generate_existing_network_button">
+                           <property name="enabled">
+                            <bool>true</bool>
+                           </property>
+                           <property name="text">
+                            <string>Generate geography</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QPushButton" name="save_existing_network_button">
+                           <property name="text">
+                            <string>Save as...</string>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </widget>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QGroupBox" name="shapefile_input_extension_group">
+                       <property name="enabled">
+                        <bool>true</bool>
+                       </property>
+                       <property name="minimumSize">
+                        <size>
+                         <width>0</width>
+                         <height>90</height>
+                        </size>
+                       </property>
+                       <property name="title">
+                        <string>Option 2: Import from &quot;*.zip&quot; file</string>
+                       </property>
+                       <widget class="QWidget" name="horizontalLayoutWidget_9">
+                        <property name="geometry">
+                         <rect>
+                          <x>10</x>
+                          <y>20</y>
+                          <width>311</width>
+                          <height>24</height>
+                         </rect>
+                        </property>
+                        <layout class="QHBoxLayout" name="horizontalLayout_40">
+                         <item>
+                          <widget class="QLineEdit" name="lineEdit_existingNetworkShapefile">
+                           <property name="enabled">
+                            <bool>true</bool>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QToolButton" name="toolButton_existingNetworkShapefile">
+                           <property name="toolTip">
+                            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select path to folder containing&lt;/p&gt;&lt;p&gt;- 'edges' folder (containing the shapefile)&lt;/p&gt;&lt;p&gt;- data_nodes.csv&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                           </property>
+                           <property name="text">
+                            <string>...</string>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </widget>
+                       <widget class="QWidget" name="horizontalLayoutWidget_10">
+                        <property name="geometry">
+                         <rect>
+                          <x>10</x>
+                          <y>43</y>
+                          <width>311</width>
+                          <height>31</height>
+                         </rect>
+                        </property>
+                        <layout class="QHBoxLayout" name="horizontalLayout_12">
+                         <item>
+                          <widget class="QPushButton" name="add_existing_network_button">
+                           <property name="enabled">
+                            <bool>true</bool>
+                           </property>
+                           <property name="text">
+                            <string>Add existing network</string>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </widget>
+                      </widget>
+                     </item>
+                    </layout>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_13">
+                  <item>
+                   <spacer name="horizontalSpacer_11">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="reset_button">
+                    <property name="text">
+                     <string>Reset</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="compute_button">
+                    <property name="enabled">
+                     <bool>true</bool>
+                    </property>
+                    <property name="text">
+                     <string>Compute</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="horizontalSpacer_2">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <spacer name="verticalSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>40</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </widget>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="results_tab">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <attribute name="title">
+            <string>Results</string>
+           </attribute>
+           <layout class="QGridLayout" name="gridLayout_4">
+            <property name="leftMargin">
+             <number>1</number>
+            </property>
+            <property name="topMargin">
+             <number>1</number>
+            </property>
+            <property name="rightMargin">
+             <number>1</number>
+            </property>
+            <property name="bottomMargin">
+             <number>1</number>
+            </property>
+            <item row="0" column="0">
+             <widget class="QWidget" name="widget_2" native="true">
+              <widget class="QWidget" name="layoutWidget">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>10</y>
+                 <width>311</width>
+                 <height>22</height>
+                </rect>
+               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_14">
+                <item>
+                 <widget class="QLabel" name="nb_selected_buildings_label">
+                  <property name="text">
+                   <string>Number of selected buildings:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="nb_selected_buildings_int_label">
+                  <property name="text">
+                   <string>0</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </widget>
+              <widget class="QWidget" name="layoutWidget">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>30</y>
+                 <width>311</width>
+                 <height>22</height>
+                </rect>
+               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_15">
+                <item>
+                 <widget class="QLabel" name="total_pipe_length_label">
+                  <property name="text">
+                   <string>Total pipe length:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="total_pipe_length_int_label">
+                  <property name="text">
+                   <string>0 meters</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_3">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </widget>
+              <widget class="QWidget" name="layoutWidget_11">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>50</y>
+                 <width>311</width>
+                 <height>22</height>
+                </rect>
+               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_20">
+                <item>
+                 <widget class="QLabel" name="total_leastcost_length_label">
+                  <property name="text">
+                   <string>Total reduced-cost streets length:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="total_leastcost_length_int_label">
+                  <property name="text">
+                   <string>0 meters</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_8">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </widget>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QgsCollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>qgscollapsiblegroupbox.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>
