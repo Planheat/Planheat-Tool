@@ -22,8 +22,8 @@ module Absorption_heat_pump_district_heating
         ST_specific_seasonal=readcsv(string(input_folder, "\\ST_specific_time_seasonal.csv"))
 
 
-        Electricity_price=readcsv(string(input_folder, "\\Electricity_price_time.csv"))
-        #Electricity_price=Electricity_price[1:4380]
+        #28/01/2020:  from tech_infos
+        #Electricity_price=readcsv(string(input_folder, "\\Electricity_price_time.csv"))
 
         Heat_exchanger_specific=readcsv(string(input_folder, "\\Heat_exchanger_specific_time.csv"))
 
@@ -137,7 +137,7 @@ module Absorption_heat_pump_district_heating
         cost_var_EH = tech_infos["cost_var_EH"] # 0.5
         # Fuel cost [EUR/MWh]
         # Choose between fixed electricity price or electricity market price
-        cost_fuel_EH = Electricity_price
+        cost_fuel_EH = tech_infos["cost_fuel_EH"] # Electricity_price
 
         ## Electrical heater 2 ##
 
@@ -155,7 +155,7 @@ module Absorption_heat_pump_district_heating
         cost_var_EH_2 = tech_infos["cost_var_EH_2"] # 0.7
         # Fuel cost [EUR/MWh]
         # Choose between fixed electricity price or electricity market price
-        cost_fuel_EH_2 = Electricity_price
+        cost_fuel_EH_2 = tech_infos["cost_fuel_EH_2"] # Electricity_price
 
         ## Electrical heater 3 ##
 
@@ -173,7 +173,7 @@ module Absorption_heat_pump_district_heating
         cost_var_EH_3 = tech_infos["cost_var_EH_3"] # 0.8
         # Fuel cost [EUR/MWh]
         # Choose between fixed electricity price or electricity market price
-        cost_fuel_EH_3 = Electricity_price
+        cost_fuel_EH_3 = tech_infos["cost_fuel_EH_3"] # Electricity_price
 
         ## Heat pump ##
         # Installed capacity [MW]
@@ -190,7 +190,7 @@ module Absorption_heat_pump_district_heating
         cost_var_HP = tech_infos["cost_var_HP"] # 0.5
         # Fuel cost [EUR/MWh]
         # Choose between fixed electricity price or electricity market price
-        cost_fuel_HP = Electricity_price
+        cost_fuel_HP = tech_infos["cost_fuel_HP"] # Electricity_price
 
         ## Heat pump 2 ##
 
@@ -208,7 +208,7 @@ module Absorption_heat_pump_district_heating
         cost_var_HP_2 = tech_infos["cost_var_HP_2"] # 0.5
         # Fuel cost [EUR/MWh]
         # Choose between fixed electricity price or electricity market price
-        cost_fuel_HP_2 = Electricity_price
+        cost_fuel_HP_2 = tech_infos["cost_fuel_HP_2"] # Electricity_price
 
         ## Heat pump 3 ##
         # Installed capacity [MW]
@@ -225,7 +225,7 @@ module Absorption_heat_pump_district_heating
         cost_var_HP_3 = tech_infos["cost_var_HP_3"] # 0.5
         # Fuel cost [EUR/MWh]
         # Choose between fixed electricity price or electricity market price
-        cost_fuel_HP_3 = Electricity_price
+        cost_fuel_HP_3 = tech_infos["cost_fuel_HP_3"] # Electricity_price
 
         ## Absorption heat pump ##
 
@@ -263,7 +263,7 @@ module Absorption_heat_pump_district_heating
         # Fuel cost [EUR/MWh]
         cost_fuel_CHP = tech_infos["cost_fuel_CHP"] # 20
         # Price paid to CHP for electrcity production
-        CHP_electricity_price=Electricity_price
+        CHP_electricity_price = tech_infos["CHP_electricity_price"] # Electricity_price
 
         ## Cogeneration 2 ##
 
@@ -284,7 +284,7 @@ module Absorption_heat_pump_district_heating
         # Fuel cost [EUR/MWh]
         cost_fuel_CHP_2 = tech_infos["cost_fuel_CHP_2"] # 15
         # Price paid to CHP for electrcity production
-        CHP_electricity_price_2=Electricity_price
+        CHP_electricity_price_2 = tech_infos["CHP_electricity_price_2"] # Electricity_price
 
 
         ## ORC Cogeneration ##
@@ -304,7 +304,7 @@ module Absorption_heat_pump_district_heating
         # Variable cost [EUR/MWh]
         cost_var_CHP_ORC = tech_infos["cost_var_CHP_ORC"]
         # Price paid to CHP for electrcity production
-        CHP_ORC_electricity_price=Electricity_price
+        CHP_ORC_electricity_price = tech_infos["CHP_ORC_electricity_price"] # Electricity_price
         # ORC Thermal availability
         ORC_thermal_availability=(ORC_waste_heat_availability*eta_CHP_el)/cb_CHP_ORC
 
@@ -361,7 +361,7 @@ module Absorption_heat_pump_district_heating
         cost_var_HP_waste_heat_I_1 = tech_infos["cost_var_HP_waste_heat_I_1"] # 0.7
         # Fuel cost [EUR/MWh]
         # Choose between fixed electricity price or electricity market price
-        cost_fuel_HP_waste_heat_I_1 = Electricity_price
+        cost_fuel_HP_waste_heat_I_1 = tech_infos["cost_fuel_HP_waste_heat_I_1"] # Electricity_price
 
         ## Waste heat - heat pumps 2 ##
 
@@ -379,7 +379,7 @@ module Absorption_heat_pump_district_heating
         cost_var_HP_waste_heat_I_2 = tech_infos["cost_var_HP_waste_heat_I_2"] # 1.5
         # Fuel cost [EUR/MWh]
         # Choose between fixed electricity price or electricity market price
-        cost_fuel_HP_waste_heat_I_2 = Electricity_price
+        cost_fuel_HP_waste_heat_I_2 = tech_infos["cost_fuel_HP_waste_heat_I_2"] # Electricity_price
 
         ## Waste heat - heat pumps 3##
 
@@ -397,7 +397,7 @@ module Absorption_heat_pump_district_heating
         cost_var_HP_waste_heat_I_3 = tech_infos["cost_var_HP_waste_heat_I_3"] # 1.5
         # Fuel cost [EUR/MWh]
         # Choose between fixed electricity price or electricity market price
-        cost_fuel_HP_waste_heat_I_3 = Electricity_price
+        cost_fuel_HP_waste_heat_I_3 = tech_infos["cost_fuel_HP_waste_heat_I_3"] # Electricity_price
 
         ## Waste heat - heat pumps - temperature group II ##
 
@@ -417,7 +417,7 @@ module Absorption_heat_pump_district_heating
         cost_var_HP_waste_heat_II_1 =tech_infos["cost_var_HP_waste_heat_II_1"]
         # Fuel cost [EUR/MWh]
         # Choose between fixed electricity price or electricity market price
-        cost_fuel_HP_waste_heat_II_1 = Electricity_price
+        cost_fuel_HP_waste_heat_II_1 = tech_infos["cost_fuel_HP_waste_heat_II_1"] # Electricity_price
 
         # Heat pump II_2 #
 
@@ -435,7 +435,7 @@ module Absorption_heat_pump_district_heating
         cost_var_HP_waste_heat_II_2 =tech_infos["cost_var_HP_waste_heat_II_2"]
         # Fuel cost [EUR/MWh]
         # Choose between fixed electricity price or electricity market price
-        cost_fuel_HP_waste_heat_II_2 = Electricity_price
+        cost_fuel_HP_waste_heat_II_2 = tech_infos["cost_fuel_HP_waste_heat_II_2"] # Electricity_price
 
         # Heat pump II_3 #
 
@@ -453,7 +453,7 @@ module Absorption_heat_pump_district_heating
         cost_var_HP_waste_heat_II_3 = tech_infos["cost_var_HP_waste_heat_II_3"]
         # Fuel cost [EUR/MWh]
         # Choose between fixed electricity price or electricity market price
-        cost_fuel_HP_waste_heat_II_3 = Electricity_price
+        cost_fuel_HP_waste_heat_II_3 = tech_infos["cost_fuel_HP_waste_heat_II_3"] # Electricity_price
 
 
         ## Waste heat - heat pumps - temperature group III ##
@@ -474,7 +474,7 @@ module Absorption_heat_pump_district_heating
         cost_var_HP_waste_heat_III_1 = tech_infos["cost_var_HP_waste_heat_III_1"]
         # Fuel cost [EUR/MWh]
         # Choose between fixed electricity price or electricity market price
-        cost_fuel_HP_waste_heat_III_1 = Electricity_price
+        cost_fuel_HP_waste_heat_III_1 = tech_infos["cost_fuel_HP_waste_heat_III_1"] # Electricity_price
 
         # Heat pump III_2 #
 
@@ -492,7 +492,7 @@ module Absorption_heat_pump_district_heating
         cost_var_HP_waste_heat_III_2 = tech_infos["cost_var_HP_waste_heat_III_2"]
         # Fuel cost [EUR/MWh]
         # Choose between fixed electricity price or electricity market price
-        cost_fuel_HP_waste_heat_III_2 = Electricity_price
+        cost_fuel_HP_waste_heat_III_2 = tech_infos["cost_fuel_HP_waste_heat_III_2"] # Electricity_price
 
         # Heat pump III_3 #
 
@@ -510,7 +510,7 @@ module Absorption_heat_pump_district_heating
         cost_var_HP_waste_heat_III_3 = tech_infos["cost_var_HP_waste_heat_III_3"]
         # Fuel cost [EUR/MWh]
         # Choose between fixed electricity price or electricity market price
-        cost_fuel_HP_waste_heat_III_3 = Electricity_price
+        cost_fuel_HP_waste_heat_III_3 = tech_infos["cost_fuel_HP_waste_heat_III_3"] # Electricity_price
 
 
         ## Seasonal waste heat heat pumps ##
@@ -529,7 +529,7 @@ module Absorption_heat_pump_district_heating
         cost_var_HP_waste_heat_seasonal = tech_infos["cost_var_HP_waste_heat_seasonal"] # 0.5
         # Fuel cost [EUR/MWh]
         # Choose between fixed electricity price or electricity market price
-        cost_fuel_HP_waste_heat_seasonal = Electricity_price
+        cost_fuel_HP_waste_heat_seasonal = tech_infos["cost_fuel_HP_waste_heat_seasonal"] # Electricity_price
 
         ## Waste heat absorption heat pump ##
 
@@ -849,7 +849,7 @@ module Absorption_heat_pump_district_heating
         status = solve(m)
 
         print_function(string("Exit with status:", status))
-        print_function("Julia code for district heating: OPTIMIZED!")
+        print_function("Julia code for district heating: END OF SCRIPT!")
 
         ##### Result visualization ####
 

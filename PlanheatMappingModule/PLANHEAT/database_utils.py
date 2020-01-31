@@ -20,7 +20,6 @@ ALIAS = True
 def get_algorithm(algorithm_id):
     if algorithm_id is None:
         return None
-
     db = sqlite3.connect(mm_config.CURRENT_DB_CMM_SMM_FILE_PATH)
     db.row_factory = sqlite3.Row
     c = db.cursor()

@@ -3,6 +3,8 @@ import os.path
 from PyQt5.QtWidgets import QMessageBox, QInputDialog, QLineEdit
 import json
 import shutil
+import pathlib
+import traceback
 
 from ... import master_planning_config
 
@@ -153,7 +155,7 @@ class FileManager:
     def load(self, file):
         input_file = os.path.join(self.work_folder, file)
         if not os.path.isfile(input_file):
-            print("SaveScenario.py, load(). Couldn't load", file, "File does not exist.")
+            print("FileManager.py, load(). Couldn't load", file, "File does not exist.")
             return
         return self.load_json(input_file)
 
@@ -184,6 +186,8 @@ class FileManager:
         if "<" in text:
             return False
         if ">" in text:
+            return False
+        if "*" in text:
             return False
         if "." in text:
             return False
@@ -239,73 +243,46 @@ class FileManager:
         try:
             os.remove(os.path.join(folder, name + ".shp"))
         except Exception as e:
-            print("FileManager.py, remove_all_shape_file_from_name. Immpossible to delete file:", e)
+            print("FileManager.py, remove_all_shape_file_from_name. Impossible to delete file:", e)
         try:
             os.remove(os.path.join(folder, name + ".dbf"))
         except Exception as e:
-            print("FileManager.py, remove_all_shape_file_from_name. Immpossible to delete file:", e)
+            print("FileManager.py, remove_all_shape_file_from_name. Impossible to delete file:", e)
         try:
             os.remove(os.path.join(folder, name + ".prj"))
         except Exception as e:
-            print("FileManager.py, remove_all_shape_file_from_name. Immpossible to delete file:", e)
+            print("FileManager.py, remove_all_shape_file_from_name. Impossible to delete file:", e)
         try:
             os.remove(os.path.join(folder, name + ".qpj"))
         except Exception as e:
-            print("FileManager.py, remove_all_shape_file_from_name. Immpossible to delete file:", e)
+            print("FileManager.py, remove_all_shape_file_from_name. Impossible to delete file:", e)
         try:
             os.remove(os.path.join(folder, name + ".shx"))
         except Exception as e:
-            print("FileManager.py, remove_all_shape_file_from_name. Immpossible to delete file:", e)
+            print("FileManager.py, remove_all_shape_file_from_name. Impossible to delete file:", e)
         try:
             os.remove(os.path.join(folder, name + ".cpg"))
         except Exception as e:
-            print("FileManager.py, remove_all_shape_file_from_name. Immpossible to delete file:", e)
+            print("FileManager.py, remove_all_shape_file_from_name. Impossible to delete file:", e)
 
     def remove_file_from_file_path(self, file_path):
         try:
             os.remove(os.path.join(file_path))
         except Exception as e:
-            print("FileManager.py, remove_all_shape_file_from_name. Immpossible to delete file:", file_path, e)
+            print("FileManager.py, remove_all_shape_file_from_name. Impossible to delete file:", file_path, e)
 
     def remove_folder(self, folder):
         try:
             shutil.rmtree(folder)
         except Exception as e:
-            print("FileManager.py, remove_folder. Immpossible to delete folder:", folder, e)
-
-    def purge_unused_network_folder_and_shapefiles(self):
-        network_to_save = []
-        for filename in os.listdir(self.work_folder):
-            if filename.endswith(".json"):
-                data = self.load(filename)
-                for n in data["networks"]["baseline"]["DHN"]:
-                    network_to_save.append(n)
-                for n in data["networks"]["baseline"]["DCN"]:
-                    network_to_save.append(n)
-                for n in data["networks"]["future"]["DHN"]:
-                    network_to_save.append(n)
-                for n in data["networks"]["future"]["DCN"]:
-                    network_to_save.append(n)
-        d = os.path.join(self.work_folder, "Baseline", "Networks", "DHN")
-        if os.path.isdir(d):
-            for existing_network in [o for o in os.listdir(d) if os.path.isdir(os.path.join(d, o))]:
-                if existing_network not in network_to_save:
-                    shutil.rmtree(os.path.join(d, existing_network))
-        d = os.path.join(self.work_folder, "Baseline", "Networks", "DCN")
-        if os.path.isdir(d):
-            for existing_network in [o for o in os.listdir(d) if os.path.isdir(os.path.join(d, o))]:
-                if existing_network not in network_to_save:
-                    shutil.rmtree(os.path.join(d, existing_network))
-        d = os.path.join(self.work_folder, "Future", "Networks", "DHN")
-        if os.path.isdir(d):
-            for existing_network in [o for o in os.listdir(d) if os.path.isdir(os.path.join(d, o))]:
-                if existing_network not in network_to_save:
-                    shutil.rmtree(os.path.join(d, existing_network))
-        d = os.path.join(self.work_folder, "Future", "Networks", "DCN")
-        if os.path.isdir(d):
-            for existing_network in [o for o in os.listdir(d) if os.path.isdir(os.path.join(d, o))]:
-                if existing_network not in network_to_save:
-                    shutil.rmtree(os.path.join(d, existing_network))
+            print("FileManager.py, remove_folder. Immpossible to delete folder:", folder, e,
+                  "iterating over subdirectories")
+            for folder, sub_folders, file_names in os.walk(folder):
+                for sub_folder in sub_folders:
+                    try:
+                        shutil.rmtree(os.path.join(folder, sub_folder))
+                    except Exception:
+                        pass
 
     def move_folder(self, root_src_dir, root_target_dir):
         if not os.path.isdir(root_src_dir):
@@ -318,6 +295,25 @@ class FileManager:
             print("FileManager.py, copy_folder():", source, "does not exist and it cannot be copied")
             return
         shutil.copytree(source, target)
+
+    @staticmethod
+    def delete_file(file):
+        try:
+            if os.path.isfile(file):
+                os.remove(file)
+        except Exception:
+            traceback.print_exc()
+
+    def get_sub_path(self, path, start=0, end=0):
+        p = pathlib.path(path)
+        new_path = ""
+        if end == 0:
+            end = len(p.parts)
+        for part in p.parts[start:end]:
+            new_path += part + "/"
+        return os.path.normpath(new_path[0:-1])
+
+
 
 
 

@@ -18,7 +18,6 @@ class FECfilterService:
     def __init__(self, fec_filter_combo_box: QComboBox, description_filter_label: QLabel, mode="future"):
         self.fec_filter_combo_box = fec_filter_combo_box
         self.description_filter_label = description_filter_label
-        self.fake_KPIs = self.example_KPIs()
 
         self.fec_filter_combo_box.clear()
         self.fec_filter_combo_box.insertItem(0, "Select filter:")
@@ -56,7 +55,6 @@ class FECfilterService:
             return self.apply_filter_YEOH_Base(KPIs)
 
     def apply_filter_FEC(self, KPIs):
-        KPIs = self.fake_KPIs
         output_table = {}
         sources_names = FECfilterService.get_from_key(KPIs, "sources")
         for index, source in enumerate(sources_names):
@@ -67,7 +65,6 @@ class FECfilterService:
         return output_table
 
     def apply_filter_FEC_specific(self, KPIs):
-        KPIs = self.example_KPIs()
         output_table = {}
         sources_names = FECfilterService.get_from_key(KPIs, "sources")
         for index, source in enumerate(sources_names):
@@ -78,7 +75,6 @@ class FECfilterService:
         return output_table
 
     def apply_filter_FEC_future(self, KPIs):
-        KPIs = self.fake_KPIs
         output_table = {}
         sources_names = FECfilterService.get_from_key(KPIs, "sources")
         for index, source in enumerate(sources_names):
@@ -89,7 +85,6 @@ class FECfilterService:
         return output_table
 
     def apply_filter_FEC_future_specific(self, KPIs):
-        KPIs = self.example_KPIs()
         output_table = {}
         sources_names = FECfilterService.get_from_key(KPIs, "sources")
         for index, source in enumerate(sources_names):
@@ -100,7 +95,6 @@ class FECfilterService:
         return output_table
 
     def apply_filter_FEC_variation(self, KPIs):
-        KPIs = self.fake_KPIs
         output_table = {}
         sources_names = FECfilterService.get_from_key(KPIs, "sources")
         for index, source in enumerate(sources_names):
@@ -111,7 +105,6 @@ class FECfilterService:
         return output_table
 
     def apply_filter_FEC_saving(self, KPIs):
-        KPIs = self.example_KPIs()
         output_table = {}
         sources_names = FECfilterService.get_from_key(KPIs, "sources")
         for index, source in enumerate(sources_names):
@@ -122,7 +115,6 @@ class FECfilterService:
         return output_table
 
     def apply_filter_YEOH_Base(self, KPIs):
-        KPIs = self.example_KPIs()
         output_table = {}
         YEOHbase = FECfilterService.get_from_key(KPIs, "EN_15.1")
         if YEOHbase is None:
@@ -139,7 +131,6 @@ class FECfilterService:
         return output_table
 
     def apply_filter_YEOH_Future(self, KPIs):
-        KPIs = self.example_KPIs()
         output_table = {}
         YEOHbase = FECfilterService.get_from_key(KPIs, "EN_15.2")
         if YEOHbase is None:
@@ -156,7 +147,6 @@ class FECfilterService:
         return output_table
 
     def apply_filter_YEOH_Variation(self, KPIs):
-        KPIs = self.example_KPIs()
         output_table = {}
         YEOHbase = FECfilterService.get_from_key(KPIs, "EN_15.3")
         if YEOHbase is None:
@@ -175,7 +165,10 @@ class FECfilterService:
     @staticmethod
     def get_from_key(dictionary, key):
         try:
-            return dictionary[key]
+            item = dictionary[key]
+            if isinstance(item, float):
+                return "{:.2f}".format(item)
+            return item
         except KeyError:
             return None
 

@@ -12,26 +12,21 @@
         email                : eglantina.metani@softeco.it  ,  daniele.bonventre@softeco.it
  ***************************************************************************/
 """
-import csv
+
 import os
 import os.path
-import traceback
-import shutil
-# Import pandas to manage data into DataFrames
-import pandas
+
 
 from PyQt5.QtWidgets import *
 from PyQt5 import QtCore
 from PyQt5.QtGui import *
-from PyQt5.QtWidgets import (QWidget, QPushButton, QHBoxLayout, QVBoxLayout, QApplication, QListView)
 from PyQt5 import QtGui, QtWidgets, uic
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QTreeWidget, QMessageBox
-from PyQt5.QtCore import QLocale
 
 # Import PyQt5
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QAction, QMenu, QInputDialog, QLineEdit, QListWidgetItem, QTreeWidgetItem
+from PyQt5.QtWidgets import QAction, QMenu, QInputDialog, QLineEdit, QListWidgetItem
 # Import qgis main libraries
 from qgis.core import *
 from qgis.gui import *
@@ -40,15 +35,14 @@ from qgis.core import QgsProject, QgsCoordinateTransform
 # Import the custom tree widget items
 from .building.Building import *
 from .building.DPM import *
+from .building.TreeItemManager import TreeItemManager
 from .technology.Technology import *
-from .Network import Network, network_save
+from .Network import Network
 from .simpleDialog import Form
 from .dialogSources import CheckSourceDialog
-from .layer_utils import load_file_as_layer, load_open_street_maps, add_layer_to_group, get_only_new_features
+from .layer_utils import load_file_as_layer, add_layer_to_group, get_only_new_features
 from .Tjulia.DistrictSimulator import DistrictSimulator
 from .Transport.Transport_electrical_vehicles_demand import Transport_sector
-#from .Tjulia.district.heating.Booster_heat_pump_COP import Booster_COP
-from .save_utility.SaveScenario import SaveScenario
 from .save_utility.upload import Upload
 from .dhcoptimizerplanheat.dhcoptimizer_planheat import DHCOptimizerPlanheat
 from .AdditionalSimulationParameterGUI import AdditionalSimulationParameterGUI
@@ -59,11 +53,9 @@ from .utility.data_manager.SourceTransfer import SourceTransfer
 from .building.CustomContextMenu import CustomContextMenu
 from .utility.BuildingCharacterization.BuildingCharacterizationService import BuildingCharacterizationService
 from .utility.NetworkCharacterization.NetworkCharacterizationService import NetworkCharacterizationService
-
-from .Test import Test
+from .config.services.SourcesTableDefaultLoader import SourcesTableDefaultLoader
 
 from .dhcoptimizerplanheat.ui import ui_utils
-from . import master_planning_config as mp_config
 
 
 
@@ -133,7 +125,7 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                                  "save_as.png")
         icon.addPixmap(QPixmap(icon_path), QIcon.Normal, QIcon.Off)
         self.save_existing_network_button.setIcon(icon)
-        self.save.setIcon(icon)
+        self.saveLoad.setIcon(icon)
 
         icon = QIcon()
         icon_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "icons",
@@ -323,13 +315,16 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.create_generation_point.setEnabled(False)
         self.create_generation_point_2.setEnabled(False)
 
-        for i in range(self.sourcesTable.rowCount()):
-            for j in range(self.sourcesTable.columnCount()):
-                self.sourcesTable.setItem(i, j, QTableWidgetItem("1"))
+        SourcesTableDefaultLoader.load_default(self.sourcesTable)
+        SourcesTableDefaultLoader.hide_default_rows(self.sourcesTable)
+        self.defaultData.clicked.connect(lambda: SourcesTableDefaultLoader.load_default(self.sourcesTable))
 
         self.KPIs_additional_data = {}
         self.dialog_additional_parameters = None
         self.additional_parameters_btn.clicked.connect(self.additional_parameters_btn_handler)
+
+        self.tree_item_manager = TreeItemManager(self.iface, self.dmmTree, self.dmmTreeNetwork,
+                                                 [self.DCN_network_list, self.DHN_network_list])
 
     def load_default_data(self):
         pass
@@ -656,8 +651,10 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 i = 2
 
                 #source = ""
-        technology =tech
+        technology = tech
         for b in selected:
+            if b.isHidden():
+                continue
             if b.child(i) is not None:
                 b.child(i).addChild(
                     Technology(
@@ -812,7 +809,9 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         Open the context menu for the trees of the widget
         :return:
         """
+        print("Step1._menu point:", type(point), point)
         selected = self.dmmTree.itemAt(point)
+        print("Step1._menu point:", type(selected), selected)
         menu = QMenu()
         if isinstance(selected, Technology):
             remove = QAction(
@@ -999,6 +998,7 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             self.DHN_network_list[network_to_be_removed[i]].remove_group()            # try:
             del self.DHN_network_list[network_to_be_removed[i]]
         self.refresh_DHN_network()
+        self.tree_item_manager.update_buildings_visualizzation()
 
     def remove_DCN_networks(self):
         network_to_be_removed = []
@@ -1009,6 +1009,7 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             self.DCN_network_list[network_to_be_removed[i]].remove_group()
             del self.DCN_network_list[network_to_be_removed[i]]
         self.refresh_DCN_network()
+        self.tree_item_manager.update_buildings_visualizzation()
 
     def refresh_DHN_network(self):
         self.listWidget_4.clear()
@@ -1306,30 +1307,30 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         tes_startEnd = self.networkTesStartEnd.value()
         tes_discharge = self.networkTes_discharge.value()
         COP_absorption = self.networkCop_absorption.value()
-        el_sale = self.network_el_sale
+        el_sale = self.network_el_sale.value()
 
         child = [str(" "),
-                str(technology),
-                str(source),
-                str(area),
-                str(temperature),
-                str(efficiency),
-                str(first_order),
-                str(second_order),
-                str(p_max),
-                str(p_min),
-                str(powerToRatio),
-                str(tech_min),
-                str(ramp_upDown),
-                str(fix),
-                str(fuel),
-                str(variable),
-                str(tes_size),
-                str(soc_min),
-                str(tes_startEnd),
-                str(tes_discharge),
-                str(COP_absorption),
-                str(el_sale)]
+                 str(technology),
+                 str(source),
+                 str(area),
+                 str(temperature),
+                 str(efficiency),
+                 str(first_order),
+                 str(second_order),
+                 str(p_max),
+                 str(p_min),
+                 str(powerToRatio),
+                 str(tech_min),
+                 str(ramp_upDown),
+                 str(fix),
+                 str(variable),
+                 str(fuel),
+                 str(tes_size),
+                 str(soc_min),
+                 str(tes_startEnd),
+                 str(tes_discharge),
+                 str(COP_absorption),
+                 str(el_sale)]
         new_child = QTreeWidgetItem(child)
 
         parent = self.dmmTreeNetwork.currentItem()
@@ -1355,17 +1356,16 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             if temperature > 40:
                 self.vis_MsgError()
 
-
-
-    def active_input_cooling(self,p):
+    def active_input_cooling(self, p):
         self.disable_all_cooling()
         techn = str(self.coolingTechnology.currentText())
 
-        if techn == self.simulator.technology_for_cooling[0] or techn == self.simulator.technology_for_cooling[0]:
+        if techn == self.simulator.technology_for_cooling[0] or techn == self.simulator.technology_for_cooling[1]:
             if techn == self.simulator.technology_for_cooling[0]:
-                self.sourceCool = self.simulator.sources_for_technology[5]
+                self.sourceCool = self.simulator.sources_for_technology[0]
             if techn == self.simulator.technology_for_cooling[1]:
                 self.sourceCool = self.simulator.sources_for_technology[8]
+            self.disable_all_cooling()
             self.coolingTemp.setEnabled(True)
             self.coolingTemp.setEnabled(True)
             self.P_max_cooling.setEnabled(True)
@@ -1380,30 +1380,28 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 self.sourceCool = self.simulator.sources_for_technology[9]
             if techn == self.simulator.technology_for_cooling[3]:
                 self.sourceCool = self.simulator.sources_for_technology[8]
+            self.disable_all_cooling()
             self.coolingTechMin.setEnabled(True)
             self.coolingRampUpDown.setEnabled(True)
             self.coolingVariableCost.setEnabled(True)
-            self.P_max_cooling.setEnabled(False)
-            self.Cop_absorption_cooling.setEnabled(False)
-            self.coolingFuelCost.setEnabled(False)
-            self.coolingFixedCost.setEnabled(False)
+            self.coolingFixedCost.setEnabled(True)
+            self.Cop_absorption_cooling.setEnabled(True)
+            self.P_max_cooling.setEnabled(True)
+            self.coolingFuelCost.setEnabled(True)
 
 
     def active_source_dialog(self, gf):
         self.disable_all_heating_input()
         self.sourceRead = ' '
         t = str(self.heatingTechnology.currentText())
-        print("step1_v2.active_source_dialog(). Searching technology:", t)
 
         key_list = self.simulator.individual_H_C_dict_var.keys()
 
         for key in key_list:
                 z = self.simulator.individual_H_C_dict_var[key]
-                print("step1_v2.active_source_dialog(). Searching in list:", z)
                 # first category HOB
                 if t in z:
                     if key == list(key_list)[0]: #heat_only_boiler
-                        print("step1_v2.active_source_dialog(). Found!", list(key_list)[0])
                         self.heatingEfficiency.setEnabled(True)
                         # self.heatingCapacity.lineEdit().setEnabled(True)
                         self.P_max_heating.setEnabled(True)
@@ -1422,7 +1420,6 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
                     if key == list(key_list)[1]: #electrical_heater
                         # self.heatingCapacity.lineEdit().setEnabled(True)
-                        print("step1_v2.active_source_dialog(). Found!", list(key_list)[1])
                         self.P_max_heating.setEnabled(True)
                         self.heatingTechMin.setEnabled(True)
                         self.heatingEfficiency.setEnabled(True)
@@ -1432,7 +1429,6 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                         self.sourceRead = self.simulator.sources_for_technology[11] # 'Electricity'
 
                     if key == list(key_list)[2]: #heat_pump
-                        print("step1_v2.active_source_dialog(). Found!", list(key_list)[2])
                         self.P_max_heating.setEnabled(True)
                         self.heatingTechMin.setEnabled(True)
                         self.heatingRampUpDown.setEnabled(True)
@@ -1448,7 +1444,6 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                             self.sourceRead = self.simulator.ask_for_sources(t, serv="heating")
 
                     if key == list(key_list)[3]: #cogeneration
-                        print("step1_v2.active_source_dialog(). Found!", list(key_list)[3])
                         self.P_max_heating.setEnabled(True)
                         self.heatingTechMin.setEnabled(True)
                         self.heatingEfficiency.setEnabled(True)
@@ -1465,9 +1460,7 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                         elif t == z[2]:
                             self.sourceRead = self.simulator.sources_for_technology[1]  # 'Biomass foresty'
 
-
                     if key == list(key_list)[4]:#solar_thermal
-                        print("step1_v2.active_source_dialog(). Found!", list(key_list)[4])
                         self.heatingEfficiency.setEnabled(True)
                         self.heatingInclinazione.setEnabled(True)
                         self.heating1coeff.setEnabled(True)
@@ -1478,7 +1471,6 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                         self.sourceRead = self.simulator.sources_for_technology[2]
 
                     if key ==list(key_list)[5]:#cooling_heat_pump
-                        print("step1_v2.active_source_dialog(). Found!", list(key_list)[5])
                         # self.heatingCapacity.lineEdit().setEnabled(True)
                         self.heatingVariableCost.lineEdit().setEnabled(True)
 
@@ -1491,7 +1483,6 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                     # 7 thermal energy storage
                     # 8 domestic_hot_water_thermal_energy_storage
                     if key == list(key_list)[8] or key == list(key_list)[7]:
-                        print("step1_v2.active_source_dialog(). Found!", list(key_list)[8], list(key_list)[7])
                         self.Tes_size_heating.setEnabled(True)
                         self.Soc_min_heating.setEnabled(True)
                         self.tes_startEnd_heating.setEnabled(True)
@@ -1500,7 +1491,6 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                         self.sourceRead = self.simulator.sources_for_technology[0]
 
                     if key == list(key_list)[12]:  # absorption_heat_pump
-                        print("step1_v2.active_source_dialog(). Found!", list(key_list)[12])
                         self.P_max_heating.setEnabled(True)
                         self.COP_heating.setEnabled(True)
                         self.heatingVariableCost.setEnabled(True)
@@ -1609,6 +1599,7 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
     def active_source_dialogDHW(self):
         self.sourceDhw = ' '
+        self.disable_all_dhw_input()
 
         q = str(self.dhwTechnology.currentText())
 
@@ -1652,10 +1643,11 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 if key == list(key_list)[2]:  # heat_pump
                     self.dhwP_max.setEnabled(True)
                     self.dhwTechMin.setEnabled(True)
-                    self.dhwEfficiency.setEnabled(True)
                     self.dhwRampUpDown.setEnabled(True)
                     self.dhwVariableCost.setEnabled(True)
                     self.dhwTemp.setEnabled(True)
+                    self.dhwFixedCost.setEnabled(True)
+                    self.dhwFuelCost.setEnabled(True)
                     # self.simulator.ask_for_sources(q, serv="dhw")
                     if q == z[0]:
                         self.sourceDhw = self.simulator.sources_for_technology[5]
@@ -1678,6 +1670,7 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                     self.dhwFixedCost.setEnabled(True)
                     self.dhwFixedCost.setEnabled(True)
                     self.dhwElsale.setEnabled(True)
+                    self.dhwCb_CHP.setEnabled(True)
                     if q == z[0]:
                         self.sourceDhw = self.simulator.sources_for_technology[9] # 'Natural gas'
                     elif q == z[1]:
@@ -1726,6 +1719,7 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                     self.dhwCop.setEnabled(True)
                     self.dhwVariableCost.setEnabled(True)
                     self.dhwFuelCost.setEnabled(True)
+                    self.dhwFixedCost.setEnabled(True)
                     self.dhwTechMin.setEnabled(True)
                     self.dhwRampUpDown.setEnabled(True)
                    # self.ask_for_sources(q)
@@ -1870,7 +1864,7 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                     # self.networkSources.setEnabled(True)
                     # self.sourceNet = self.simulator.ask_tchnology_for_absoptionHeatPump(t)
                     if t == z[0]:  # Air source gas absorption heat pump
-                        self.sourceNet = self.simulator.sources_for_technology[5]
+                        self.sourceNet = self.simulator.sources_for_technology[9]
                     if t == z[1]:  # Shallow geothermal gas absorption heat pump
                         self.sourceNet = self.simulator.sources_for_technology[12]
                     if t == z[2]:  # Absorption heat pump
@@ -2278,23 +2272,18 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             self.pipes_selected_from_list = True
 
     def save_clicked(self):
-
         if self.check_sources() and self.check_tech_capacity():
-
-            # if not self.networks_send:
-            self.networks_send = True
-
-            for n in self.DHN_network_list:
-                print("Sending:", n.name)
-            for n in self.DCN_network_list:
-                print("Sending:", n.name)
-            self.send_networks.emit([self.DHN_network_list, self.DCN_network_list], self.building_layer,
-                                    self.street_layer, TechnologiesTransfer(self.dmmTree), SourceTransfer(self.sourcesTable))
-
             self.send_widget.emit(self.dmmTree, self.sourcesTable, self.DHN_network_list, self.DCN_network_list)
-            print("Step1_v2-save_clicked(), sending widgets:", self.dmmTree, self.sourcesTable)
+            if not self.networks_send:
+                self.send_networks.emit([self.DHN_network_list, self.DCN_network_list], self.building_layer,
+                                        self.street_layer, TechnologiesTransfer(self.dmmTree,
+                                                                                n_tree=self.dmmTreeNetwork),
+                                        SourceTransfer(self.sourcesTable))
+                self.networks_send = True
+                confirm_baseline: QPushButton = self.save
+                confirm_baseline.setText("Go to step selection")
         else:
-            print("step1, save_clicked: check_tech_capacity failed")
+            print("step1, save_clicked: check_tech_capacity or check_sources failed")
 
     def check_tech_capacity(self):
         if self.muted:
@@ -2328,7 +2317,8 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             if i > 20:
                 s = s + "-> " + "... other " + str(len(building_list) - 1) + " buildings..."
                 break
-        msgBox.setText("Are you sure to continue?")
+        msgBox.setText("Are you sure to continue? The definition of the baseline scenario should be "
+                       "completed before proceeding. Click Cancel and save your project if you're not sure")
         msgBox.setInformativeText("The technologies of the following buildings do not cover the peak demand: " + s)
         msgBox.setStandardButtons(QMessageBox.Cancel | QMessageBox.Ok)
         msgBox.setDefaultButton(QMessageBox.Cancel)
@@ -2366,7 +2356,6 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                     item.setSelected(True)
             except:
                 pass
-
 
     def insert_PeakDemandDhw(self):
         self.dialog.show()
@@ -2541,34 +2530,6 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         else:
             for i in range(selected.childCount()-1, -1, -1):
                 selected.removeChild(selected.child(i))
-
-    def DHN_to_save(self):
-        widget = self.listWidget_4
-        if self.work_folder is not None:
-            self.folder = self.work_folder
-        else:
-            folder = os.path.join(os.path.dirname(os.path.realpath(__file__)), "save_utility", "DefaultSaveFolder")
-        for item in widget.selectedItems():
-            network_index = widget.row(item)
-            list = self.DHN_network_list[network_index]
-            save_network_list = network_save(list)
-            save_network_list.save_network_baseline(self.folder)
-
-
-    def DCN_to_save(self):
-
-        widget = self.listNetworkDCN
-        if self.work_folder is not None:
-            self.folder = self.work_folder
-        else:
-            folder = os.path.join(os.path.dirname(os.path.realpath(__file__)), "save_utility", "DefaultSaveFolder")
-        for item in widget.selectedItems():
-            network_index = widget.row(item)
-            list = self.DCN_network_list[network_index]
-            save_network_list = network_save(list)
-            save_network_list.save_network_baseline(self.folder)
-
-
 
     def load_folder_dhn(self):
         folder_DHN = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
@@ -2820,11 +2781,10 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.add_old_streets_button_2.clicked.connect(lambda: self.add_streets_optimizer(dhcoptimizerplanheat))
         self.generate_existing_network_button_2.clicked.connect(lambda: self.generate_geography(dhcoptimizerplanheat, "DCN"))
         self.closeEditing_2.clicked.connect(lambda: self.close_optimizer(dhcoptimizerplanheat))
-
-        self.create_generation_point.clicked.connect(lambda : self.locate_sources_DHN(dhcoptimizerplanheat))
-        self.create_generation_point_2.clicked.connect(lambda : self.locate_sources_DCN(dhcoptimizerplanheat))
-        self.connect_generation_point.clicked.connect(lambda : dhcoptimizerplanheat.connect_sources())
-        self.connect_generation_point_2.clicked.connect(lambda : dhcoptimizerplanheat.connect_sources())
+        self.create_generation_point.clicked.connect(lambda: self.locate_sources_DHN(dhcoptimizerplanheat))
+        self.create_generation_point_2.clicked.connect(lambda: self.locate_sources_DCN(dhcoptimizerplanheat))
+        self.connect_generation_point.clicked.connect(lambda: dhcoptimizerplanheat.connect_sources())
+        self.connect_generation_point_2.clicked.connect(lambda: dhcoptimizerplanheat.connect_sources())
 
         dhcoptimizerplanheat.dock.closed.connect(lambda: self.dhcoptimizerplanheat_closed(dhcoptimizerplanheat))
         dhcoptimizerplanheat.manual_dock.closed.connect(lambda: self.dhcoptimizerplanheat_closed(dhcoptimizerplanheat))
@@ -2913,6 +2873,7 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         data_transfer.network.optimized = True
         self.insert_point()
         data_transfer.step1_mode = False
+        self.tree_item_manager.update_buildings_visualizzation()
 
     def get_data_transfer(self, _, data_transfer):
         self.data_transfer = data_transfer
@@ -2953,7 +2914,6 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             return
         self.data_transfer.network.connect_generation_points_v2(supply_layer, streets_layer)
 
-
     def hide_layers_before_editing_networks(self, mode, network_name):
         # hide original street layer (will be recreated)
         # hide future and baseline building shape (not usefull)
@@ -2983,6 +2943,18 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.dialog_additional_parameters.show()
 
     def receive_additional_parameters(self, data):
-        print("Step1.receive_additional_parameters(). data:", data)
         if isinstance(data, dict):
             self.KPIs_additional_data = data
+
+    def update_building_tree_state(self):
+        for i in range(self.dmmTree.topLevelItemCount()):
+            item = self.dmmTree.topLevelItem(i)
+            try:
+                building_feature_id = int(item.text(0))
+                for networks in [self.DHN_network_list, self.DCN_network_list]:
+                    for network in networks:
+                        pass
+            except Exception:
+                pass
+
+

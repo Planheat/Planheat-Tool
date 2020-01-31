@@ -11,7 +11,7 @@ module individual_heating_and_cooling
 # 	end
         m = Model(solver = CbcSolver(logLevel=3, seconds=60))
 
-#         m = Model(solver = CbcSolver(logLevel=1, ratioGap=1e-4))
+#       m = Model(solver = CbcSolver(logLevel=1, ratioGap=1e-4))
 
 
         file_end = string(building_id, ".csv")
@@ -30,8 +30,8 @@ module individual_heating_and_cooling
         ST_specific = readcsv(string(input_folder, "\\ST_specific_time.csv"))
         # ST_specific=ST_specific[1:4000]
 
-        Electricity_price = readcsv(string(input_folder, "\\Electricity_price_time.csv"))
-        # Electricity_price=Electricity_price[1:4000]
+		#28/01/2020: el price in thech_infos
+        #Electricity_price = readcsv(string(input_folder, "\\Electricity_price_time.csv"))
 
         eta_HP = readcsv(string(input_folder, "\\eta_HP_1.csv"))
         # eta_HP = eta_HP[1:4000]
@@ -92,7 +92,7 @@ module individual_heating_and_cooling
         cost_var_EH = tech_infos["cost_var_EH"] #0.5
         # Fuel cost [EUR/MWh]
         # Choose between fixed electricity price or electricity market price
-        cost_fuel_EH = Electricity_price
+        cost_fuel_EH = tech_infos["cost_fuel_EH"]  # Electricity_price
         # Ramp-up-down speed [MW/h]
         Percentage_ramp_up_down_EH=tech_infos["Percentage_ramp_up_down_EH"]
         ramp_up_down_EH = P_max_EH*Percentage_ramp_up_down_EH
@@ -107,7 +107,7 @@ module individual_heating_and_cooling
         cost_var_EH_2 = tech_infos["cost_var_EH_2"] #0.7
         # Fuel cost [EUR/MWh]
         # Choose between fixed electricity price or electricity market price
-        cost_fuel_EH_2 = Electricity_price
+        cost_fuel_EH_2 = tech_infos["cost_fuel_EH_2"]  # Electricity_price
         Technical_minimum_EH_2 = tech_infos["Technical_minimum_EH_2"] #0
         P_min_EH_2 = P_max_EH_2*Technical_minimum_EH_2
         # Ramp-up-down speed [MW/h]
@@ -124,7 +124,7 @@ module individual_heating_and_cooling
         cost_var_HP = tech_infos["cost_var_HP"] #0.5
         # Fuel cost [EUR/MWh]
         # Choose between fixed electricity price or electricity market price
-        cost_fuel_HP = Electricity_price
+        cost_fuel_HP = tech_infos["cost_fuel_HP"]  # Electricity_price
         Tecnical_minimum_HP= tech_infos["Technical_minimum_HP"] #0
         P_min_HP = Tecnical_minimum_HP*P_max_HP
         # Ramp-up-down speed [MW/h]
@@ -141,7 +141,7 @@ module individual_heating_and_cooling
         cost_var_HP_2 = tech_infos["cost_var_HP_2"] #0.5
         # Fuel cost [EUR/MWh]
         # Choose between fixed electricity price or electricity market price
-        cost_fuel_HP_2 = Electricity_price
+        cost_fuel_HP_2 = tech_infos["cost_fuel_HP_2"]  # Electricity_price
         Tecnical_minimum_HP_2= tech_infos["Technical_minimum_HP_2"] #0
         P_min_HP_2 = Tecnical_minimum_HP_2*P_max_HP_2
         # Ramp-up-down speed [MW/h]
@@ -179,7 +179,7 @@ module individual_heating_and_cooling
         # Fuel cost [EUR/MWh]
         cost_fuel_CHP = tech_infos["cost_fuel_CHP"] #20
         # Price paid to CHP for electrcity production
-        CHP_electricity_price=Electricity_price
+        CHP_electricity_price = tech_infos["CHP_electricity_price"]  # Electricity_price
         # Technical minimum [MW]
         Tecnical_minimum_CHP= tech_infos["Tecnical_minimum_CHP"]
         P_min_CHP = Tecnical_minimum_CHP*P_max_CHP
@@ -207,7 +207,7 @@ module individual_heating_and_cooling
         cost_var_HP_cool = tech_infos["cost_var_HP_cool"] #0.5
         # Fuel cost [EUR/MWh]
         # Choose between fixed electricity price or electricity market price
-        cost_fuel_HP_cool = Electricity_price
+        cost_fuel_HP_cool = tech_infos["cost_fuel_HP_cool"]  # Electricity_price
         # Technical minimum [MW]
         Tecnical_minimum_HP_cool=tech_infos["Tecnical_minimum_HP_cool"]
         P_min_HP_cool = Tecnical_minimum_HP_cool*P_max_HP_cool
@@ -226,7 +226,7 @@ module individual_heating_and_cooling
         cost_var_HP_cool_2 = tech_infos["cost_var_HP_cool_2"] #0.5
         # Fuel cost [EUR/MWh]
         # Choose between fixed electricity price or electricity market price
-        cost_fuel_HP_cool_2 = Electricity_price
+        cost_fuel_HP_cool_2 = tech_infos["cost_fuel_HP_cool_2"]  # Electricity_price
         Tecnical_minimum_HP_cool_2=tech_infos["Tecnical_minimum_HP_cool_2"]
         P_min_HP_cool_2 = Tecnical_minimum_HP_cool_2*P_max_HP_cool_2
         # Ramp-up-down speed [MW/h]
@@ -518,7 +518,7 @@ module individual_heating_and_cooling
         writecsv(string(output_folder, "/Result_HP_cool_", building_id, ".csv"), Result_HP_cool)
         writecsv(string(output_folder, "/Result_HP_cool_2_", building_id, ".csv"), Result_HP_cool_2)
 
-        writecsv(string(output_folder, "/Result_HP_cool_absorption" ,building_id, ".csv"), Result_HP_cool_absorption)
+        writecsv(string(output_folder, "/Result_HP_cool_absorption_" ,building_id, ".csv"), Result_HP_cool_absorption)
 
         # writecsv(string(output_folder, "/Result_HP_comb_heat_", building_id, ".csv"), Result_HP_comb_heat_and_DHW)
         #writecsv(string(output_folder, "/Result_HP_comb_cool_", building_id, ".csv"), Result_HP_comb_cool)
@@ -547,7 +547,7 @@ module individual_heating_and_cooling
         writecsv(string(output_folder, "/Result_HP_cool_", building_id, ".csv"), example_file)
         writecsv(string(output_folder, "/Result_HP_cool_2_", building_id, ".csv"), example_file)
 
-        writecsv(string(output_folder, "/Result_HP_cool_absorption" ,building_id, ".csv"), example_file)
+        writecsv(string(output_folder, "/Result_HP_cool_absorption_" ,building_id, ".csv"), example_file)
 
        # writecsv(string(output_folder, "/Result_HP_comb_heat_", building_id, ".csv"), Result_HP_comb_heat_and_DHW)
         #writecsv(string(output_folder, "/Result_HP_comb_cool_", building_id, ".csv"), Result_HP_comb_cool)

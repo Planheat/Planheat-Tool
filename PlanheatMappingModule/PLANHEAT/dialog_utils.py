@@ -207,6 +207,8 @@ def select_supply_algoritm_node_dialog(node, new):
     dialog.param2InputText.textChanged.connect(lambda: refresh_straw_yield(dialog, node, algorithms[dialog.algorithmSelect.currentData()]))
     dialog.param4InputText.textChanged.connect(lambda: refresh_energy_production_factor(dialog, algorithms[dialog.algorithmSelect.currentData()]))
 
+    fill_select_boxes_with_data_nodes(dialog, node)
+
     dialog.param1Select.currentIndexChanged.connect(
         lambda: fill_attributes_select_box(dialog.param1IdFieldSelect, file=find_node_file_by_id(node.treeWidget(), dialog.param1Select.currentData()),
                                            map_selection=find_node_map_selection_by_id(node.treeWidget(), dialog.param1Select.currentData()),
@@ -218,7 +220,6 @@ def select_supply_algoritm_node_dialog(node, new):
 
     dialog.bufferText.setText(str(node_data.buffer))
 
-    fill_select_boxes_with_data_nodes(dialog, node)
 
     if not new:
         dialog.descriptionText.setText(str(node_data.description))
@@ -232,9 +233,9 @@ def select_supply_algoritm_node_dialog(node, new):
                     index = dialog.param1Select.findData(value.value)
                     if index != -1:
                         dialog.param1Select.setCurrentIndex(index)
-                    if value.value and dialog.param1IdFieldSelect.isVisible():
-                        selection_file = find_node_file_by_id(node.treeWidget(), value.value)
-                        selection_map = find_node_map_selection_by_id(node.treeWidget(), value.value)
+                    if value.value is not None and dialog.findChild(QWidget, "param1IdFieldSelect"):
+                        # selection_file = find_node_file_by_id(node.treeWidget(), value.value)
+                        # selection_map = find_node_map_selection_by_id(node.treeWidget(), value.value)
                         # fill_attributes_select_box(dialog.param1IdFieldSelect, file=selection_file, map_selection=selection_map, custom_value="calculate feature areas", shp_only=True)
                         dialog.param1IdFieldSelect.setCurrentIndex(dialog.param1IdFieldSelect.findText(value.id_field))
                 elif key == 2:
@@ -721,6 +722,7 @@ def save_algorithm_node_attributes_dialog(dialog, node, new, close=True):
         p1id = None
         if dialog.findChild(QWidget, "param1IdFieldSelect"):
             p1id = str(dialog.param1IdFieldSelect.currentText())
+        print(p1id)
         parameter = Parameter(None, node_data.node_id, 1, dialog.param1Select.currentData(), p1id, None)
         if node_data.parameters and 1 in node_data.parameters:
             parameter.parameter_id = node_data.parameters[1].parameter_id
@@ -1267,6 +1269,7 @@ def all_fields_filled(dialog):
 
 def fill_attributes_select_box(box, file=None, custom_value=None, shp_only=False, map_selection=None):
     attributes = []
+    print("triggered")
     if file:
         attributes = get_shape_attributes_list(str(file))
     elif map_selection:

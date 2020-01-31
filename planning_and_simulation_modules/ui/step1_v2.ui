@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1264</width>
-    <height>828</height>
+    <width>1190</width>
+    <height>865</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -16,11 +16,17 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>286</width>
+    <height>133</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string> Baseline scenario definition</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
-   <layout class="QGridLayout" name="gridLayout_3">
+   <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
@@ -31,7 +37,7 @@
          </font>
         </property>
         <property name="currentIndex">
-         <number>2</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="dhcnTab">
          <attribute name="title">
@@ -1056,14 +1062,17 @@
                  <double>0.010000000000000</double>
                 </property>
                 <property name="value">
-                 <double>1.000000000000000</double>
+                 <double>3.100000000000000</double>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="QDoubleSpinBox" name="network2coeff">
                 <property name="decimals">
-                 <number>3</number>
+                 <number>4</number>
+                </property>
+                <property name="minimum">
+                 <double>-99999999.989999994635582</double>
                 </property>
                 <property name="maximum">
                  <double>99999999.989999994635582</double>
@@ -1072,7 +1081,7 @@
                  <double>0.010000000000000</double>
                 </property>
                 <property name="value">
-                 <double>1.000000000000000</double>
+                 <double>0.000500000000000</double>
                 </property>
                </widget>
               </item>
@@ -1080,6 +1089,9 @@
                <widget class="QDoubleSpinBox" name="network_el_sale">
                 <property name="maximum">
                  <double>999999999.000000000000000</double>
+                </property>
+                <property name="value">
+                 <double>1.000000000000000</double>
                 </property>
                </widget>
               </item>
@@ -1130,20 +1142,20 @@
                  <double>0.010000000000000</double>
                 </property>
                 <property name="value">
-                 <double>1.000000000000000</double>
+                 <double>0.000000000000000</double>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="QDoubleSpinBox" name="networkRampUpDown">
                 <property name="maximum">
-                 <double>99999999.989999994635582</double>
+                 <double>100.000000000000000</double>
                 </property>
                 <property name="singleStep">
-                 <double>0.010000000000000</double>
+                 <double>1.000000000000000</double>
                 </property>
                 <property name="value">
-                 <double>1.000000000000000</double>
+                 <double>100.000000000000000</double>
                 </property>
                </widget>
               </item>
@@ -1877,7 +1889,7 @@
             <rect>
              <x>10</x>
              <y>290</y>
-             <width>354</width>
+             <width>351</width>
              <height>21</height>
             </rect>
            </property>
@@ -2013,7 +2025,7 @@
             <rect>
              <x>10</x>
              <y>160</y>
-             <width>354</width>
+             <width>351</width>
              <height>31</height>
             </rect>
            </property>
@@ -2030,14 +2042,14 @@
                <double>0.010000000000000</double>
               </property>
               <property name="value">
-               <double>1.000000000000000</double>
+               <double>3.100000000000000</double>
               </property>
              </widget>
             </item>
             <item>
              <widget class="QDoubleSpinBox" name="heating2coeff">
               <property name="decimals">
-               <number>3</number>
+               <number>4</number>
               </property>
               <property name="minimum">
                <double>-99999999.989999994635582</double>
@@ -2049,7 +2061,7 @@
                <double>0.010000000000000</double>
               </property>
               <property name="value">
-               <double>1.000000000000000</double>
+               <double>0.000500000000000</double>
               </property>
              </widget>
             </item>
@@ -2057,6 +2069,9 @@
              <widget class="QDoubleSpinBox" name="heatingElsale">
               <property name="maximum">
                <double>999999.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>1.000000000000000</double>
               </property>
              </widget>
             </item>
@@ -2946,14 +2961,14 @@
                <double>0.010000000000000</double>
               </property>
               <property name="value">
-               <double>1.000000000000000</double>
+               <double>3.100000000000000</double>
               </property>
              </widget>
             </item>
             <item>
              <widget class="QDoubleSpinBox" name="dhw2coeff">
               <property name="decimals">
-               <number>3</number>
+               <number>4</number>
               </property>
               <property name="minimum">
                <double>-99999999.989999994635582</double>
@@ -2965,7 +2980,7 @@
                <double>0.010000000000000</double>
               </property>
               <property name="value">
-               <double>1.000000000000000</double>
+               <double>0.000500000000000</double>
               </property>
              </widget>
             </item>
@@ -2973,6 +2988,9 @@
              <widget class="QDoubleSpinBox" name="dhwElsale">
               <property name="maximum">
                <double>9999999.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>1.000000000000000</double>
               </property>
              </widget>
             </item>
@@ -3772,14 +3790,14 @@
                <double>0.010000000000000</double>
               </property>
               <property name="value">
-               <double>1.000000000000000</double>
+               <double>3.100000000000000</double>
               </property>
              </widget>
             </item>
             <item>
              <widget class="QDoubleSpinBox" name="cooling2coeff">
               <property name="decimals">
-               <number>3</number>
+               <number>4</number>
               </property>
               <property name="minimum">
                <double>-99999999.989999994635582</double>
@@ -3791,7 +3809,7 @@
                <double>0.010000000000000</double>
               </property>
               <property name="value">
-               <double>1.000000000000000</double>
+               <double>0.000500000000000</double>
               </property>
              </widget>
             </item>
@@ -4127,17 +4145,7 @@
            </item>
            <item>
             <property name="text">
-             <string>Shallow geothermal compression chiller</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
              <string>Air source gas absorption chiller</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Shallow geothermal Gas absorption chiller</string>
             </property>
            </item>
           </widget>
@@ -4296,7 +4304,7 @@
            <rect>
             <x>0</x>
             <y>60</y>
-            <width>1201</width>
+            <width>891</width>
             <height>671</height>
            </rect>
           </property>
@@ -4622,7 +4630,7 @@ factor</string>
          <widget class="QPushButton" name="defaultData">
           <property name="geometry">
            <rect>
-            <x>1050</x>
+            <x>740</x>
             <y>20</y>
             <width>151</width>
             <height>28</height>
@@ -5133,6 +5141,43 @@ factor</string>
             <string>Additional simulation input</string>
            </property>
           </widget>
+         </widget>
+         <widget class="QPushButton" name="saveLoad">
+          <property name="geometry">
+           <rect>
+            <x>400</x>
+            <y>710</y>
+            <width>319</width>
+            <height>28</height>
+           </rect>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>319</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>70</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="baseSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Save/Load</string>
+          </property>
          </widget>
         </widget>
        </widget>

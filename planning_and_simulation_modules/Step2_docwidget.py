@@ -1,8 +1,6 @@
-import os, shutil
-import math
+import os
 
-from PyQt5 import QtGui, QtWidgets, uic
-from PyQt5.QtGui import QColor, QBrush
+from PyQt5 import QtWidgets, uic
 from PyQt5.QtCore import pyqtSignal
 from PyQt5 import QtCore
 from PyQt5.QtGui import QColor, QPixmap, QIcon, QBrush
@@ -10,10 +8,11 @@ import os.path
 import logging
 import sys
 import traceback
+import time
 
 # Import PyQt5
-from PyQt5.QtWidgets import QTreeWidget, QTableWidgetItem, QMessageBox
-from PyQt5.QtCore import QThread
+from PyQt5.QtWidgets import QTableWidgetItem, QMessageBox
+
 
 # Import qgis main libraries
 from qgis.core import *
@@ -21,24 +20,20 @@ from qgis.gui import *
 from qgis.utils import *
 
 # Import the custom tree widget items
-from .building.Building import *
 from .utility.filters.FECvisualizerService import FECvisualizerService
-from .utility.easy_progress_bar import Actions
+
 from .building.DPM import *
 from .dialogSources import CheckSourceDialog
 from .technology.Technology import *
-from .Tjulia.Heat_pump_COP import generate_fileEta_forJulia
+
 from .Tjulia.Solar_thermal_production import generate_solar_thermal_forJulia
-from .Tjulia.single_building.Dem_cool_heating import generafile, gen_dem_time_district
-from .Tjulia.single_building.eta_cool_heat_pump import eta_cool_heat_pump
-from .Tjulia.district.heating.Waste_heat_heat_pumps_heating import generate_file_Waste_heat_pump_heating
-from .Tjulia.district.cooling.Waste_heat_heat_pumps_cooling import generate_file_Waste_heat_pump_cooling
+from .Tjulia.single_building.Dem_cool_heating import generafile
+from .Tjulia.gui.SimulationDetailsWorker import SimulationDetailsWorker
 from .Tjulia.DistrictSimulator import DistrictSimulator
+from .Tjulia.test.MyLog import MyLog
 
+from .utility.pvgis.PvgisApiWorker import PvgisApiWorker
 
-from .Tjulia.Heat_pump_cool_COP import genera_file_etaHP_cool
-
-from .dhcoptimizerplanheat.optimizer.automatic_design.ad_network_optimization import ADNetworkOptimizer
 from . import master_planning_config
 
 import requests
@@ -53,17 +48,21 @@ class Step2_widget(QtWidgets.QDockWidget, FORM_CLASS):
     update_progress_bar = pyqtSignal(int)
     stop_progress_bar = pyqtSignal()
 
-    def __init__(self, work_folder=None, parent=None):
+    def __init__(self, work_folder=None, parent=None, iface=None):
         """Constructor."""
         super(Step2_widget, self).__init__(parent)
 
         self.logger = logging.getLogger(__name__)
+        self.my_log = MyLog(os.path.join(os.path.dirname(os.path.realpath(__file__)), "Tjulia", "test",
+                                         "log_simulator.txt"))
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
         # self.<objectname>, and you can use autoconnect slots - see
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
+        self.iface = iface
+        self.loading_mode_on = False
         self.baseline_buildings_widget = None
         self.baseline_sources_table = None
         self.baseline_scenario = None
@@ -119,6 +118,9 @@ class Step2_widget(QtWidgets.QDockWidget, FORM_CLASS):
         self.tableWidget_5.hideRow(4)
         self.tableWidget_5.hideRow(23)
         self.tableWidget_2.hideRow(9)
+        for i in range(self.tableWidget_3.rowCount()):
+            if i not in [0, 5]:
+                self.tableWidget_3.hideRow(i)
 
         self.tabWidget.setCurrentIndex(0)
         self.pop_up_progress_bar = None
@@ -128,16 +130,17 @@ class Step2_widget(QtWidgets.QDockWidget, FORM_CLASS):
         event.accept()
 
     def closeStep2(self):
-        if self.KPIs is None:
-            msg = QMessageBox(self)    
-            msg.setIcon(QMessageBox.Question)
-            msg.setStandardButtons(QMessageBox.Yes|QMessageBox.No)
-            msg.setWindowTitle("KPIs uncomputed")
-            msg.setText("The KPIs have not been calculated. They need to be computed to run the simulation."
-                        +" Do you want to continue anyway ?")
-            retval = msg.exec_()
-            if retval == QMessageBox.No:
-                return
+        if not self.loading_mode_on:
+            if self.KPIs is None:
+                msg = QMessageBox(self)
+                msg.setIcon(QMessageBox.Question)
+                msg.setStandardButtons(QMessageBox.Yes|QMessageBox.No)
+                msg.setWindowTitle("KPIs uncomputed")
+                msg.setText("The KPIs have not been calculated. They need to be computed to run the simulation."
+                            + " Do you want to continue anyway ?")
+                retval = msg.exec_()
+                if retval == QMessageBox.No:
+                    return
         self.hide()
         self.step2_closing_signal.emit()
 
@@ -164,32 +167,14 @@ class Step2_widget(QtWidgets.QDockWidget, FORM_CLASS):
         self.mode_individual_buildings_active = isactive
 
     def KPIs_baselineScenario(self):
-        # print("Main plugin thread:", int(QThread.currentThreadId()))
-        # pop_up_progress_bar = Actions()
-        # thread = QThread()
-        # pop_up_progress_bar.moveToThread(thread)
-        # thread.started.connect(pop_up_progress_bar.start)
-        # # self.update_progress_bar.connect(pop_up_progress_bar.add_progress)
-        # # self.stop_progress_bar.connect(pop_up_progress_bar.stop)
-        # pop_up_progress_bar.finished.connect(thread.quit)
-        # # self.pop_up_progress_bar.finished.connect(self.pop_up_progress_bar.deleteLater)
-        # thread.finished.connect(thread.deleteLater)
-        #
-        # thread.start()
-        #
-        # self.stop_progress_bar.emit()
-        #
-        # return
-
-
-        kpis_folder = os.path.join( master_planning_config.CURRENT_PLANNING_DIRECTORY,
-                                    master_planning_config.DISTRICT_FOLDER,
-                                    master_planning_config.KPIS_FOLDER)
+        self.my_log.log("GENERAL COMPUTATION STARTS")
+        kpis_folder = os.path.join(master_planning_config.CURRENT_PLANNING_DIRECTORY,
+                                   master_planning_config.DISTRICT_FOLDER,
+                                   master_planning_config.KPIS_FOLDER)
 
         #======================= Network approach =========================
-
         if True:#self.mode_networks_active:
-
+            self.my_log.log("NETWORKS GENERAL COMPUTATION STARTS")
             #dr = os.path.join(os.path.dirname(os.path.realpath(__file__)), "Tjulia", "district", "heating")
             dr = os.path.join(kpis_folder, "Tjulia", "district", "heating")
             self.remove_files(os.path.join(dr, "Results"), "Result")
@@ -197,16 +182,8 @@ class Step2_widget(QtWidgets.QDockWidget, FORM_CLASS):
             dr_sim = os.path.join(kpis_folder, "Tjulia", "district")
 
             if len(self.DHN_network_list) > 0:
-                cinput = os.path.join(  master_planning_config.CURRENT_MAPPING_DIRECTORY,
-                                    master_planning_config.DMM_FOLDER,
-                                    master_planning_config.DMM_PREFIX+master_planning_config.DMM_HOURLY_SUFFIX+".csv")
-                gen_dem_time_district(cinput=cinput, coutput=os.path.join(dr, "input"), energy="Heating")
                 self.district_heating_preprocessing(dr_sim)
             if len(self.DCN_network_list) > 0:
-                cinput = os.path.join(  master_planning_config.CURRENT_MAPPING_DIRECTORY,
-                                    master_planning_config.DMM_FOLDER,
-                                    master_planning_config.DMM_PREFIX+master_planning_config.DMM_HOURLY_SUFFIX+".csv")
-                gen_dem_time_district(cinput=cinput, coutput=os.path.join(dr, "input"), energy="Cooling")
                 self.district_cooling_preprocessing(dr_sim)
 
             print("Step2.py, KPIs_baselineScenario(): setting up simulator")
@@ -220,11 +197,13 @@ class Step2_widget(QtWidgets.QDockWidget, FORM_CLASS):
             # thread_networks.started.connect(lambda: self.simulator.run_district(dr_sim))
             # thread_networks.start()
             self.simulator.run_district(dr_sim)
+            self.my_log.log("NETWORKS GENERAL COMPUTATION ENDS")
 
         #======================= Buildings approach =========================
 
         if True:#self.mode_individual_buildings_active:
-
+            self.my_log.log("BUILDINGS GENERAL COMPUTATION STARTS")
+            now = time.time()
             #dr = os.path.join(os.path.dirname(os.path.realpath(__file__)), "Tjulia", "single_building")
             dr = os.path.join(kpis_folder, "Tjulia", "single_building")
             # ==> [PlanHeatProjectName]_hourly.csv
@@ -236,22 +215,27 @@ class Step2_widget(QtWidgets.QDockWidget, FORM_CLASS):
                                     master_planning_config.DMM_FOLDER,
                                     master_planning_config.DMM_PREFIX+master_planning_config.DMM_HOURLY_SUFFIX+".csv")
             n, buildings = generafile(cinput=cinput, coutput=os.path.join(dr, "input"))
-
+            self.my_log.log("Hourly profiles processed in " + str(time.time()-now) + " seconds.")
+            now = time.time()
             self.remove_files(os.path.join(dr, "Results"), "Result")
+            self.my_log.log("Old results removed in " + str(time.time() - now) + " seconds.")
+            now = time.time()
             print("Step2.py, KPIs_baselineScenario(): single building common precalculations")
             self.single_building_common_precalculation(dr)
+            self.my_log.log("Common precaltulations done in " + str(time.time() - now) + " seconds.")
             print("Step2.py, KPIs_baselineScenario(): running building calculation*")
-            self.simulator.run_buildings(buildings, dr)
+            self.simulator.run_buildings(buildings, dr, log=self.my_log)
             self.simulator.progress_bar = self.progressBar
-            KPIs = self.simulator.close_simulation()
-            self.fec_visualizer_service.set_KPIs(KPIs)
+            self.my_log.log("BUILDINGS GENERAL COMPUTATION ENDS")
+
 
         #================================================================
-
+        KPIs = self.simulator.close_simulation()
+        self.fec_visualizer_service.set_KPIs(KPIs)
 
         self.KPIs = KPIs
 
-        self.send_KPIs_to_future.emit(KPIs)
+        self.send_KPIs_to_future.emit(self.KPIs)
 
         cellr =QTableWidgetItem(str(KPIs["EN_1.1R"]))
         cellt = QTableWidgetItem(str(KPIs["EN_1.1T"]))
@@ -813,9 +797,30 @@ class Step2_widget(QtWidgets.QDockWidget, FORM_CLASS):
         return url_PVGIS
 
     def download_data_from_PVGIS(self, dr, lat=51, lon=4, startyear=2015, endyear=2015, peakpower=3, loss=0, angle=0):
+        try:
+            geom = self.baseline_scenario.getFeature(0).geometry().centroid().asPoint()
+            lon = geom.x()
+            lat = geom.y()
+        except:
+            pass
         # url_PVGIS = self.PVGIS_url_gen(lat, lon, startyear, endyear, peakpower, loss, angle)
         url_PVGIS = self.PVGIS_url_gen(lat, lon, startyear, endyear, peakpower, loss, angle)
+
+        # pvgis_api_worker = PvgisApiWorker(url_PVGIS, dr)
+        # pvgis_api_thread = QThread()
+        # pvgis_api_worker.moveToThread(pvgis_api_thread)
+        # pvgis_api_thread.started.connect(pvgis_api_worker.process)
+        # pvgis_api_worker.finished.connect(work_done)
+        # pvgis_api_worker.finished.connect(pvgis_api_thread.quit)
+        # pvgis_api_worker.finished.connect(pvgis_api_worker.deleteLater)
+        # pvgis_api_thread.finished.connect(pvgis_api_thread.deleteLater)
+
+        # do the magic
+        # pvgis_api_thread.start()
+
+
         # url_PVGIS = 'http://re.jrc.ec.europa.eu/pvgis5/seriescalc.php?lat=51&lon=4&startyear=2015&endyear=2015&peakpower=3&loss=0&angle=0'
+
         r = requests.get(url_PVGIS)
         if r.status_code == 200:
             global_solar_irradiation = dr + "\\Global_solar_irradiation.csv"
@@ -827,21 +832,22 @@ class Step2_widget(QtWidgets.QDockWidget, FORM_CLASS):
             gsi2 = open(global_solar_irradiation_2, 'w')
             gsis = open(global_solar_irradiation_seasonal, 'w')
             data = r.text.split("\r\n")
+            header_rows = 9
             for i in range(8760):
                 try:
-                    value = data[11+i].split(",")[1]
+                    value = data[header_rows+i].split(",")[1]
                 except:
                     print("Critical error retrieving data from PVGIS: unexpected kind or data format. "
-                          "Output may be corrupted")
+                          "Output may be corrupted at index", i)
                     break
                 gsi.write(value + "\n")
                 gsi2.write(value + "\n")
                 gsis.write(value + "\n")
                 try:
-                    ot.write(data[11+i].split(",")[3] + "\n")
+                  ot.write(data[header_rows+i].split(",")[3] + "\n")
                 except:
                     print("Critical error retrieving data from PVGIS: unexpected kind or data format. "
-                          "Output may be corrupted")
+                        "Output may be corrupted at index", i)
                     break
             gsi.close()
             gsi2.close()

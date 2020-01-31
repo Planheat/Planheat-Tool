@@ -1,30 +1,18 @@
 from PyQt5 import QtWidgets, uic
 # Import PyQt5
-from PyQt5.QtGui import QIcon, QColor, QBrush
-from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem, QMessageBox
+from PyQt5.QtGui import QColor, QBrush
+from PyQt5.QtWidgets import QTableWidgetItem, QMessageBox
 # Import qgis main libraries
 from qgis.core import *
 from qgis.gui import *
 from qgis.utils import *
 # Import the custom tree widget items
-from .building.DPM import *
 from .technology.Technology import *
 from .VITO.Prioritization_algorithm import *
-from .result_utils import PlotCanvas
-from .Tjulia.DistrictSimulator import DistrictSimulator
 
 from .utility.data_manager.PlanningCriteriaTransfer import PlanningCriteriaTransfer
-
-from matplotlib.font_manager import FontProperties
-
-from matplotlib.font_manager import FontProperties
-from matplotlib.figure import Figure
-
-import numpy as np
-import matplotlib.mlab as mlab
-import matplotlib.pyplot as plt
-import sip
-import pandas
+from .utility.filters.FECvisualizerService import FECvisualizerService
+from .config.PlanningCriteriaHelper import PlanningCriteriaHelper
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui', 'Step3dockwidget.ui'))
@@ -46,7 +34,7 @@ class Step3_widget(QtWidgets.QDockWidget, FORM_CLASS):
 
         self.treeWidget.itemPressed.connect(self.itemSelection)
         self.add_criteria.clicked.connect(self.insert_criteria)
-        self.resetTargets.clicked.connect(self.reset_table)
+        # self.resetTargets.clicked.connect(self.reset_table)
 
         self.remove_criteria.clicked.connect(self.delete_criteria)
         self.energy_criteria.currentItemChanged.connect(self.current_item_changed)
@@ -67,12 +55,7 @@ class Step3_widget(QtWidgets.QDockWidget, FORM_CLASS):
 
         self.weights = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
-        # self.plot = PlotCanvas(self, width=10, height=4, dpi=100)
-        # layout = self.gridLayout
-        # layout.addWidget(self.plot)
-        # self.ax = self.plot.figure.add_subplot(111)
-
-        self.simulator=DistrictSimulator()
+        self.planning_criteria_helper = PlanningCriteriaHelper()
 
         self.set_table_flags()
 
@@ -81,17 +64,24 @@ class Step3_widget(QtWidgets.QDockWidget, FORM_CLASS):
         self.format_tables()
         self.tabWidget_2.setCurrentIndex(0)
         self.tabWidget_3.setCurrentIndex(0)
-
+        self.tableEnStep3.hideRow(3)
+        self.tableEnStep3.hideRow(4)
+        self.fec_visualizer_service = FECvisualizerService(self.output_table, self.fec_filter_combo_box,
+                                                           self.description_filter_label, mode="baseline")
+        for i in range(self.tableEcoStep3.rowCount()):
+            if i not in [0, 5]:
+                self.tableEcoStep3.hideRow(i)
 
     def load_scv(self, data):
         self.data = data
 
-
-
     def itemSelection(self, item, column):
         p = item.text(column)
-        help = self.simulator.insert_text_help(p)
-        self.helpText.setText(help)
+        help_text = self.planning_criteria_helper.insert_text_help(p)
+        if not isinstance(help_text, str):
+            print("Step3.itemSelection(): help is not a string", type(help_text))
+        else:
+            self.helpText.setText(help_text)
         self.show_help()
 
     def show_help(self):
@@ -157,21 +147,21 @@ class Step3_widget(QtWidgets.QDockWidget, FORM_CLASS):
             return
 
     def update_KPIs_visualization_tab(self):
-        criterion_to_rows = {"EN1": [1, 2, 3, 4, 5, 6],
-                             "EN2": [7, 8, 9, 10, 11, 12],
-                             "EN3": [13, 14, 15, 16, 17, 18],
-                             "EN4": [19, 20, 21, 22],
-                             "EN5": [23, 24, 25, 26],
-                             "EN6": [27, 28, 29, 30],
-                             "EN7": [31, 32, 33, 34],
-                             "EN9": [35, 36],
-                             "EN11": [37, 38, 39],
-                             "EN12": [40, 41],
-                             "EN13a": [42, 43, 9, 10, 11, 12],
-                             "EN13b": [44, 45],
-                             "EN14a": [46, 47],
-                             "EN14b": [48, 49],
-                             "EN15": [50, 51],
+        criterion_to_rows = {"EN1": [1, 2, 3, 4, 5, 6, 7],
+                             "EN2": [8, 9, 10, 11, 12, 13],
+                             "EN3": [14, 15, 16, 17, 18, 19, 20],
+                             "EN4": [21, 22, 23, 24],
+                             "EN5": [25, 26, 27, 28],
+                             "EN6": [29, 30, 31, 32],
+                             "EN7": [33, 34, 35, 36],
+                             "EN9": [37, 38],
+                             "EN11": [39, 40, 41],
+                             "EN12": [42, 43],
+                             "EN13a": [44, 45, 10, 11, 12, 13],
+                             "EN13b": [46, 47],
+                             "EN14a": [48, 49],
+                             "EN14b": [50, 51],
+                             "EN15": [52, 53],
                              "ENV1": [1, 2, 3, 4, 5],
                              "ENV2": [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
                              "ENV3": [21, 22],
@@ -189,6 +179,7 @@ class Step3_widget(QtWidgets.QDockWidget, FORM_CLASS):
             for criteria in criterion_to_rows.keys():
                 if self.chech_criterion_is_selected(widgets[1], criteria):
                     for row in criterion_to_rows[criteria]:
+                        print(criteria, row)
                         widgets[0].showRow(row)
         self.criteria_transfer.push_districtSim_table_update(self.chech_criterion_is_selected)
 
@@ -256,43 +247,43 @@ class Step3_widget(QtWidgets.QDockWidget, FORM_CLASS):
             return
 
     def vis_tab3(self):
-
-
         self.row_association_En = {1: 1,
                                    2: 2,
-                                   3: 7,
-                                   4: 8,
-                                   5: 13,
-                                   6: 14,
-                                   7: 19,
-                                   8: 20,
-                                   9: 23,
-                                   10: 24,
-                                   11: 27,
-                                   12: 28,
-                                   13: 31,
-                                   14: 32,
-                                   15: 35,
-                                   16: 37,
-                                   17: 40,
-                                   18: 42,
-                                   19: 44,
-                                   20: 46,
-                                   21: 48,
-                                   22: 50,
-                                   23: 52
+                                   3: 8,
+                                   4: 9,
+                                   5: 15,
+                                   6: 16,
+                                   7: 21,
+                                   8: 22,
+                                   9: 25,
+                                   10: 26,
+                                   11: 29,
+                                   12: 30,
+                                   13: 33,
+                                   14: 34,
+                                   15: 37,
+                                   16: 39,
+                                   17: 42,
+                                   18: 44,
+                                   19: 46,
+                                   20: 48,
+                                   21: 50,
+                                   22: 52,
+                                   23: 54
                                   }
 
         self.row_association_Env = {1: 1,
                                     2: 2,
-                                    3: 6,
-                                    4: 7,
-                                    5: 11,
-                                    6: 12,
-                                    7: 16
+                                    3: 7,
+                                    4: 8,
+                                    5: 13,
+                                    6: 14,
+                                    7: 19,
+                                    8: 20,
+                                    9: 25
                                 }
 
-        self.row_association_Eco = {1: 5}
+        self.row_association_Eco = {5: 5}
 
         self.row_association_So = {1: 1,
                                    2: 4,
@@ -338,6 +329,15 @@ class Step3_widget(QtWidgets.QDockWidget, FORM_CLASS):
                 except:
                     pass
 
+        for i in range(self.step2_economic_tab.rowCount()):
+            for tb in [self.tableVisKpiEco, self.tableEcoStep3]:
+                try:
+                    tb.setItem(self.row_association_Eco[i], 5, self.step2_economic_tab.item(i, 5).clone())
+                    tb.setItem(self.row_association_Eco[i], 4, self.step2_economic_tab.item(i, 4).clone())
+                    tb.setItem(self.row_association_Eco[i], 3, self.step2_economic_tab.item(i, 3).clone())
+                except:
+                    pass
+
     def load_table(self):
         for t in [self.step2_energy_tab]:
             for i in range(t.rowCount()):
@@ -378,7 +378,6 @@ class Step3_widget(QtWidgets.QDockWidget, FORM_CLASS):
                         pass
                 except:
                     pass
-
 
         for p in [self.step2_social_tab]:
             for k in range(p.rowCount()):
@@ -531,62 +530,6 @@ class Step3_widget(QtWidgets.QDockWidget, FORM_CLASS):
                         tables_dict[key].setItem(j, 0, item)
                 tables_dict[key].sortItems(0)
 
-        # self.Check_of_planningcriteria()
-
-    def Check_of_planningcriteria(self):
-        self.list_PlanningCriteria_energy = {'EN1: Reduction of primary energy consumption': [1, 2, 3, 4, 5, 6],#[0]
-                                         'EN2: Reduction of final energy consumption': [7, 8, 9, 10, 11, 12],#[1]
-                                         'EN3: Reduction of useful energy demand': [13, 14, 15, 16, 17, 18],#[2]
-                                         'EN4: Increase share of renewable energy sources': [19, 20, 21, 22],#[3]
-                                         'EN5: Increase utilization of energy from waste heat sources': [23, 24, 25, 26],#[4]
-                                         'EN6: Reduction of energy consumption from conventional fuels': [27, 28, 29, 30],#[5]
-                                         'EN7: Reduction of energy consumption  from Imported Sources': [31, 32, 33, 34],#[6]
-                                         'EN9: Cooling penetration': [35, 36],#[7]
-                                         'EN11: Solar thermal penetration': [37, 38, 39],#[8]
-                                         'EN12: Use of local sources': [40, 41],#[9]
-                                         'EN13a:  DHN thermal losses reduction': [42, 43],#[10]
-                                         'EN13b: DCN thermal losses reduction': [44, 45],#[11]
-                                         'EN14a: DHN heat density reduction': [46, 47],#[12]
-                                         'EN14b: DCN heat density reduction': [48, 49],#[13]
-                                         'EN15: Operating hours increase': [50, 51]}#[14]
-
-        self.list_PlanningCriteria_evairmental ={'ENV1: CO2 reduction':[1, 2, 3, 4, 5, 6],#[0]
-                                                 'ENV2: Pollutants emission reduction':[7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21] ,#[1]
-                                                 'ENV3: Noise pollution reduction': [22, 23]}#[2]
-
-        self.list_PlanningCriteria_economic= {'ECO1: Creation of economically feasible H&C scenarios':[1, 2, 3, 4],#[0]
-                                              'ECO2: Operational costs reduction':[5, 6, 7],#[1]
-                                              'ECO3: Levelised cost of heat':[8],#[2]
-                                              'ECO4: CO2 reduction cost':[9]}#[3]
-
-        self.list_PlanningCriteria_social ={'SO1: Energy poverty reduction':[1, 2],#[0]
-                                            'SO2: Job increase':[3, 4],#[1]
-                                            'SO3: Security of supply increase':[5, 6]}#[2]
-        righe_En = []
-        for i in [self.energy_criteria]:
-             for j in [self.list_PlanningCriteria_energy[i]]:
-                righe_En.append(j)
-
-
-        for i in range(self.tableVisKpiEn.rowCount()-1, -1, -1):
-            if i in righe_En:
-
-                pass
-            else:
-                self.tableVisKpiEn.remove(i)
-
-        righe_Env = []
-        for l in [self.environmental_criteria]:
-            for k in self.list_PlanningCriteria_evairmental[l]:
-                righe_Env.append(k)
-
-        for l in range(self.tableVisKpiEnv.rowCount()-1, -1, -1):
-            if l in righe_Env:
-                pass
-            else:
-                self.tableVisKpiEn.remove(l)
-
-
     def recive_tab_sources(self, step0_sources_availability_tab):
 
         table =step0_sources_availability_tab
@@ -613,12 +556,12 @@ class Step3_widget(QtWidgets.QDockWidget, FORM_CLASS):
         # self.plot.draw()
 
     def set_table_flags(self):
-        energy_not_editable = [1, 2, 7, 8, 13, 14, 19, 20, 23, 24, 27, 28, 31, 32, 35, 37, 39, 41, 43, 45,
-                               47, 49]
+        energy_not_editable = [1, 2, 8, 9, 15, 16, 21, 22, 25, 26, 29, 30, 33, 34, 37, 39, 41, 43, 45, 47,
+                               49, 51]
         self.set_table_flags_target(self.tableVisKpiEn, energy_not_editable)
-        environmental_not_editable = [1, 2, 6, 7, 11, 12, 16, 17, 21]
+        environmental_not_editable = [1, 2, 7, 8, 13, 14, 19, 20, 25]
         self.set_table_flags_target(self.tableVisKpiEnv, environmental_not_editable)
-        economic_not_editable = []
+        economic_not_editable = [5]
         self.set_table_flags_target(self.tableVisKpiEco, economic_not_editable)
         social_not_editable = []
         self.set_table_flags_target(self.tableVisKpiSo, social_not_editable)
@@ -642,3 +585,6 @@ class Step3_widget(QtWidgets.QDockWidget, FORM_CLASS):
                     self.tableVisKpiEn.item(i, j).font().setPointSize(7)
                 except:
                     pass
+
+    def receive_KPIs(self, KPIs):
+        self.fec_visualizer_service.set_KPIs(KPIs)

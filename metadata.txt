@@ -10,14 +10,14 @@
 name=PlanHeat project
 qgisMinimumVersion=3.0
 description=The PlanHeat tool is the heart of the PLANHEAT project. Composed of three separate modules, it will help your city to simulate its way to decarbonising its heating and cooling system by showing you economically feasible scenarios.
-version=2.0
+version=2.2
 author=PlanHeat consortium
 email=stefano.barberis@rina.org
 
 about=The PlanHeat tool is the heart of the PLANHEAT project. Composed of three separate modules, it will help your city to simulate its way to decarbonising its heating and cooling system by showing you economically feasible scenarios.
 
-tracker=http://bugs(TODO)
-repository=http://repo(TODO)
+tracker=http://planheat.eu
+repository=http://planheat.eu
 # End of mandatory metadata
 
 # Recommended items:

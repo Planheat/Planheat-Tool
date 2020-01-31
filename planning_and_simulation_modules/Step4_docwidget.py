@@ -3,16 +3,16 @@ import sys
 import logging
 import os.path
 import shutil
+import traceback
 # Import pandas to manage data into DataFrames
 import pandas
 
-from PyQt5 import QtGui, QtCore, QtWidgets, uic
+from PyQt5 import QtCore, QtWidgets, uic
 from PyQt5.QtCore import pyqtSignal
 # Import PyQt5
 from PyQt5.QtGui import QIcon, QColor, QPixmap
-from PyQt5.QtWidgets import QAction, QMenu, QPushButton, QDialog, QLabel, QComboBox, QInputDialog, QLineEdit,QListWidgetItem, QTreeWidgetItemIterator
-from PyQt5.QtWidgets import QTreeWidget, QMessageBox, QTableWidgetItem
-from PyQt5.QtCore import QLocale
+from PyQt5.QtWidgets import QAction, QMenu, QInputDialog, QLineEdit, QListWidgetItem
+from PyQt5.QtWidgets import QMessageBox, QTableWidgetItem
 
 # Import qgis main libraries
 from qgis.core import *
@@ -22,14 +22,14 @@ from qgis.utils import *
 # Import the custom tree widget items
 from .building.Building import *
 from .building.DPM import *
+from .building.TreeItemManager import TreeItemManager
 from .technology.Technology import *
-from .Network import Network, network_save
-#from .optimizer.ad_network_optimization import ADNetworkOptimizer
-from .layer_utils import load_file_as_layer, load_open_street_maps, add_layer_to_group, get_only_new_features
+from .Network import Network
+from .layer_utils import load_file_as_layer, add_layer_to_group, get_only_new_features
 from .dialogSources import CheckSourceDialog
 from .simpleDialog import Form
 from .Tjulia.DistrictSimulator import DistrictSimulator
-from .DPMplugin import DPMDialog
+from .Tjulia.test.MyLog import MyLog
 from .Transport.Transport_electrical_vehicles_demand import Transport_sector
 from .AdditionalSimulationParameterGUI import AdditionalSimulationParameterGUI
 
@@ -38,6 +38,10 @@ from .dhcoptimizerplanheat.dhcoptimizer_planheat import DHCOptimizerPlanheat
 from .building.CustomContextMenu import CustomContextMenu
 from .utility.BuildingCharacterization.BuildingCharacterizationService import BuildingCharacterizationService
 from .utility.NetworkCharacterization.NetworkCharacterizationService import NetworkCharacterizationService
+from .utility.DataTransfer import DataTransfer
+from .config.services.SourcesTableDefaultLoader import SourcesTableDefaultLoader
+
+from .save_utility.AoutLoadNetwork import AutoLoadNetwork
 
 
 
@@ -226,11 +230,15 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
 
         self.KPIs_additional_data = {}
 
-        for i in range(self.suppliesTable_future.rowCount()):
-            for j in range(self.suppliesTable_future.columnCount()):
-                self.suppliesTable_future.setItem(i, j, QTableWidgetItem("1"))
+
+        SourcesTableDefaultLoader.load_default(self.suppliesTable_future)
+        SourcesTableDefaultLoader.hide_default_rows(self.suppliesTable_future)
+        self.suppliesTable_future.hideRow(7)
+        self.show
 
         self.step0_source_availability_table = None
+        self.tree_item_manager = TreeItemManager(self.iface, self.dmmTree_future, self.futureDmmTreeNetwork,
+                                                 [self.futureDCN_network_list, self.futureDHN_network_list])
 
     def closeEvent(self, event):
         #self.closingPlugin.emit()
@@ -537,6 +545,8 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
 
         technology = t
         for b in selected:
+            if b.isHidden():
+                continue
             if b.child(i) is not None:
                 b.child(i).addChild(
                     Technology(
@@ -621,7 +631,9 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
         Open the context menu for the trees of the widget
         :return:
         """
+        print("Step4._menu point:", type(point), point)
         selected = self.dmmTree_future.itemAt(point)
+        print("Step4._menu point:", type(selected), selected)
         menu = QMenu()
         if isinstance(selected, Technology):
             remove = QAction(
@@ -779,6 +791,7 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
             self.futureDHN_network_list[network_to_be_removed[i]].remove_group()
             del self.futureDHN_network_list[network_to_be_removed[i]]
         self.refresh_DHN_network()
+        self.tree_item_manager.update_buildings_visualizzation()
 
     def remove_DCN_networks(self):
         network_to_be_removed = []
@@ -789,6 +802,7 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
             self.futureDCN_network_list[network_to_be_removed[i]].remove_group()
             del self.futureDCN_network_list[network_to_be_removed[i]]
         self.refresh_DCN_network()
+        self.tree_item_manager.update_buildings_visualizzation()
 
     def refresh_DHN_network(self):
         self.listWidget_future.clear()
@@ -899,7 +913,6 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
         self.add_streets(widget, "DHN")
         self.refresh_DHN_network_streets()
 
-
     def add_streets_to_DCN_networks(self):
         if self.street_layer is None:
             return
@@ -908,7 +921,6 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
         widget = self.listNetworkDCN
         self.add_streets(widget, "DCN")
         self.refresh_DCN_network_streets()
-
 
     def remove_streets_from_DHN_networks(self):
         self.remove_streets_from_networks("DHN")
@@ -1056,7 +1068,6 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
             self.phases.setTabEnabled(2, True)
 
     def insert_technology(self):
-
             technology = self.networkTechnology.currentText()
             source = self.future_sourceNet
             area = self.networkarea.value()
@@ -1071,7 +1082,7 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
             tech_min = self.networkTechMin.value()
             ramp_up = self.networkRampUpDown.value()
             ramp_down = self.networkRampUpDown.value()
-            variable = self.networkRampUpDown.value()
+            variable = self.networkVariableCost.value()
             fix = self.networkFixedCost.value()
             fuel = self.networkFuelCost.value()
             tes_size = self.networkTes_size.value()
@@ -1079,6 +1090,7 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
             tes_startEnd = self.networkTesStartEnd.value()
             tes_discharge = self.networkTes_discharge.value()
             COP_absorption = self.networkCop_absorption.value()
+            el_sale = self.network_el_sale.value()
 
             child = [str(" "),
                      str(technology),
@@ -1095,32 +1107,32 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
                      str(ramp_up),
                      str(ramp_down),
                      str(fix),
-                     str(fuel),
                      str(variable),
+                     str(fuel),
                      str(tes_size),
                      str(soc_min),
                      str(tes_startEnd),
                      str(tes_discharge),
-                     str(COP_absorption)]
+                     str(COP_absorption),
+                     str(el_sale)]
             new_child = QTreeWidgetItem(child)
 
-            parent = self.dmmTreeNetwork.currentItem()
+            parent = self.futureDmmTreeNetwork.currentItem()
             if parent is None:
-                self.dmmTreeNetwork.invisibleRootItem()
+                return
+            if parent.parent() is not None:
+                return
+            if parent is None:
+                self.futureDmmTreeNetwork.invisibleRootItem()
             else:
                 parent.addChild(new_child)
 
-            if technology in self.technology_temp40_70:
-                tempMax = 70
-                temperature > tempMax
-                self.vis_MsgError()
-
-            if technology in self.technology_temp_40:
-                tempMax = 40
-                temperature > tempMax
-            self.vis_MsgError()
+            if technology in self.technology_temp_70:
+                if temperature < 70:
+                    self.vis_MsgError()
 
     def insert_techNetwork(self):
+        return
         self.futureDmmTreeNetwork.clear()
         for lista in [self.futureDHN_network_list, self.futureDCN_network_list]:
             for i in lista:
@@ -1229,23 +1241,18 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
     def future_insert_point(self):
         self.insert_techNetwork()
 
-
     def receive_networks(self, networks, building_layer, street_layer, technologies_transfer, source_transfer):
-        technologies_transfer.buildings_tree_widget_transfer(self.dmmTree_future, building_layer, self.future_scenario)
-        source_transfer.transfer_sources_table(self.suppliesTable_future)
-
         root = QgsProject.instance().layerTreeRoot()
         for n in self.futureDHN_network_list:
             root.removeChildNode(root.findGroup(n.get_group_name()))
-            print("Step_4.py, receive_networks(). Deleting folder",
-                  os.path.realpath(os.path.join(n.save_file_path, "../")))
             try:
+                print("Step_4.py, receive_networks(). Deleting folder",
+                      os.path.realpath(os.path.join(n.save_file_path, "../")))
                 shutil.rmtree(os.path.realpath(os.path.join(n.save_file_path, "../")),
                               ignore_errors=True)
             except Exception as e:
-                print("Step_4.py, receive_networks(). Error removing",
-                      os.path.realpath(os.path.join(n.save_file_path, "../")),
-                      e)
+                print("Step_4.py, receive_networks(). Error removing folder")
+                traceback.print_exc()
         for n in self.futureDCN_network_list:
             root.removeChildNode(root.findGroup(n.get_group_name()))
             print("Step_4.py, receive_networks(). Deleting folder",
@@ -1269,36 +1276,33 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
             self.futureDHN_network_list.append(new_dhn)
             print("Step4.py, receive_networks(). Old network path:", dhn.get_save_file_path())
             if dhn.get_save_file_path() is not None:
-                new_save_file_path = os.path.realpath(os.path.join(dhn.get_save_file_path(), "../../../../",
-                                                                   "Future", "Networks", new_dhn.n_type,
-                                                                   new_dhn.get_ID(), new_dhn.name + ".zip"))
-                print("Step4.py, receive_networks(). Old network path:", new_save_file_path)
-                dir_name, _ = os.path.split(new_save_file_path)
-                os.makedirs(dir_name, exist_ok=True)
-                for f in os.listdir(os.path.dirname(dhn.get_save_file_path())):
-                    if f.startswith(new_dhn.name):
-                        shutil.copyfile(os.path.join(os.path.dirname(dhn.get_save_file_path()), f),
-                                        os.path.join(dir_name, f))
+                new_dhn.save_file_path = os.path.realpath(os.path.join(dhn.get_save_file_path(), "../../../../../",
+                                                                       "Future", "Networks", new_dhn.n_type,
+                                                                       new_dhn.get_ID(), new_dhn.name + ".zip"))
+                print("Step4.py, receive_networks(). New network path:", new_dhn.get_save_file_path())
+                new_dir_path, _ = os.path.split(new_dhn.get_save_file_path())
+                old_dir_path, _ = os.path.split(dhn.get_save_file_path())
+                print("Step4.receive_networks():", new_dir_path, old_dir_path)
+                shutil.copytree(old_dir_path, new_dir_path)
 
         for dcn in networks[1]:
             new_dcn = Network(orig=dcn)
             self.futureDHN_network_list.append(new_dcn)
             print("Step4.py, receive_networks(). Old network path:", dcn.get_save_file_path())
             if dcn.get_save_file_path() is not None:
-                new_save_file_path = os.path.realpath(os.path.join(dcn.get_save_file_path(), "../../../../",
-                                                                   "Future", "Networks", new_dcn.n_type,
-                                                                   new_dcn.get_ID(), new_dcn.name + ".zip"))
-                print("Step4.py, receive_networks(). Old network path:", new_save_file_path)
-                dir_name, _ = os.path.split(new_save_file_path)
-                os.makedirs(dir_name, exist_ok=True)
-                for f in os.listdir(os.path.dirname(dcn.get_save_file_path())):
-                    if f.startswith(new_dhn.name):
-                        shutil.copyfile(os.path.join(os.path.dirname(dcn.get_save_file_path()), f),
-                                        os.path.join(dir_name, f))
-
+                new_dcn.save_file_path = os.path.realpath(os.path.join(dcn.get_save_file_path(), "../../../../../",
+                                                                       "Future", "Networks", new_dcn.n_type,
+                                                                       new_dcn.get_ID(), new_dcn.name + ".zip"))
+                print("Step4.py, receive_networks(). Old network path:", new_dcn.get_save_file_path())
+                new_dir_path, _ = os.path.split(new_dcn.get_save_file_path())
+                old_dir_path, _ = os.path.split(dcn.get_save_file_path())
+                print("Step4.receive_networks():", new_dir_path, old_dir_path)
+                shutil.copytree(old_dir_path, new_dir_path)
 
         # self.futureDHN_network_list = [Network(orig=dhn) for dhn in networks[0]]
         # self.futureDCN_network_list = [Network(orig=dcn) for dcn in networks[1]]
+        self.port_tech_from_baseline(technologies_transfer, building_layer, source_transfer)
+
         self.set_building_layer(building_layer)
         self.set_street_layer(street_layer)
 
@@ -1313,6 +1317,7 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
             # if n.supply_layer is not None:
             #     add_layer_to_group(n.supply_layer, group_name)
             #add_layer_to_group(n.supply_layer, n.get_group_name())
+            AutoLoadNetwork(self.work_folder).load(n, self.data_transfer)
 
         for n in self.futureDCN_network_list:
             n.scenario_type = "future"
@@ -1325,10 +1330,20 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
             # if n.supply_layer is not None:
             #     add_layer_to_group(n.supply_layer, group_name)
             #add_layer_to_group(n.supply_layer, n.get_group_name())
+            AutoLoadNetwork(self.work_folder).load(n, self.data_transfer)
 
         self.refresh_DCN_network()
         self.refresh_DHN_network()
 
+    def port_tech_from_baseline(self, technologies_transfer, building_layer, source_transfer):
+        technologies_transfer.buildings_tree_widget_transfer(self.dmmTree_future, building_layer, self.future_scenario)
+        tmp = technologies_transfer.widget_input
+        technologies_transfer.widget_input = technologies_transfer.n_tree
+        technologies_transfer.tree_widget_transfer(self.futureDmmTreeNetwork)
+        technologies_transfer.update_network_id_user_role_data([self.futureDHN_network_list,
+                                                                self.futureDCN_network_list])
+        technologies_transfer.widget_input = tmp
+        source_transfer.transfer_sources_table(self.suppliesTable_future)
 
     def recive_treeWidget_baseline(self, dmmTree):
         print(dmmTree)
@@ -1393,7 +1408,6 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
 #        flows, obj_val, edges_to_keep = self.opt.optimize()
 #
 #        self.build_optimized_layers(network, flows, obj_val, edges_to_keep)
-
 
     def set_up_logger(self):
         class Printer:
@@ -1493,6 +1507,8 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
         self.data_transfer.buildings = self.future_scenario
         self.data_transfer.baseline_scenario = self.baseline_scenario
         self.data_transfer.study_id += 1
+        self.data_transfer.step1_mode = False
+        self.data_transfer.print_state()
         dhcoptimizerplanheat = DHCOptimizerPlanheat(self.iface,
                                                     working_directory=folder, 
                                                     data_transfer=self.data_transfer)
@@ -1550,6 +1566,64 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
     def network_optimizer_post_processing(self, data_transfer):
         data_transfer.network.optimized = True
         self.insert_techNetwork()
+        self.update_network_after_router_optimizer(data_transfer)
+        self.tree_item_manager.update_buildings_visualizzation()
+
+    def update_network_after_router_optimizer(self, data_transfer: DataTransfer):
+        log = MyLog(None, file_name="update_future_tree_network_log")
+        new_items = []
+        log.log("data_transfer.network.get_supplies_names()", data_transfer.network.get_supplies_names())
+        for gen_point in data_transfer.network.get_supplies_names():
+            log.log("iterating over", gen_point)
+            for i in range(self.futureDmmTreeNetwork.topLevelItemCount()):
+                network_id = self.futureDmmTreeNetwork.topLevelItem(i).data(0, Qt.UserRole)
+                log.log("checking it against", self.futureDmmTreeNetwork.topLevelItem(i).text(0), network_id)
+                if not network_id == data_transfer.network.get_ID():
+                    log.log("tree item rejected")
+                    continue
+                log.log("tree item approved!")
+                log.log("no I'll compare check:", self.futureDmmTreeNetwork.topLevelItem(i).text(0),
+                        gen_point[0] + " - " + data_transfer.network.name)
+                if self.futureDmmTreeNetwork.topLevelItem(i).text(0) == gen_point[0] + " - " + data_transfer.network.name:
+                    log.log("comparison is TRUE")
+                    self.redistribuite_gen_point_capacity(log, self.futureDmmTreeNetwork.topLevelItem(i), gen_point[1])
+                    break
+                log.log("comparison is FALSE")
+            else:  # if I don't find the generation point in the tree widget
+                log.log("I did not found an item for that generation point. I'll reate a new one:",
+                        data_transfer.network.name + " - " + gen_point[0], data_transfer.network.get_ID())
+                new_item = QTreeWidgetItem()
+                new_item.setText(0, gen_point[0] + " - " + data_transfer.network.name)
+                new_item.setData(0, Qt.UserRole, QVariant(data_transfer.network.get_ID()))
+                new_item.setData(8, Qt.UserRole, QVariant(str(gen_point[1])))
+                new_items.append(new_item)
+        log.log("adding new top level items", len(new_items))
+        for new_item in new_items:
+            self.futureDmmTreeNetwork.insertTopLevelItem(0, new_item)
+
+    def redistribuite_gen_point_capacity(self, log, item: QTreeWidgetItem, value: float, column=8):
+        log.log("redistribuite_gen_point_capacity() new_value:", value)
+        item.setData(8, Qt.UserRole, QVariant(str(value)))
+        capacity = 0.0
+        for i in range(item.childCount()):
+            tech = item.child(i)
+            try:
+                capacity += float(tech.text(column))
+                log.log("redistribuite_gen_point_capacity(): new_capacity, contrinution:", capacity,
+                        float(tech.text(column)))
+            except Exception:
+                pass
+        if capacity == 0.0:
+            log.log("capacity is 0! return")
+            return
+        for i in range(item.childCount()):
+            tech = item.child(i)
+            try:
+                log.log("redistribuite_gen_point_capacity(): ", tech.text(column), value/capacity)
+                formatted_new_capacity = "{:.2f}".format(float(tech.text(column))*(value/capacity))
+                tech.setText(column, formatted_new_capacity)
+            except Exception:
+                pass
 
     def get_data_transfer(self, _, data_transfer):
         self.data_transfer = data_transfer
@@ -1702,9 +1776,9 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
     def futureActive_input_cooling(self, p):
         self.disable_all_cooling()
         techn = str(self.coolingTechnology.currentText())
-        if techn == self.future_simulator.technology_for_cooling[0] or techn == self.future_simulator.technology_for_cooling[0]:
+        if techn == self.future_simulator.technology_for_cooling[0] or techn == self.future_simulator.technology_for_cooling[1]:
             if techn == self.future_simulator.technology_for_cooling[0]:
-                self.future_sourceCool = self.future_simulator.sources_for_technology[5]
+                self.future_sourceCool = self.future_simulator.sources_for_technology[0]
             if techn == self.future_simulator.technology_for_cooling[1]:
                 self.future_sourceCool = self.future_simulator.sources_for_technology[8]
             self.coolingTemp.setEnabled(True)
@@ -1724,10 +1798,10 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
             self.coolingTechMin.setEnabled(True)
             self.coolingRampUpDown.setEnabled(True)
             self.coolingVariableCost.setEnabled(True)
-            self.P_max_cooling.setEnabled(False)
-            self.Cop_absorption_cooling.setEnabled(False)
-            self.coolingFuelCost.setEnabled(False)
-            self.coolingFixedCost.setEnabled(False)
+            self.coolingFixedCost.setEnabled(True)
+            self.Cop_absorption_cooling.setEnabled(True)
+            self.P_max_cooling.setEnabled(True)
+            self.coolingFuelCost.setEnabled(True)
 
     def futureActive_source_dialog(self, gf):
         self.disable_all_heating_input()
@@ -1839,7 +1913,7 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
                     if t == z[0]:
                         self.future_sourceRead = self.future_simulator.sources_for_technology[5]  # 'Air'
                     if t == z[1]:
-                        self.future_sourceRead = self.future_future_simulator.sources_for_technology[
+                        self.future_sourceRead = self.future_simulator.sources_for_technology[
                             12]  # 'Geothermal - Shallow - Ground heat extraction'
                     if t == z[2]:  # "Absorption Heat Pump"
                         self.future_sourceRead = self.future_simulator.sources_for_technology[0]  # ' 'logy[0]  #
@@ -1862,7 +1936,6 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
                 if key == list(key_list)[0]:  # heat_only_boiler
 
                     self.dhwEfficiency.setEnabled(True)
-                    # self.dhwCapacity.lineEdit().setEnabled(True)
                     self.dhwP_max.setEnabled(True)
                     self.dhwTechMin.setEnabled(True)
                     self.dhwRampUpDown.setEnabled(True)
@@ -1890,10 +1963,11 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
                 if key == list(key_list)[2]:  # heat_pump
                     self.dhwP_max.setEnabled(True)
                     self.dhwTechMin.setEnabled(True)
-                    self.dhwEfficiency.setEnabled(True)
                     self.dhwRampUpDown.setEnabled(True)
                     self.dhwVariableCost.setEnabled(True)
                     self.dhwTemp.setEnabled(True)
+                    self.dhwFixedCost.setEnabled(True)
+                    self.dhwFuelCost.setEnabled(True)
                     # self.simulator.ask_for_sources(q, serv="dhw")
                     if q == z[0]:
                         self.future_sourceDhw = self.future_simulator.sources_for_technology[5]
@@ -1916,6 +1990,7 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
                     self.dhwFixedCost.setEnabled(True)
                     self.dhwFixedCost.setEnabled(True)
                     self.dhwElsale.setEnabled(True)
+                    self.dhwCb_CHP.setEnabled(True)
                     if q == z[0]:
                         self.future_sourceDhw = self.future_simulator.sources_for_technology[9]  # 'Natural gas'
                     elif q == z[1]:
@@ -1965,6 +2040,7 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
                     self.dhwCop.setEnabled(True)
                     self.dhwVariableCost.setEnabled(True)
                     self.dhwFuelCost.setEnabled(True)
+                    self.dhwFixedCost.setEnabled(True)
                     self.dhwTechMin.setEnabled(True)
                     self.dhwRampUpDown.setEnabled(True)
                     # self.ask_for_sources(q)
@@ -2092,7 +2168,7 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
                     # self.networkSources.setEnabled(True)
                     # self.future_sourceNet = self.future_simulator.ask_tchnology_for_absoptionHeatPump(t)
                     if t == z[0]:  # Air source gas absorption heat pump
-                        self.future_sourceNet = self.future_simulator.sources_for_technology[5]
+                        self.future_sourceNet = self.future_simulator.sources_for_technology[9]
                     if t == z[1]:  # Shallow geothermal gas absorption heat pump
                         self.future_sourceNet = self.future_simulator.sources_for_technology[12]
                     if t == z[2]:  # Absorption heat pump
@@ -2283,26 +2359,6 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
                 return True
         else:
             return True
-
-    def future_DHN_to_save(self):
-        widget = self.listWidget_future
-        self.folder = os.path.join(os.path.dirname(os.path.realpath(__file__)), "save_utility", "DefaultSaveFolder")
-        for item in widget.selectedItems():
-            network_index = widget.row(item)
-            list = self.futureDHN_network_list[network_index]
-
-            save_network_list = network_save(list)
-            save_network_list.save_network_baseline(self.folder)
-
-    def future_DCN_to_save(self):
-        widget = self.listNetworkDCN
-        self.folder = os.path.join(os.path.dirname(os.path.realpath(__file__)), "save_utility", "DefaultSaveFolder")
-        for item in widget.selectedItems():
-            network_index = widget.row(item)
-            list = self.futureDCN_network_list[network_index]
-
-            save_network_list = network_save(list)
-            save_network_list.save_network_baseline(self.folder)
 
     def tab_current_changed(self, index):
         self.insert_techNetwork()

@@ -57,11 +57,11 @@ IF "%QGIS_PYTHON_VERSION%" == "Python36" (
 IF "%QGIS_PYTHON_VERSION%" == "Python36" (
 	"%PYTHON_DIR%\python.exe" -m pip install --ignore-installed --no-deps  "%PLUGIN_DEPS_DIR%\python_libs\Fiona-1.8.4-cp36-cp36m-win_amd64.whl"
 	"%PYTHON_DIR%\python.exe" -m pip install --ignore-installed --no-deps  "%PLUGIN_DEPS_DIR%\python_libs\Rtree-0.8.3-cp36-cp36m-win_amd64.whl"
-	"%PYTHON_DIR%\python.exe" -m pip install --ignore-installed --no-deps  "%PLUGIN_DEPS_DIR%\python_libs\pandas-0.24.1-cp36-cp36m-win_amd64.whl"
+	"%PYTHON_DIR%\python.exe" -m pip install --ignore-installed --no-deps  "%PLUGIN_DEPS_DIR%\python_libs\pandas-0.25.3-cp36-cp36m-win_amd64.whl"
 ) ELSE (
 	"%PYTHON_DIR%\python.exe" -m pip install --ignore-installed --no-deps  "%PLUGIN_DEPS_DIR%\python_libs\Fiona-1.8.6-cp37-cp37m-win_amd64.whl"
 	"%PYTHON_DIR%\python.exe" -m pip install --ignore-installed --no-deps  "%PLUGIN_DEPS_DIR%\python_libs\Rtree-0.8.3-cp37-cp37m-win_amd64.whl"
-	"%PYTHON_DIR%\python.exe" -m pip install --ignore-installed --no-deps  "%PLUGIN_DEPS_DIR%\python_libs\pandas-0.24.2-cp37-cp37m-win_amd64.whl"
+	"%PYTHON_DIR%\python.exe" -m pip install --ignore-installed --no-deps  "%PLUGIN_DEPS_DIR%\python_libs\pandas-0.25.3-cp37-cp37m-win_amd64.whl"
 )
 "%PYTHON_DIR%\python.exe" -m pip install --ignore-installed --no-deps  "%PLUGIN_DEPS_DIR%\python_libs\geopandas-0.4.0-py2.py3-none-any.whl"
 "%PYTHON_DIR%\python.exe" -m pip install --ignore-installed --no-deps  "%PLUGIN_DEPS_DIR%\python_libs\decorator-4.3.2-py2.py3-none-any.whl"

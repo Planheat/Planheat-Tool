@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>988</width>
-    <height>671</height>
+    <width>1017</width>
+    <height>655</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,7 +26,7 @@
        </font>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="smmTab">
        <property name="enabled">
@@ -196,7 +196,7 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
-          <widget class="QgsFileWidget" name="layerPath">
+          <widget class="QgsFileWidget" name="layerPath" native="true">
            <property name="font">
             <font>
              <weight>50</weight>
@@ -212,7 +212,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QgsFileWidget" name="layerPath1">
+          <widget class="QgsFileWidget" name="layerPath1" native="true">
            <property name="font">
             <font>
              <weight>50</weight>
@@ -228,7 +228,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QgsFileWidget" name="layerPath2">
+          <widget class="QgsFileWidget" name="layerPath2" native="true">
            <property name="font">
             <font>
              <weight>50</weight>
@@ -244,7 +244,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QgsFileWidget" name="layerPath3">
+          <widget class="QgsFileWidget" name="layerPath3" native="true">
            <property name="font">
             <font>
              <weight>50</weight>
@@ -323,7 +323,7 @@
          <rect>
           <x>720</x>
           <y>190</y>
-          <width>77</width>
+          <width>95</width>
           <height>37</height>
          </rect>
         </property>
@@ -567,8 +567,8 @@
        <layout class="QGridLayout" name="gridLayout_4">
         <item row="0" column="0">
          <layout class="QGridLayout" name="gridLayout_3">
-          <item row="3" column="4">
-           <spacer name="horizontalSpacer_4">
+          <item row="1" column="4">
+           <spacer name="horizontalSpacer_3">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -597,32 +597,32 @@
             </column>
             <column>
              <property name="text">
-              <string>AHeatDem [kW]</string>
+              <string>AHeatDem [kWh]</string>
              </property>
             </column>
             <column>
              <property name="text">
-              <string>AHeatDemM2 [kW]</string>
+              <string>AHeatDemM2 [kWh]</string>
              </property>
             </column>
             <column>
              <property name="text">
-              <string>ACoolDem [kW]</string>
+              <string>ACoolDem [kWh]</string>
              </property>
             </column>
             <column>
              <property name="text">
-              <string>ACoolDemM2 [kW]</string>
+              <string>ACoolDemM2 [kWh]</string>
              </property>
             </column>
             <column>
              <property name="text">
-              <string>ADHWDem [kW]</string>
+              <string>ADHWDem [kWh]</string>
              </property>
             </column>
             <column>
              <property name="text">
-              <string>ADHWDemDM2 [kW]</string>
+              <string>ADHWDemDM2 [kWh]</string>
              </property>
             </column>
             <column>
@@ -651,19 +651,6 @@
              </property>
             </column>
            </widget>
-          </item>
-          <item row="0" column="0">
-           <spacer name="horizontalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
           </item>
           <item row="2" column="0" colspan="5">
            <widget class="QTreeWidget" name="pmTree">
@@ -682,32 +669,32 @@
             </column>
             <column>
              <property name="text">
-              <string>AHeatDem [kW]</string>
+              <string>AHeatDem [kWh]</string>
              </property>
             </column>
             <column>
              <property name="text">
-              <string>AHeatDemM2 [kW]</string>
+              <string>AHeatDemM2 [kWh]</string>
              </property>
             </column>
             <column>
              <property name="text">
-              <string>ACoolDem [kW]</string>
+              <string>ACoolDem [kWh]</string>
              </property>
             </column>
             <column>
              <property name="text">
-              <string>ACoolDemM2 [kW]</string>
+              <string>ACoolDemM2 [kWh]</string>
              </property>
             </column>
             <column>
              <property name="text">
-              <string>ADHWDem [kW]</string>
+              <string>ADHWDem [kWh]</string>
              </property>
             </column>
             <column>
              <property name="text">
-              <string>ADHWDemDM2 [kW]</string>
+              <string>ADHWDemDM2 [kWh]</string>
              </property>
             </column>
             <column>
@@ -737,19 +724,6 @@
             </column>
            </widget>
           </item>
-          <item row="1" column="4">
-           <spacer name="horizontalSpacer_3">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
           <item row="3" column="0" colspan="3">
            <widget class="QLabel" name="label_15">
             <property name="text">
@@ -757,22 +731,8 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="0" colspan="3">
-           <widget class="QLabel" name="label_14">
-            <property name="text">
-             <string>Baseline scenario</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="3">
-           <widget class="QProgressBar" name="progressBar_load_all_files">
-            <property name="value">
-             <number>24</number>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="4">
-           <spacer name="horizontalSpacer">
+          <item row="0" column="0">
+           <spacer name="horizontalSpacer_2">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -795,6 +755,53 @@
             </property>
            </widget>
           </item>
+          <item row="0" column="4">
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="3" column="4">
+           <spacer name="horizontalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="5" column="4">
+           <widget class="QPushButton" name="saveLoad">
+            <property name="text">
+             <string>Save/Load</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_14">
+            <property name="text">
+             <string>Baseline scenario</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" colspan="3">
+           <widget class="QProgressBar" name="progressBar_load_all_files">
+            <property name="value">
+             <number>24</number>
+            </property>
+           </widget>
+          </item>
          </layout>
         </item>
        </layout>
@@ -806,13 +813,38 @@
        <layout class="QGridLayout" name="gridLayout_5">
         <item row="0" column="0">
          <layout class="QGridLayout" name="gridLayout_2">
-          <item row="2" column="0" colspan="2">
-           <widget class="QComboBox" name="comboLayer">
+          <item row="1" column="0">
+           <widget class="QPushButton" name="pushButton_2">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Override Current Selection</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0" colspan="4">
+           <widget class="QTableWidget" name="sources_available"/>
+          </item>
+          <item row="0" column="4">
+           <widget class="QListWidget" name="listWidget">
+            <item>
+             <property name="text">
+              <string>item1</string>
+             </property>
+             <property name="checkState">
+              <enum>Checked</enum>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QPushButton" name="pushButton_3">
+            <property name="text">
+             <string>Invert Checked</string>
             </property>
            </widget>
           </item>
@@ -829,7 +861,41 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="2">
+          <item row="3" column="0">
+           <widget class="QProgressBar" name="pbar_Download">
+            <property name="value">
+             <number>24</number>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="4">
+           <widget class="QPushButton" name="ok2">
+            <property name="toolTip">
+             <string notr="true">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Jump to the baseline assessment. Be sure everithing is Ok before continue.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Next Step</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="4">
+           <widget class="QPushButton" name="cancel">
+            <property name="text">
+             <string>Cancel</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="4">
+           <widget class="QComboBox" name="comboLayer">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
            <widget class="QPushButton" name="btnSourcesAvailability">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -846,65 +912,6 @@
             <property name="text">
              <string>Sources Availability</string>
             </property>
-           </widget>
-          </item>
-          <item row="3" column="2">
-           <widget class="QPushButton" name="cancel">
-            <property name="text">
-             <string>Cancel</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QPushButton" name="pushButton_2">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>Override Current Selection</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="4">
-           <widget class="QPushButton" name="ok2">
-            <property name="toolTip">
-             <string notr="true">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Jump to the baseline assessment. Be sure everithing is Ok before continue.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>Next Step</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0" colspan="4">
-           <widget class="QTableWidget" name="sources_available"/>
-          </item>
-          <item row="1" column="2">
-           <widget class="QPushButton" name="pushButton_3">
-            <property name="text">
-             <string>Invert Checked</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0" colspan="2">
-           <widget class="QProgressBar" name="pbar_Download">
-            <property name="value">
-             <number>24</number>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="4">
-           <widget class="QListWidget" name="listWidget">
-            <item>
-             <property name="text">
-              <string>item1</string>
-             </property>
-             <property name="checkState">
-              <enum>Checked</enum>
-             </property>
-            </item>
            </widget>
           </item>
          </layout>

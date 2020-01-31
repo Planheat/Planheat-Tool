@@ -30,14 +30,17 @@ class Building(QTreeWidgetItem):
     dropped
     """
 
-    def __init__(self, feature: QgsFeature):
+    def __init__(self, feature: QgsFeature, default_constructor=None):
         """
         Initalise the building class instance
         :param feature:
         """
-        QTreeWidgetItem.__init__(
-            self, [str(feature.id())], type=QTreeWidgetItem.Type
-        )
+        if default_constructor is None:
+            QTreeWidgetItem.__init__(
+                self, [str(feature.id())], type=QTreeWidgetItem.Type
+            )
+        else:
+            QTreeWidgetItem.__init__(self, default_constructor["par1"], default_constructor["par2"])
 
         self.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
         self.dhcn = False
@@ -110,6 +113,10 @@ class Building(QTreeWidgetItem):
             index=building_index
         )
 
+    def clear_technologies(self):
+        for i in range(self.childCount()):
+            self.child(i).takeChildren()
+
     def toggle_dhn(self, dhn_id: str):
         """
         Connect/disconnect the building to the DHN
@@ -144,9 +151,9 @@ class Building(QTreeWidgetItem):
             self.setText(12, dcn_id)
             self.cooling.setDisabled(True)
 
-    def update_data(self):
-        """
-        Update the heating total output and efficiency
-        :return:
-        """
-        return
+    def has_any_technology(self):
+        for i in range(self.childCount()):
+            service = self.child(i)
+            if not service.childCount() == 0:
+                return True
+        return False

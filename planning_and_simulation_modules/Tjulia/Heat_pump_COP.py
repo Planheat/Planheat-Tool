@@ -11,6 +11,7 @@ import os.path
 
 
 def generate_fileEta_forJulia(val_list, input_folder="", output_folder=""):
+    max_COP = 10.0
 
     if val_list is None:
         return
@@ -38,6 +39,9 @@ def generate_fileEta_forJulia(val_list, input_folder="", output_folder=""):
     # Lorenz efficiency
     eta_Lorentz_1 = 0.6
     eta_HP_1 = eta_Lorentz_1*T_sink_1/(T_sink_1-T_source_1)
+    for i in range(len(eta_HP_1)):
+        if eta_HP_1[i] > max_COP:
+            eta_HP_1[i] = max_COP
     np.savetxt(output_folder + "\\eta_HP_1.csv", eta_HP_1, delimiter=".")
 
     # Heat pump 2, group 1 COP #
@@ -54,7 +58,9 @@ def generate_fileEta_forJulia(val_list, input_folder="", output_folder=""):
     # Lorenz efficiency
     eta_Lorentz_2 = 0.6
     eta_HP_2 = eta_Lorentz_2*(T_sink_2)/(T_sink_2-T_source_2)
-
+    for i in range(len(eta_HP_2)):
+        if eta_HP_2[i] > max_COP:
+            eta_HP_2[i] = max_COP
 
     np.savetxt(output_folder + "\\eta_HP_2.csv", eta_HP_2, delimiter=".")
 
@@ -72,6 +78,9 @@ def generate_fileEta_forJulia(val_list, input_folder="", output_folder=""):
     # Lorenz efficiency
     eta_Lorentz_3 = val_list[5]
     eta_HP_3 = eta_Lorentz_3*T_sink_3/(T_sink_3-T_source_3)
+    for i in range(len(eta_HP_3)):
+        if eta_HP_3[i] > max_COP:
+            eta_HP_3[i] = max_COP
 
     np.savetxt(output_folder + "\\eta_HP_3.csv", eta_HP_3, delimiter=".")
 

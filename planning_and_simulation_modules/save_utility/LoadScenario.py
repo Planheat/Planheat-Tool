@@ -3,16 +3,21 @@ import os.path
 from PyQt5.QtWidgets import QTreeWidget, QTreeWidgetItem, QTableWidget, QListWidget, QTableWidgetItem
 from PyQt5 import QtCore
 from PyQt5.QtGui import QFont
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import QObject
 from ..city.src.FileManager import FileManager
 from ..layer_utils import load_file_as_layer
+from .ZipManager import ZipManager
+import traceback
 
 
 class LoadScenario(QObject):
+    progressBarUpdate = pyqtSignal(int, int, bool)
 
-    def __init__(self, folder=None):
+    def __init__(self, folder=None, version=None):
         QObject.__init__(self)
         self.data = {}
+        self.version = version
         if folder is None:
             self.folder = os.path.join(os.path.dirname(os.path.realpath(__file__)), "DefaultSaveFolder")
         else:
@@ -22,8 +27,10 @@ class LoadScenario(QObject):
             except TypeError:
                 self.folder = os.path.join(os.path.dirname(os.path.realpath(__file__)), "DefaultSaveFolder")
         self.file_manager = FileManager(work_folder=self.folder)
+        self.zip_manager = ZipManager()
+        self.file_loaded_name = None
 
-    def fill_tre_widget_item(self, widget, name=None):
+    def fill_tre_widget_item(self, widget, name=None, TreeWidgetItem=QTreeWidgetItem):
         if name is None:
             name = widget.objectName()
         if name not in [key for key in self.data.keys()]:
@@ -157,6 +164,7 @@ class LoadScenario(QObject):
 
     def load(self, file):
         self.data = self.file_manager.load(file)
+        self.file_loaded_name = file
 
     def load_layer_from_shapefile(self, file_path, layer_name=None):
         if file_path is None:
@@ -185,13 +193,13 @@ class LoadScenario(QObject):
             return
         btn.setEnabled(state)
 
-    def get_data(self, key, dict_data=None):
+    def get_data(self, key, dict_data=None, default=None):
         if dict_data is None:
             dict_data = self.data
         try:
             return dict_data[str(key)]
         except KeyError:
-            return None
+            return default
 
     def fill_double_spin_box(self, double_spin_box, value):
         if value is None:
@@ -209,5 +217,39 @@ class LoadScenario(QObject):
             return
         if radioButton is None:
             return
-
         radioButton.setChecked(state)
+
+    def get_object_from_zip(self, source):
+        try:
+            zip_file_path = os.path.join(self.file_manager.work_folder, "data", self.file_loaded_name[0:-5] + ".zip")
+            result_object = {}
+            if os.path.isfile(zip_file_path):
+                # print("LoadScenario.get_object_from_zip(). parameters (before)", zip_file_path,
+                #       self.zip_manager.OBJECT,
+                #       self.get_data("zipPath." + source, self.data),
+                #       result_object)
+                result_object = self.zip_manager.extract(zip_file_path,
+                                                         self.zip_manager.OBJECT,
+                                                         self.get_data("zipPath." + source, self.data),
+                                                         result_object)
+                # print("LoadScenario.get_object_from_zip(). parameters (after)", zip_file_path,
+                #       self.zip_manager.OBJECT,
+                #       self.get_data("zipPath." + source, self.data),
+                #       result_object)
+                return result_object
+            return {}
+        except Exception:
+            traceback.print_exc()
+            return None
+
+    def extract_folder_from_zip(self, zip_file_path, rel_folder_path, destination_path):
+        return self.zip_manager.extract(zip_file_path, self.zip_manager.FOLDER, rel_folder_path, destination_path,
+                                        trunc_base_path=2)
+
+    def version_check(self, version_to_check):
+        if version_to_check is None or self.version is None:
+            return False
+        else:
+            if not version_to_check == self.version:
+                return False
+        return True

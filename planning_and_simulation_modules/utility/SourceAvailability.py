@@ -1,8 +1,12 @@
 # import some modules used in the example
 from qgis.core import *
-from PyQt5 import QtCore, QtGui
+from PyQt5 import QtCore
 from ..layer_utils import raster_shapefile_intersection_integral
-import math
+from .safe_dict_get import get_data
+from .. import master_planning_config as config
+import os.path
+import pandas
+import traceback
 
 
 class SourceAvailability(QtCore.QObject):
@@ -21,10 +25,8 @@ class SourceAvailability(QtCore.QObject):
 
     def get_empty_source_availability_dict(self):
         sources_availability = {}
-        for mapped_source in self.dialog_source.mapped_sources:
-            sources_availability[self.dialog_source.MM_to_DPM_sources_dict[mapped_source]] = []
-            for i in range(self.h8760):
-                sources_availability[self.dialog_source.MM_to_DPM_sources_dict[mapped_source]].append(0.0)
+        for source in self.dialog_source.sources:
+            sources_availability[source] = [0.0 for i in range(self.h8760)]
         return sources_availability
 
     def start_end_month(self, month):
@@ -66,7 +68,7 @@ class SourceAvailability(QtCore.QObject):
                         sources_availability[source][i] += integral
                     break
             else:
-                print("Step0Dialog.py, span_integral, strange things are happening. suffix: ", suffix)
+                print("SourceAvailability.py, span_integral, strange things are happening. suffix: ", suffix)
         return sources_availability
 
     def get_source_availability_from_rasters(self, layer=None, sources_availability=None):
@@ -103,6 +105,55 @@ class SourceAvailability(QtCore.QObject):
                         # print("sources_availability", sources_availability)
                         break
         return sources_availability
+
+    def get_source_availability_from_csv(self, sources_availability=None):
+        if sources_availability is None:
+            sources_availability = self.get_empty_source_availability_dict()
+
+        # Read config excel sources file
+        confic_sources_file = os.path.join(os.path.dirname(__file__), "../", "config", "sources", "Csv_SMM.xlsm")
+        try:
+            config_sources_data_frame = pandas.read_excel(confic_sources_file)
+        except Exception:
+            print("Source availability: errors with file:", confic_sources_file)
+            return sources_availability
+
+        # Read the SMM csv sources availability
+        supply_csv = os.path.join(config.CURRENT_MAPPING_DIRECTORY, "SMM", "planheat_result_2.csv")
+        try:
+            data_frame = pandas.read_csv(supply_csv, sep="\t")
+        except Exception:
+            print("Source availability: errors with file:", supply_csv)
+            return sources_availability
+
+        # compute availability
+        for i, row in data_frame.iterrows():
+            smm_source = row["Class"] + row["Description"]
+            for j, source in config_sources_data_frame.iterrows():
+                try:
+                    config_source = source["Class"]+source["Description"]
+                    if smm_source == config_source:
+                        dpm_source = source["planning_module_related_source"]
+                        inside_availability = self.sum_row(row, 3)
+                        sources_availability = self.span_integral(sources_availability,
+                                                                  dpm_source, inside_availability, "")
+                        break
+                except Exception:
+                    continue
+        return sources_availability
+
+    def sum_row(self, row, start=0, ends=None):
+        if ends is None:
+            ends = len(row)
+        total = 0.0
+        try:
+            for i in range(start, ends):
+                if row[i] == row[i]:
+                    total += row[i]
+        except Exception:
+            print("SourceAvailability.sum_row error at index", i)
+            return total
+        return total
 
     def update_source_availability_from_shapefile(self, sources_availability, mapped_source, layer, attribute):
         self.pbar_Download.setValue(self.pbar_Download.value() + 12)
@@ -176,37 +227,31 @@ class SourceAvailability(QtCore.QObject):
                 self.comboLayer.setCurrentText(name)
 
     def source_availability(self):
-        txt = self.txt
-        layers = QgsProject.instance().mapLayersByName(txt)
-        if len(layers) > 0:
-            self.pbar_Download.setMinimum(0)
-            self.pbar_Download.setValue(0)
-            max_val = 0
-            for mapped_source in self.dialog_source.mapped_sources:
-                if self.dialog_source.monthly_temperature[mapped_source]:
-                    max_val += 12
-                else:
-                    max_val += 1
-            self.pbar_Download.setMaximum(max_val)
-            self.pbar_Download.show()
+        # txt = self.txt
+        # layers = QgsProject.instance().mapLayersByName(txt)
+        # if len(layers) > 0:
+        self.pbar_Download.setMinimum(0)
+        self.pbar_Download.setValue(0)
+        max_val = 0
+        for mapped_source in self.dialog_source.mapped_sources:
+            if self.dialog_source.monthly_temperature[mapped_source]:
+                max_val += 12
+            else:
+                max_val += 1
+        self.pbar_Download.setMaximum(max_val)
+        self.pbar_Download.show()
 
-            # self.cancel.show()
-            # sources_availability = self.get_empty_source_availability_dict()
-            # background_thread = Thread(target=self.get_source_availability_from_rasters, args=(layers[0], sources_availability))
-            # background_thread.start()
-            # background_thread.join()
+        # sources_availability = self.get_source_availability_from_rasters(layers[0])
+        sources_availability = self.get_source_availability_from_csv()
 
-            sources_availability = self.get_source_availability_from_rasters(layers[0])
+        sources_availability = self.get_sources_availability_from_shapefiles(sources_availability)
 
-            sources_availability = self.get_sources_availability_from_shapefiles(sources_availability)
+        self.pbar_Download.setValue(self.pbar_Download.maximum())
+        self.pbar_Download.hide()
+        # self.cancel.hide()
 
-            self.pbar_Download.setValue(self.pbar_Download.maximum())
-            self.pbar_Download.hide()
-            # self.cancel.hide()
+        return sources_availability
 
-            return sources_availability
-
-        return None
 
     def sources_temperature(self):
         for mapped_source in self.dialog_source.mapped_sources:

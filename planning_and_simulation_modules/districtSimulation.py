@@ -15,40 +15,26 @@ from qgis.gui import *
 from qgis.utils import *
 
 # Import the custom tree widget items
-from .building.Building import *
 from .building.DPM import *
 from .technology.Technology import *
-from .Network import Network
 from .utility.plots.PlotService import PlotService
 
 from .Tjulia.Heat_pump_COP import generate_fileEta_forJulia
-from .Tjulia.Solar_thermal_production import generate_solar_thermal_forJulia
 from .Tjulia.single_building.Dem_cool_heating import generafile
 from .Tjulia.single_building.eta_cool_heat_pump import eta_cool_heat_pump
-from .Tjulia.district.heating.Waste_heat_heat_pumps_heating import generate_file_Waste_heat_pump_heating
-from .Tjulia.district.cooling.Waste_heat_heat_pumps_cooling import generate_file_Waste_heat_pump_cooling
 from .Tjulia.Solar_thermal_production import generate_solar_thermal_forJulia
 from .Tjulia.DistrictSimulator import DistrictSimulator
+from .Tjulia.test.MyLog import MyLog
 from .dialogSources import CheckSourceDialog
 from .city.load_to_table import updata_dic
 from .city.load_to_table import Qdialog_save_file
 
-
-from .utility.data_manager.PlanningCriteriaTransfer import PlanningCriteriaTransfer
-
 import requests
 import logging
 import sys
-import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.font_manager import FontProperties
-from matplotlib.figure import Figure
-import csv
-import sip
-import pandas as pd
+
 import shutil
 
-from .layer_utils import load_file_as_layer, load_open_street_maps
 
 from . import master_planning_config
 
@@ -71,6 +57,8 @@ class DistrictSimunation_Widget(QtWidgets.QDockWidget, FORM_CLASS):
 
         self.logger = logging.getLogger(__name__)
 
+        self.sources = CheckSourceDialog()
+
         self.target_input_table_en = None
         self.target_input_table_env = None
         self.target_input_table_eco = None
@@ -86,15 +74,11 @@ class DistrictSimunation_Widget(QtWidgets.QDockWidget, FORM_CLASS):
         self.progressBar.hide()
         self.label_3.hide()
         self.label_4.hide()
-
-
-
-
-
         self.step4 = None
         self.step0 = None
 
         self.baseline_KPIs = {}
+        self.KPIs = {}
         # key must be the table row
         self.EN_keys = { 1: "EN_1.1",
                          2: "EN_1.2",
@@ -239,8 +223,6 @@ class DistrictSimunation_Widget(QtWidgets.QDockWidget, FORM_CLASS):
 
         self.simulator = None
 
-        self.sources = CheckSourceDialog()
-
         self.fec_visualizer_service = FECvisualizerService(self.output_table, self.fec_filter_combo_box,
                                                            self.description_filter_label)
         self.tabWidget_2.setCurrentIndex(0)
@@ -318,9 +300,21 @@ class DistrictSimunation_Widget(QtWidgets.QDockWidget, FORM_CLASS):
                                 master_planning_config.DMM_PREFIX+master_planning_config.DMM_FUTURE_HOURLY_SUFFIX+".csv")
         n, buildings = generafile(cinput=cinput, coutput=os.path.join(dr, "input"))
         self.single_building_common_precalculation(dr)
-        self.simulator.run_buildings(buildings, dr)
+        my_log = MyLog(os.path.join(os.path.dirname(os.path.realpath(__file__)), "Tjulia", "test",
+                                    "future_building_simulation.txt"))
+        self.simulator.run_buildings(buildings, dr, log=my_log)
         self.label_3.setText("KPIs calculation...")
         KPIs = self.simulator.close_simulation(self.baseline_KPIs)
+        self.KPIs = KPIs
+        # print("districtSimulation.run() self.baseline_KPIs is KPIs: ", self.baseline_KPIs is KPIs)
+        # for key in self.baseline_KPIs.keys():
+        #     try:
+        #         if self.baseline_KPIs[key] is KPIs[key]:
+            #             print("districtSimulation.run() keys check TRUE: ", key)
+                    #     except:
+        #         pass
+        # print("districtSimulation.run() self.baseline_KPIs is self.KPIs: ", self.baseline_KPIs is self.KPIs)
+        # print("districtSimulation.run() self.KPIs is KPIs: ", self.KPIs is KPIs)
         self.fec_visualizer_service.set_KPIs(KPIs)
         self.label_3.setText("DONE!")
         self.fill_table(KPIs)
@@ -328,8 +322,8 @@ class DistrictSimunation_Widget(QtWidgets.QDockWidget, FORM_CLASS):
         self.label_4.hide()
         self.label_3.hide()
         self.finish_simulation()
-        print("KPIs DONE!")
         print(KPIs)
+        print("KPIs DONE!")
 
     def set_up_simulator(self):
         self.simulator.DHN_network_list = self.step4.futureDHN_network_list
@@ -494,7 +488,7 @@ class DistrictSimunation_Widget(QtWidgets.QDockWidget, FORM_CLASS):
 
     def receive_KPIs(self, KPIs):
         self.baseline_KPIs = KPIs
-        print(self.baseline_KPIs)
+        print("districtSimulation.receive_KPIs(): self.baseline_KPIs", self.baseline_KPIs)
         self.fill_table(self.baseline_KPIs)
         self.fec_visualizer_service.set_KPIs(self.baseline_KPIs)
 
@@ -633,6 +627,12 @@ class DistrictSimunation_Widget(QtWidgets.QDockWidget, FORM_CLASS):
         return url_PVGIS
 
     def download_data_from_PVGIS(self, dr, lat=51, lon=4, startyear=2015, endyear=2015, peakpower=3, loss=0, angle=0):
+        try:
+            geom = self.step4.future_scenario.getFeature(0).geometry().centroid().asPoint()
+            lon = geom.x()
+            lat = geom.y()
+        except:
+            pass
         url_PVGIS = self.PVGIS_url_gen(lat, lon, startyear, endyear, peakpower, loss, angle)
         # url_PVGIS = 'http://re.jrc.ec.europa.eu/pvgis5/seriescalc.php?lat=51&lon=4&startyear=2015&endyear=2015&peakpower=3&loss=0&angle=0'
         r = requests.get(url_PVGIS)
@@ -646,21 +646,22 @@ class DistrictSimunation_Widget(QtWidgets.QDockWidget, FORM_CLASS):
             gsi2 = open(global_solar_irradiation_2, 'w')
             gsis = open(global_solar_irradiation_seasonal, 'w')
             data = r.text.split("\r\n")
+            header_rows = 9
             for i in range(8760):
                 try:
-                    value = data[11+i].split(",")[1]
+                    value = data[header_rows+i].split(",")[1]
                 except:
                     print("Critical error retrieving data from PVGIS: unexpected kind or data format. "
-                          "Output may be corrupted")
+                          "Output may be corrupted at index", i)
                     break
                 gsi.write(value + "\n")
                 gsi2.write(value + "\n")
                 gsis.write(value + "\n")
                 try:
-                    ot.write(data[11+i].split(",")[3] + "\n")
+                    ot.write(data[header_rows+i].split(",")[3] + "\n")
                 except:
                     print("Critical error retrieving data from PVGIS: unexpected kind or data format. "
-                          "Output may be corrupted")
+                          "Output may be corrupted at index", i)
                     break
             gsi.close()
             gsi2.close()
@@ -814,16 +815,16 @@ class DistrictSimunation_Widget(QtWidgets.QDockWidget, FORM_CLASS):
         for i in range(self.tableWidget.rowCount()):
             try:
                 if float(self.tableWidget.item(i, 1).text()) < float(self.tableWidget.item(i, 2).text()):
-                    self.tableWidget.item(i, 1).setForeground(QColor(0, 255, 0))
-                    self.tableWidget.item(i, 2).setForeground(QColor(0, 255, 0))
+                    self.tableWidget.item(i, 1).setForeground(QColor(255, 0, 0))
+                    self.tableWidget.item(i, 2).setForeground(QColor(255, 0, 0))
                     # icon = QIcon()
                     # icon_path = os.path.join(self.file_manager.city_plugin_folder, "../", "images",
                     #                          "green_check.png")
                     # icon.addPixmap(QPixmap(icon_path), QIcon.Normal, QIcon.Off)
                     # total_percent.setIcon(icon)
                 else:
-                    self.tableWidget.item(i, 1).setForeground(QColor(255, 0, 0))
-                    self.tableWidget.item(i, 2).setForeground(QColor(255, 0, 0))
+                    self.tableWidget.item(i, 1).setForeground(QColor(0, 0, 255))
+                    self.tableWidget.item(i, 2).setForeground(QColor(0, 0, 255))
                     # icon = QIcon()
                     # icon_path = os.path.join(self.file_manager.city_plugin_folder, "../", "images",
                     #                          "red_cross.png")

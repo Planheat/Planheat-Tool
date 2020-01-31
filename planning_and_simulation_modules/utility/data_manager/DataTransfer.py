@@ -24,6 +24,8 @@ class DataTransfer:
 
         self.pipes_list = None
 
+        self.save_network_on_exit = True
+
     def get_results(self):
         results = {}
         if self.nb_selected_buildings_int_label is not None:
@@ -70,6 +72,26 @@ class DataTransfer:
             print("DataTransfer.py, print_state(). Graph is None")
         else:
             print("DataTransfer.py, print_state(). Graph is not empty:")
+        if self.network is not None:
+            print("DataTransfer.py, print_state(). Network is not None:", self.network.name)
+        else:
+            print("DataTransfer.py, print_state(). network is None:")
+        if self.tree_group is not None:
+            print("DataTransfer.py, print_state(). tree_group is not None:", self.tree_group)
+        else:
+            print("DataTransfer.py, print_state(). tree_group is None:")
+        if self.tree_group is not None:
+            print("DataTransfer.py, print_state(). tree_group_name is not None:", self.tree_group_name)
+        else:
+            print("DataTransfer.py, print_state(). tree_group_name is None:")
+        if self.baseline_scenario is not None:
+            print("DataTransfer.py, print_state(). baseline_scenario is not None:", self.baseline_scenario.name())
+        else:
+            print("DataTransfer.py, print_state(). baseline_scenario is None:")
+        print("DataTransfer.py, print_state(). automatic_upload_network:", self.automatic_upload_network)
+        print("DataTransfer.py, print_state(). automatic_upload_network:", self.dock_type)
+        print("DataTransfer.py, print_state(). step1_mode:", self.step1_mode)
+        print("DataTransfer.py, print_state(). pipes_list:", self.pipes_list)
 
     def print_graph(self):
         print("DataTransfer.py, print_graph(). self.geo_graph:")

@@ -8,14 +8,10 @@ import numpy as np
 import os.path
 
 def genera_file_etaHP_cool(val_list=None, input_folder="", output_folder=""):
+    max_COP = 10.0
+
     if val_list is None:
         return
-
-    # Only for testing
-    if input_folder == "":
-        input_folder = "C:\\Users\\qgis1\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\planning_module\\Tjulia\\single_building"
-    if output_folder == "":
-        output_folder = "C:\\Users\\qgis1\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\planning_module\\Tjulia\\single_building\\input"
 
     ####### Heat pump 1, group 1 COP ########
 
@@ -33,7 +29,10 @@ def genera_file_etaHP_cool(val_list=None, input_folder="", output_folder=""):
     eta_Lorentz_1= 0.6
     print("eta_Lorentz_1", type(eta_Lorentz_1), eta_Lorentz_1, "T_sink_1", type(T_sink_1), T_sink_1, "T_source_1",
           type(T_source_1), T_source_1)
-    eta_HP_1=eta_Lorentz_1*(T_sink_1)/(T_sink_1-T_source_1)
+    eta_HP_1=eta_Lorentz_1*T_sink_1/(T_source_1 - T_sink_1)
+    for i in range(len(eta_HP_1)):
+        if eta_HP_1[i] > max_COP:
+            eta_HP_1[i] = max_COP
     np.savetxt(output_folder + "\\eta_HP_cool.csv", eta_HP_1, delimiter=".")
 
 
@@ -49,6 +48,30 @@ def genera_file_etaHP_cool(val_list=None, input_folder="", output_folder=""):
     T_sink_2= T_sink2 +273.15
     #Lorenz efficiency
     eta_Lorentz_2= 0.6
-    eta_HP_2=eta_Lorentz_2*(T_sink_2)/(T_sink_2-T_source_2)
+    eta_HP_2=eta_Lorentz_2*T_sink_2/(T_source_2 - T_sink_2)
+    for i in range(len(eta_HP_2)):
+        if eta_HP_2[i] > max_COP:
+            eta_HP_2[i] = max_COP
 
     np.savetxt(output_folder + "\\eta_HP_cool_2.csv", eta_HP_2, delimiter=".")
+
+
+
+    ####### Heat pump 3, group 1 COP ########
+    #Load meteorological data
+    try:
+        T_source_3 = np.genfromtxt(input_folder + "\\T_source_HP_cool_3.csv")
+    except OSError:
+        T_source_3 = np.genfromtxt(os.path.realpath(os.path.join(input_folder, "../", "Outside_temperature.csv")))
+    T_source_3=T_source_3+273.15
+    # Heat sink temperature [°C]
+    T_sink3 = val_list[4]
+    T_sink_3= T_sink3 +273.15
+    #Lorenz efficiency
+    eta_Lorentz_3= 0.6
+    eta_HP_3=eta_Lorentz_3*T_sink_3/(T_source_3 - T_sink_3)
+    for i in range(len(eta_HP_3)):
+        if eta_HP_3[i] > max_COP:
+            eta_HP_3[i] = max_COP
+
+    np.savetxt(output_folder + "\\eta_HP_cool_3.csv", eta_HP_3, delimiter=".")

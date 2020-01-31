@@ -25,7 +25,7 @@
          </font>
         </property>
         <property name="currentIndex">
-         <number>2</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="dhcnTab">
          <attribute name="title">
@@ -897,6 +897,9 @@
              <layout class="QHBoxLayout" name="horizontalLayout_55">
               <item>
                <widget class="QDoubleSpinBox" name="network1coeff">
+                <property name="minimum">
+                 <double>-100000.000000000000000</double>
+                </property>
                 <property name="maximum">
                  <double>100000.000000000000000</double>
                 </property>
@@ -904,14 +907,14 @@
                  <double>0.010000000000000</double>
                 </property>
                 <property name="value">
-                 <double>1.000000000000000</double>
+                 <double>3.100000000000000</double>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="QDoubleSpinBox" name="network2coeff">
                 <property name="decimals">
-                 <number>3</number>
+                 <number>4</number>
                 </property>
                 <property name="maximum">
                  <double>100000.000000000000000</double>
@@ -920,7 +923,7 @@
                  <double>0.010000000000000</double>
                 </property>
                 <property name="value">
-                 <double>1.000000000000000</double>
+                 <double>0.000500000000000</double>
                 </property>
                </widget>
               </item>
@@ -928,6 +931,9 @@
                <widget class="QDoubleSpinBox" name="network_el_sale">
                 <property name="maximum">
                  <double>999999999.000000000000000</double>
+                </property>
+                <property name="value">
+                 <double>1.000000000000000</double>
                 </property>
                </widget>
               </item>
@@ -972,26 +978,26 @@
               <item>
                <widget class="QDoubleSpinBox" name="networkTechMin">
                 <property name="maximum">
-                 <double>100000.000000000000000</double>
+                 <double>1000000.000000000000000</double>
                 </property>
                 <property name="singleStep">
                  <double>0.010000000000000</double>
                 </property>
                 <property name="value">
-                 <double>1.000000000000000</double>
+                 <double>0.000000000000000</double>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="QDoubleSpinBox" name="networkRampUpDown">
                 <property name="maximum">
-                 <double>100000.000000000000000</double>
+                 <double>100.000000000000000</double>
                 </property>
                 <property name="singleStep">
-                 <double>0.010000000000000</double>
+                 <double>1.000000000000000</double>
                 </property>
                 <property name="value">
-                 <double>1.000000000000000</double>
+                 <double>100.000000000000000</double>
                 </property>
                </widget>
               </item>
@@ -1903,14 +1909,14 @@
                <double>0.010000000000000</double>
               </property>
               <property name="value">
-               <double>1.000000000000000</double>
+               <double>3.100000000000000</double>
               </property>
              </widget>
             </item>
             <item>
              <widget class="QDoubleSpinBox" name="cooling2coeff">
               <property name="decimals">
-               <number>3</number>
+               <number>4</number>
               </property>
               <property name="minimum">
                <double>-9999999.990000000223517</double>
@@ -1922,7 +1928,7 @@
                <double>0.010000000000000</double>
               </property>
               <property name="value">
-               <double>1.000000000000000</double>
+               <double>0.000500000000000</double>
               </property>
              </widget>
             </item>
@@ -2203,17 +2209,7 @@
            </item>
            <item>
             <property name="text">
-             <string>Shallow geothermal compression chiller</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
              <string>Air source gas absorption chiller</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Shallow geothermal Gas absorption chiller</string>
             </property>
            </item>
           </widget>
@@ -2548,14 +2544,14 @@
                <double>0.010000000000000</double>
               </property>
               <property name="value">
-               <double>1.000000000000000</double>
+               <double>3.100000000000000</double>
               </property>
              </widget>
             </item>
             <item>
              <widget class="QDoubleSpinBox" name="dhw2coeff">
               <property name="decimals">
-               <number>3</number>
+               <number>4</number>
               </property>
               <property name="minimum">
                <double>-9999999.990000000223517</double>
@@ -2567,7 +2563,7 @@
                <double>0.010000000000000</double>
               </property>
               <property name="value">
-               <double>1.000000000000000</double>
+               <double>0.000500000000000</double>
               </property>
              </widget>
             </item>
@@ -2575,6 +2571,9 @@
              <widget class="QDoubleSpinBox" name="dhwElsale">
               <property name="maximum">
                <double>9999999.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>1.000000000000000</double>
               </property>
              </widget>
             </item>
@@ -3246,14 +3245,14 @@
                <double>0.001000000000000</double>
               </property>
               <property name="value">
-               <double>1.000000000000000</double>
+               <double>3.100000000000000</double>
               </property>
              </widget>
             </item>
             <item>
              <widget class="QDoubleSpinBox" name="heating2coeff">
               <property name="decimals">
-               <number>3</number>
+               <number>4</number>
               </property>
               <property name="maximum">
                <double>100000.000000000000000</double>
@@ -3262,7 +3261,7 @@
                <double>0.001000000000000</double>
               </property>
               <property name="value">
-               <double>1.000000000000000</double>
+               <double>0.000500000000000</double>
               </property>
              </widget>
             </item>
@@ -3270,6 +3269,9 @@
              <widget class="QDoubleSpinBox" name="heatingElsale">
               <property name="maximum">
                <double>999999.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>1.000000000000000</double>
               </property>
              </widget>
             </item>
@@ -3981,14 +3983,14 @@
          <widget class="QTableWidget" name="suppliesTable_future">
           <property name="geometry">
            <rect>
-            <x>10</x>
+            <x>0</x>
             <y>10</y>
-            <width>1171</width>
-            <height>641</height>
+            <width>891</width>
+            <height>671</height>
            </rect>
           </property>
           <attribute name="horizontalHeaderDefaultSectionSize">
-           <number>150</number>
+           <number>145</number>
           </attribute>
           <row>
            <property name="text">
@@ -4012,17 +4014,12 @@
           </row>
           <row>
            <property name="text">
-            <string>Solar thermal - Rooftops</string>
+            <string>Solar thermal</string>
            </property>
           </row>
           <row>
            <property name="text">
             <string>Excess heat Industry</string>
-           </property>
-          </row>
-          <row>
-           <property name="text">
-            <string>Excess heat - Industry</string>
            </property>
           </row>
           <row>
@@ -4047,17 +4044,17 @@
           </row>
           <row>
            <property name="text">
+            <string>Excess heat - Subway networks</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
             <string>Urban waste water treatment plant</string>
            </property>
           </row>
           <row>
            <property name="text">
             <string>Water - Waste water - Sewer system</string>
-           </property>
-          </row>
-          <row>
-           <property name="text">
-            <string>Water - Surface water - Rivers heat extraction heat pump</string>
            </property>
           </row>
           <row>
@@ -4092,7 +4089,17 @@
           </row>
           <row>
            <property name="text">
+            <string>Water - Surface water - Rivers heat extraction heat pump</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
             <string>Natural gas</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Electricity</string>
            </property>
           </row>
           <row>
@@ -4105,71 +4112,188 @@
             <string>Coal and Peat</string>
            </property>
           </row>
-          <row>
-           <property name="text">
-            <string>Electricity</string>
-           </property>
-          </row>
-          <row>
-           <property name="text">
-            <string>Air</string>
-           </property>
-          </row>
           <column>
            <property name="text">
             <string>Primary energy 
-factors</string>
+factor</string>
            </property>
            <property name="font">
             <font>
              <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
             </font>
            </property>
           </column>
           <column>
            <property name="text">
-            <string>Emission 
-factors</string>
+            <string>CO2 Emision
+ factor</string>
            </property>
            <property name="font">
             <font>
              <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
             </font>
            </property>
           </column>
           <column>
            <property name="text">
-            <string>Emission 
-factors 1</string>
+            <string>NOx Emision
+factor</string>
            </property>
            <property name="font">
             <font>
              <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
             </font>
            </property>
           </column>
           <column>
            <property name="text">
-            <string>Emission 
-factors 2</string>
+            <string>SOx Emission
+factor</string>
            </property>
            <property name="font">
             <font>
              <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
             </font>
            </property>
           </column>
           <column>
            <property name="text">
-            <string>Emission
-factors 3</string>
+            <string>PM10 Emision 
+factor</string>
            </property>
            <property name="font">
             <font>
              <pointsize>7</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
             </font>
            </property>
           </column>
+          <item row="0" column="0">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="flags">
+            <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+           </property>
+          </item>
+          <item row="2" column="0">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="flags">
+            <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+           </property>
+          </item>
+          <item row="3" column="0">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="flags">
+            <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+           </property>
+          </item>
+          <item row="4" column="0">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="flags">
+            <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+           </property>
+          </item>
+          <item row="5" column="0">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="flags">
+            <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+           </property>
+          </item>
+          <item row="6" column="0">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="flags">
+            <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+           </property>
+          </item>
+          <item row="7" column="0">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="flags">
+            <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+           </property>
+          </item>
+          <item row="8" column="0">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="flags">
+            <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+           </property>
+          </item>
+          <item row="9" column="0">
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item row="10" column="0">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="flags">
+            <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+           </property>
+          </item>
+          <item row="11" column="0">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="flags">
+            <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+           </property>
+          </item>
+          <item row="12" column="0">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="flags">
+            <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+           </property>
+          </item>
+          <item row="15" column="0">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="flags">
+            <set>ItemIsEnabled</set>
+           </property>
+          </item>
+          <item row="16" column="0">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="flags">
+            <set>ItemIsEnabled</set>
+           </property>
+          </item>
+          <item row="18" column="0">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="flags">
+            <set>ItemIsUserCheckable|ItemIsEnabled</set>
+           </property>
+          </item>
          </widget>
         </widget>
         <widget class="QWidget" name="transport">
@@ -4737,6 +4861,43 @@ factors 3</string>
             <string>Additional Simulation Parameters</string>
            </property>
           </widget>
+         </widget>
+         <widget class="QPushButton" name="saveLoad">
+          <property name="geometry">
+           <rect>
+            <x>750</x>
+            <y>710</y>
+            <width>100</width>
+            <height>28</height>
+           </rect>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>100</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>100</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="baseSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Save/Load</string>
+          </property>
          </widget>
         </widget>
        </widget>

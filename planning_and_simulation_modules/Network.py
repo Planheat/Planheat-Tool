@@ -2,24 +2,17 @@ import uuid
 
 import os
 import os.path
-import json
 
 from qgis.core import QgsPointXY, QgsGeometry, QgsProject, QgsFeature, QgsVectorLayer
 from qgis.core import *
 
-from .layer_utils import add_layer_to_group, save_layer_to_shapefile
-from .utility.easy_progress_bar import Actions
+from .layer_utils import add_layer_to_group
 
 import processing
 import copy
 import traceback
 
-from shapely.geometry import LineString
-
 from PyQt5.QtCore import pyqtSignal, QObject, QVariant
-from PyQt5.QtWidgets import QMessageBox
-
-from .dhcoptimizerplanheat.optimizer import config
 
 
 class Network(QObject):
@@ -47,11 +40,13 @@ class Network(QObject):
             self.streets_layer_backup = []
             self.optimized_buildings_layer = None
             self.optimized_streets_layer = None
+            self.cloned_from = None
             self.street_quality_status = False
             self.scenario_type = "baseline"
             self.supply_layer = self.create_supply_layer()
         else:
             self.optimized = orig.optimized
+            self.cloned_from = orig.get_ID()
             self.efficiency = orig.efficiency
             self.scenario_type = orig.scenario_type
             self.name = orig.name
@@ -143,49 +138,17 @@ class Network(QObject):
             # self.update_supply_labels()
         return True
 
-    @staticmethod
-    def get_length(feature):
-        return feature.geometry().length()
-
     def select_in_widget(self, selected, deselected, clearAndSelect):
         feature_to_select = []
         for feature in self.streets_layer.getSelectedFeatures():
             feature_to_select.append(feature.attribute("ID"))
         self.list_to_select_ready.emit(self.n_type, self.get_ID(), feature_to_select)
 
-    @staticmethod
-    def get_MultiPolyLine_from_feature(feature):
-        try:
-            line = feature.geometry().asMultiPolyline()
-            if len(line) == 0:
-                line = feature.geometry().asPolyline()
-                if len(line) == 0:
-                    print("Network.get_MultiPolyLine_from_feature: no line extracted from feature", "\n")
-                    return None
-                else:
-                    line = [line]
-        except:
-            print("Network.get_MultiPolyLine_from_feature: failed to extract line from feature", "\n")
-            return None
-        return line
-
-    @staticmethod
-    def feature_to_shapely_linestring(feature):
-        line = Network.get_MultiPolyLine_from_feature(feature)
-        if line is not None:
-            tuple_line = []
-            for p in line[0]:
-                tuple_line.append((p.x(), p.y()))
-            shapely_geometry = LineString(tuple_line)
-            return shapely_geometry
-        return None
-
     def pipes_length(self, log=None):
         if log is not None:
             log.log("---   Network.pipes_lenght()   ---")
         total = 0
-        if self.streets_layer is None:
-            self.search_and_fix_street_layers(log=log)
+        self.search_and_fix_street_layers(log=log)
         if self.streets_layer is None:
             return total
         if log is not None:
@@ -211,102 +174,74 @@ class Network(QObject):
             layer = self.buildings_layer
         if layer is None:
             layer = self.search_and_fix_layers()
+        if layer.name().startswith ("selected_buildings_"):
+            status = None
+        else:
+            status = 2
         residential = 0
         others = 0
         output = -1
         if layer is not None:
             for feature in layer.getFeatures():
-                if feature.attribute("Use") == "Residential":
-                    residential = residential + feature.attribute("MaxHeatDem") + feature.attribute(
-                        "MaxCoolDem") + feature.attribute("MaxDHWDem")
-                else:
-                    others = others + feature.attribute("MaxHeatDem") + feature.attribute(
-                        "MaxCoolDem") + feature.attribute("MaxDHWDem")
+                if status is None or int(feature.attribute("Status")) == status:
+                    if feature.attribute("Use") == "Residential":
+                        residential = residential + feature.attribute("MaxHeatDem") + feature.attribute(
+                            "MaxCoolDem") + feature.attribute("MaxDHWDem")
+                    else:
+                        others = others + feature.attribute("MaxHeatDem") + feature.attribute(
+                            "MaxCoolDem") + feature.attribute("MaxDHWDem")
             try:
                 output = residential/(residential+others)
             except ZeroDivisionError:
                 output = -1
         return output
 
-    def save_network(self, dict_data, directory):
-        dict_data["default_crs"] = self.default_crs
-        dict_data["sqrPrecision"] = self.sqrPrecision
-        dict_data["H_dem_attributes"] = self.H_dem_attributes
-        dict_data["C_dem_attributes"] = self.C_dem_attributes
-        dict_data["efficiency"] = self.efficiency
-        dict_data["name"] = self.name
-        dict_data["n_type"] = self.n_type
-        dict_data["street_quality_status"] = self.street_quality_status
-        dict_data["scenario_type"] = self.scenario_type
-        dict_data["buildings_layer"] = save_layer_to_shapefile(self.buildings_layer,
-                                                               os.path.join(directory,
-                                                                            "Networks",
-                                                                            self.get_ID(),
-                                                                            "buildings_layer.shp"))
-        dict_data["streets_layer"] = save_layer_to_shapefile(self.streets_layer,
-                                                             os.path.join(directory,
-                                                                          "Networks",
-                                                                          self.get_ID(),
-                                                                          "streets_layer.shp"))
-        dict_data["supply_layer"] = save_layer_to_shapefile(self.supply_layer,
-                                                            os.path.join(directory,
-                                                                         "Networks",
-                                                                         self.get_ID(),
-                                                                         "supply_layer.shp"))
-        dict_data["optimized_buildings_layer"] = save_layer_to_shapefile(self.optimized_buildings_layer,
-                                                                         os.path.join(directory,
-                                                                                      "Networks",
-                                                                                      self.get_ID(),
-                                                                                      "optimized_buildings_layer.shp"))
-        dict_data["optimized_streets_layer"] = save_layer_to_shapefile(self.optimized_streets_layer,
-                                                                       os.path.join(directory,
-                                                                                    "Networks",
-                                                                                    self.get_ID(),
-                                                                                    "optimized_streets_layer.shp"))
-        streets_lyr_backup = self.generate_streets_layer_from_features_list(self.streets_layer_backup)
-        dict_data["streets_layer_backup"] = save_layer_to_shapefile(streets_lyr_backup,
-                                                                    os.path.join(directory,
-                                                                                 "Networks",
-                                                                                 self.get_ID(),
-                                                                                 "streets_layer_backup.shp"))
-        dict_data["graph"] = {}
-        self.save_graph(dict_data["graph"])
-
-    def generate_streets_layer_from_features_list(self, features):
-        try:
-            crs = self.streets_layer.crs().authid()
-            layer = QgsVectorLayer('LineString?crs=' + crs, "streets backup", "memory")
-            layer.startEditing()
-            layer.setCrs(self.street_layer.crs())
-            layer.dataProvider().addAttributes([f for f in self.streets_layer.fields()])
-            layer.updateFields()
-            layer.commitChanges()
-            layer.startEditing()
-            pr = layer.dataProvider()
-            pr.addFeatures(features)
-            layer.commitChanges()
-            return layer
-        except:
-            print("Network.py, generate_streets_layer_from_features_list. FAILED to create backup_streets layer")
-            return None
-
     def get_group_name(self):
         return self.n_type + " (" + self.scenario_type + "): " + self.name + " - ID:" + self.get_ID()
 
     def get_supplies_names(self):
-        supply_layer = self.supply_layer
-        supply_list = []
+        try:
+            root = QgsProject.instance().layerTreeRoot()
+            node = root.findGroup(self.get_group_name())
+            layers = node.findLayers()
+            potential_supply_layer = None
+            for layer in layers:
+                if layer.name().startswith("potential_supply_") and int(layer.layer().geometryType()) == 0:
+                    potential_supply_layer = layer.layer()
+            supply_layer = self.fix_supply_layer()
+            layers = []
+            if supply_layer is not None:
+                layers.append(supply_layer)
+            if potential_supply_layer is not None:
+                layers.append(potential_supply_layer)
+            return self.get_supplies_infos(layers)
+        except Exception as e:
+            print("Network.get_supplies_names(): EXCEPTION fired", e)
+            return []
 
-        if supply_layer is None:
-            print("Network.py, get_supplies_names(). supply_layer is None")
-            return supply_list
-        if not supply_layer.isValid():
-            print("Network.py, get_supplies_names(). supply_layer is invalid")
-            return supply_list
-        for supply_feature in supply_layer.getFeatures():
-            supply_list.append([supply_feature.attribute("name"),
-                                supply_feature.attribute("capacity_MW")])
+    def get_supplies_infos(self, supply_layers):
+        supply_list = []
+        for supply_layer in supply_layers:
+            for supply_feature in supply_layer.getFeatures():
+                supply_list.append([supply_feature.attribute("name"),
+                                    supply_feature.attribute("capacity_MW")])
         return supply_list
+
+    def fix_supply_layer(self):
+        try:
+            root = QgsProject.instance().layerTreeRoot()
+            node = root.findGroup(self.get_group_name())
+            print("Network.fix_supply_layer() fixing:", self.get_group_name())
+            layers = node.findLayers()
+            for layer in layers:
+                if layer.name().startswith("old_supply_") and int(layer.layer().geometryType()) == 0:
+                    self.supply_layer = layer.layer()
+                    return layer.layer()
+            return None
+        except:
+            traceback.print_exc()
+
+
 
     def remove_group(self):
         root = QgsProject.instance().layerTreeRoot()
@@ -351,30 +286,41 @@ class Network(QObject):
     def get_connected_buildings(self):
         index = None
         output_list = []
-        root = QgsProject.instance().layerTreeRoot()
-        network_node = root.findGroup(self.get_group_name())
-        if network_node is None:
-            return output_list
-        for i, id_layer in enumerate(network_node.findLayerIds()):
-            if id_layer.startswith("selected_buildings_"):
-                index = i
-                break
-        else:
+        try:
+            root = QgsProject.instance().layerTreeRoot()
+            network_node = root.findGroup(self.get_group_name())
+            if network_node is None:
+                return output_list
             for i, id_layer in enumerate(network_node.findLayerIds()):
-                if id_layer.startswith("all_buildings_"):
+                if id_layer.startswith("selected_buildings_"):
                     index = i
+                    status = None
                     break
-        layer = network_node.findLayer(network_node.findLayerIds()[index]).layer()
-        if index is None or layer is None:
+            else:
+                for i, id_layer in enumerate(network_node.findLayerIds()):
+                    if id_layer.startswith("all_buildings_"):
+                        index = i
+                        status = 2
+                        break
+            if index is None:
+                print("ERROR in Network.get_connected_buildings: no building layer found for network", self.name)
+                return output_list
+            layer = network_node.findLayer(network_node.findLayerIds()[index]).layer()
+            if layer is None:
+                print("ERROR in Network.get_connected_buildings: failed to get buildings layer for network", self.name)
+                return output_list
+            for building in layer.getFeatures():
+                try:
+                    if status is None:
+                        output_list.append(building)
+                    elif building.attribute("Status") == status:
+                        output_list.append(building)
+                except:
+                    print("Network.get_connected_buildings(): error checking status... WHY?")
             return output_list
-        for building in layer.getFeatures():
-            try:
-                if building.attribute("Status") == 2:
-                    output_list.append(building)
-            except:
-                print("Network.get_connected_buildings(): error checking status... WHY?")
-                pass
-        return output_list
+        except Exception:
+            traceback.print_exc()
+            return output_list
 
     def search_and_fix_street_layers(self, log=None):
         if log is not None:
@@ -431,6 +377,16 @@ class Network(QObject):
                         print("Network.search_and_fix_layers() found a layer, but failed to write it's name")
                         traceback.print_exc()
                     return layer.layer()
+            for layer in layers:
+                if layer.name().startswith("all_buildings_"):
+                    try:
+                        print("Network.search_and_fix_layers() found layer:", layer.layer().name())
+                        if ovveride_layer:
+                            self.optimized_buildings_layer = layer.layer()
+                    except:
+                        print("Network.search_and_fix_layers() found a layer, but failed to write it's name")
+                        traceback.print_exc()
+                    return layer.layer()
             return None
 
     def get_efficiency(self):
@@ -441,15 +397,10 @@ class Network(QObject):
             pass
         return val
 
-class network_save(Network):
-    def __init__(self, network=None):
-        Network.__init__(self, name="default", n_type=network, orig=network, parent=None)
-        self.ID = network.get_ID()
+    def export_network_data(self):
+        data = {}
+        data["id"] = self.get_ID()
+        data["efficiency"] = self.get_efficiency()
 
-    def save_network_baseline(self, dr):
-        reti= {}
-        self.save_network(reti, dr)
-        output_file = os.path.join(dr, self.get_ID() + ".json")
-        with open(output_file, 'w') as outfile:
-            json.dump(reti, outfile, indent=4)
-
+    def is_building_connected(self, building_id):
+        pass

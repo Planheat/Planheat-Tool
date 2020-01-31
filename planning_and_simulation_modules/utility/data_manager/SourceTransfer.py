@@ -23,12 +23,7 @@ class SourceTransfer:
 
         for i in range(self.widget_input.columnCount()):
             try:
-                print("SourceTransfer.transfer_sources_table(), self.widget_input.horizontalHeaderItem(i):",
-                      self.widget_input.horizontalHeaderItem(i))
-                print("SourceTransfer.transfer_sources_table(), self.widget_input.horizontalHeaderItem(i):",
-                      self.widget_input.horizontalHeaderItem(i).text())
                 target_table.setHorizontalHeaderItem(i, self.widget_input.horizontalHeaderItem(i).clone())
-
             except AttributeError:
                 target_table.setHorizontalHeaderItem(i, QTableWidgetItem())
 

@@ -110,6 +110,7 @@ def add_id_attribute_to_layer(layer):
         layer.startEditing()
         print(layer.fields().indexFromName('ID_GEN'))
         for feature in layer.getFeatures():
+            print(number)
             feature.setAttribute(idx, number)
             layer.updateFeature(feature)
             number += 1
@@ -196,25 +197,37 @@ def load_osm():
 
 
 def get_selection():
-    from .io_utils import get_temp_folder_name
+
     layer = iface.activeLayer()
     if isinstance(layer, QgsVectorLayer):
         selected_features = layer.selectedFeatures()
         if selected_features:
-            file_name = get_temp_folder_name() + r"/" + "layer.shp"
-            newlayer = QgsVectorLayer(layer.source(), layer.name(), layer.providerType())
-            add_id_attribute_to_layer(newlayer)
-            QgsVectorFileWriter.writeAsVectorFormat(newlayer, file_name, "utf-8", layer.crs(), "ESRI Shapefile", 1)
+            file_name, newlayer = copy_layer(layer)
+            error = QgsVectorFileWriter.writeAsVectorFormat(newlayer, file_name, "utf-8", layer.crs(), "ESRI Shapefile", 1)
+            print(error)
         else:
-            file_name = get_temp_folder_name() + r"/" + "layer.shp"
-            newlayer = QgsVectorLayer(layer.source(), layer.name(), layer.providerType())
-            add_id_attribute_to_layer(newlayer)
-            QgsVectorFileWriter.writeAsVectorFormat(newlayer, file_name, "utf-8", layer.crs(), "ESRI Shapefile")
+            file_name, newlayer = copy_layer(layer)
+            error = QgsVectorFileWriter.writeAsVectorFormat(newlayer, file_name, "utf-8", layer.crs(), "ESRI Shapefile")
+            print(error)
         layer = newlayer = None
         result = ogr.Open(file_name)
         return result, file_name
 
     return None, None
+
+
+def copy_layer(layer):
+    from .io_utils import get_temp_folder_name
+    file_name = get_temp_folder_name() + r"/" + "layer.shp"
+    feats = [feat for feat in layer.getFeatures()]
+    newlayer = QgsVectorLayer(layer.source(), layer.name(), layer.providerType())
+    mem_layer_data = newlayer.dataProvider()
+    attr = layer.dataProvider().fields().toList()
+    mem_layer_data.addAttributes(attr)
+    newlayer.updateFields()
+    mem_layer_data.addFeatures(feats)
+    add_id_attribute_to_layer(newlayer)
+    return file_name, newlayer
 
 
 def move_active_vector_layer_to_top():

@@ -1,10 +1,9 @@
 from PyQt5 import QtWidgets, uic
 
 from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtGui import QIcon, QColor, QBrush
-from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem, QMessageBox
+import traceback
 
-import os
+from .VITO.mapping.MappingModuleInterface import MappingModuleInterface
 import os.path
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -24,7 +23,15 @@ class AdditionalSimulationParameterGUI(QtWidgets.QDockWidget, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
 
-        self.years.setValue(5)
+        try:
+            mapping_module_interface = MappingModuleInterface()
+            self.years.setValue(
+                mapping_module_interface.get_future_year() - mapping_module_interface.get_baseline_year())
+            self.label.setText("Years (loaded from DMM):")
+            self.years.setEnabled(False)
+            self.label.setEnabled(False)
+        except Exception:
+            self.years.setValue(5)
         self.r_factor.setValue(0.11)
         self.demo_factor.setValue(1.00)
         self.FEavailability.setValue(1)

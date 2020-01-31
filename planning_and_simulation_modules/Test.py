@@ -1,5 +1,6 @@
-from .technology.Technology import Technology
 from PyQt5.QtWidgets import QTreeWidgetItem
+
+from .technology.Technology import Technology
 
 
 class Test:

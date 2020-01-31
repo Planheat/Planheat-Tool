@@ -1,26 +1,22 @@
-import csv
-import os
+
 import json
-from PyQt5.QtWidgets import QTableWidgetItem
-from PyQt5.QtCore import Qt
 from PyQt5.QtCore import *
 from PyQt5.QtCore import pyqtSignal
 from .src.FileManager import FileManager
 from .src.ImportManager import ImportManager
-from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtGui import QPixmap
 from ..VITO.Prioritization_algorithm import *
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtWidgets
 from PyQt5 import uic
-from PyQt5.QtGui import QIcon, QColor, QBrush
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem, QMessageBox
 from .KPIsCalculatorCity import KPIsCalculator
 from .db import recive_country
 from .db import recive_primary_energy_factor
 from .updataTableKpi import update_KPIs_visualization_tab
 from .updataTableKpi import tab_not_editable
-from ..Tjulia.DistrictSimulator import DistrictSimulator
+from ..config.PlanningCriteriaHelper import PlanningCriteriaHelper
 import pandas as pd
-from collections import defaultdict
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), 'city_step01.ui'))
 
@@ -77,7 +73,8 @@ class CityStep01Dialog(QtWidgets.QDockWidget, FORM_CLASS):
 
         self.weights = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         self.calculator = KPIsCalculator()
-        self.simulator = DistrictSimulator()
+
+        self.planning_criteria_helper = PlanningCriteriaHelper()
 
         self.load_city = None
         valore_comboBox = recive_country()
@@ -158,7 +155,7 @@ class CityStep01Dialog(QtWidgets.QDockWidget, FORM_CLASS):
 
     def itemSelection(self, item, column):
         p = item.text(column)
-        help = self.simulator.insert_text_help(p)
+        help = self.planning_criteria_helper.insert_text_help(p)
         self.helpText.setText(help)
         self.show_help()
 

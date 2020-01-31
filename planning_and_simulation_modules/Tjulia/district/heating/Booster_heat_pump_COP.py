@@ -31,12 +31,20 @@ class Booster_COP:
         try:
             T_source_I_1 = np.genfromtxt(input_folder + "\\T_source_I_1_HP.csv")
         except OSError:
-            T_source_I_1 = np.genfromtxt(os.path.realpath(os.path.join(input_folder, "../../", "Outside_temperature.csv")))
+            T_source_I_1 = np.genfromtxt(os.path.realpath(os.path.join(input_folder, "../../",
+                                                                     "Outside_temperature.csv")))
+        print("Booster_heat_pump_COP.generate_fileEta_forHeating() file dato\n",
+              input_folder + "\\T_source_I_1_HP.csv",
+              os.path.realpath(os.path.join(input_folder, "../../",
+                                            "Outside_temperature.csv")),
+              T_source_I_1)
         T_source_I_1=T_source_I_1+273.15
         T_sink = list_val[0]
         T_sink_I_1= T_sink + 273.15
         eta_Lorentz_I_1=0.6
         eta_HP_I_1=eta_Lorentz_I_1*(T_sink_I_1)/(T_sink_I_1-T_source_I_1)
+        print("Booster_heat_pump_COP.generate_fileEta_forHeating() saved in\n",
+              output_folder + "\\eta_HP_I_1.csv")
         np.savetxt(output_folder + "\\eta_HP_I_1.csv", eta_HP_I_1, delimiter=".")
 
             ####### heat pump 2  ########

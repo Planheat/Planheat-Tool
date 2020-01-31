@@ -15,6 +15,8 @@ class PlotService:
     HEX = "Result_HEX"
     EH = "Result_EH"
     HP_COOL = "Result_HP_cool"
+    HP_COOL_ABSOPRTION = "Result_HP_cool_absorption"
+    HP_absorption = "Result_HP_absorption"
 
     canvas_dpi = 85
     canvas_height = 4
@@ -199,4 +201,3 @@ class PlotService:
         else:
             massimo = massimo * 1.1
         return massimo
-

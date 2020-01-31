@@ -1,15 +1,17 @@
 from PyQt5.QtWidgets import QTreeWidget, QMessageBox
 from ...layer_utils import read_layer_attribute_by_id
+from PyQt5 import QtCore
 
 
 class TechnologiesTransfer:
 
-    def __init__(self, widget_input: QTreeWidget):
+    def __init__(self, widget_input: QTreeWidget, n_tree: QTreeWidget=None):
         if widget_input is None:
             print("TechologiesTransfer.__init__(): some inputs are None")
         self.widget_input = widget_input
-        self.widget_output = None
+        self.widget_output: QTreeWidget = None
         self.buildings_transferred = False
+        self.n_tree = n_tree
 
     def tree_widget_transfer(self, widget_output: QTreeWidget):
         self.widget_output = widget_output
@@ -32,8 +34,6 @@ class TechnologiesTransfer:
         dic_building_input_id = {}
         nb_input = self.widget_input.topLevelItemCount()
         for i in range(nb_input):
-            if int(10*i/nb_input) != int(10*(i-1)/nb_input):
-                print("TechnologiesTransfer.buildings_tree_widget_transfer(): {0}%".format(100*i/nb_input))
             building_input = self.widget_input.topLevelItem(i)
             #print("TechnologiesTransfer.buildings_tree_widget_transfer(). building_input:", building_input.text(0))
             building_input_id = read_layer_attribute_by_id(baseline_layer, building_input.text(0), "BuildingID")
@@ -84,4 +84,23 @@ class TechnologiesTransfer:
             return True
         else:
             return False
+
+    def update_network_id_user_role_data(self, future_networks):
+        for i in range(self.widget_output.topLevelItemCount()):
+            future_network_id = self.widget_output.topLevelItem(i).data(0, QtCore.Qt.UserRole)
+            for j in range(self.widget_input.topLevelItemCount()):
+                baseline_network_id = self.widget_input.topLevelItem(j).data(0, QtCore.Qt.UserRole)
+                if baseline_network_id == future_network_id:
+                    for future_networks_service in future_networks:
+                        for network in future_networks_service:
+                            if network.cloned_from == baseline_network_id:
+                                self.widget_output.topLevelItem(i).setData(0, QtCore.Qt.UserRole,
+                                                                           QtCore.QVariant(network.get_ID()))
+                                break
+                        else:
+                            continue
+                        break
+                    else:
+                        continue
+                    break
 

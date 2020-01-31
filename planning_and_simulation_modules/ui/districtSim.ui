@@ -56,7 +56,7 @@
      </sizepolicy>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab_6">
      <attribute name="title">
@@ -72,7 +72,7 @@
        </rect>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_7">
        <attribute name="title">
@@ -621,7 +621,7 @@ TOT</string>
         </item>
         <item row="3" column="1">
          <property name="text">
-          <string>EN_1.3 PEC future</string>
+          <string>EN_1.3 PEC fut</string>
          </property>
          <property name="font">
           <font>
@@ -641,7 +641,7 @@ TOT</string>
         </item>
         <item row="4" column="1">
          <property name="text">
-          <string>EN_1.4 SPEC future</string>
+          <string>EN_1.4 SPEC fut</string>
          </property>
          <property name="font">
           <font>
@@ -1026,7 +1026,7 @@ TOT</string>
         </item>
         <item row="23" column="1">
          <property name="text">
-          <string>EN_4.2 RES % baseline</string>
+          <string>EN_4.2 RES % base</string>
          </property>
          <property name="font">
           <font>
@@ -1066,7 +1066,7 @@ TOT</string>
         </item>
         <item row="25" column="1">
          <property name="text">
-          <string>EN_4.4 RES % future</string>
+          <string>EN_4.4 RES % fut</string>
          </property>
          <property name="font">
           <font>
@@ -1176,7 +1176,7 @@ TOT</string>
         </item>
         <item row="30" column="1">
          <property name="text">
-          <string>EN_5.4 WH % future</string>
+          <string>EN_5.4 WH % fut</string>
          </property>
          <property name="font">
           <font>
@@ -3569,7 +3569,7 @@ TER</string>
         </item>
         <item row="4" column="1">
          <property name="text">
-          <string>SO_2.1 Job baseline</string>
+          <string>SO_2.1 Job base</string>
          </property>
          <property name="font">
           <font>
@@ -3579,7 +3579,7 @@ TER</string>
         </item>
         <item row="5" column="1">
          <property name="text">
-          <string>SO_2.2 Job future</string>
+          <string>SO_2.2 Job fut</string>
          </property>
          <property name="font">
           <font>
@@ -3750,8 +3750,8 @@ TER</string>
        <rect>
         <x>30</x>
         <y>50</y>
-        <width>551</width>
-        <height>481</height>
+        <width>791</width>
+        <height>521</height>
        </rect>
       </property>
      </widget>
@@ -3793,7 +3793,7 @@ TER</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_3"/>
      </widget>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
         <x>1030</x>
@@ -3880,7 +3880,7 @@ TER</string>
       </property>
       <layout class="QGridLayout" name="gridIndiv3"/>
      </widget>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
         <x>1030</x>

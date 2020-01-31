@@ -1,12 +1,9 @@
 
-from PyQt5.QtWidgets import *
-from PyQt5 import QtCore
-from PyQt5.QtGui import *
 
 from PyQt5.QtWidgets import (QWidget, QPushButton,
-    QHBoxLayout, QVBoxLayout, QApplication, QListView)
+    QHBoxLayout, QVBoxLayout,QListView)
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui
 
 
 class CheckSourceDialog(QWidget):
@@ -69,6 +66,17 @@ class CheckSourceDialog(QWidget):
             'Biomass - Forestry - Mixed forest',  # [28]
             'Water - Surface water - Rivers heat extraction heat pump'  # [29]
             ]
+
+        self.supply_csv_sources = {"Agriculture (High) Basic": self.sources[20], "Agriculture (High)": self.sources[20],
+                                   "Forestry (High)": self.sources[0], "Biomass": self.sources[0],
+                                   "Industry (High)": self.sources[6], "Excess heat sources": self.sources[6],
+                                   "Excess cooling sources": self.sources[19], "Waste water": self.sources[14],
+                                   "Surface water (Low)": self.sources[15], "Water": self.sources[14],
+                                   "Deep geothermal (High)": self.sources[1],
+                                   "Shallow geothermal (Low)": self.sources[2],
+                                   "Geothermal": self.sources[2], "Solar thermal (High)": self.sources[4],
+                                   "Generic heating or cooling source": self.sources[20]
+                                   }
 
         self.MM_to_DPM_sources_dict = {self.mapped_sources[0]: self.sources[1],
                                         self.mapped_sources[1]: self.sources[1],

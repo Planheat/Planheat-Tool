@@ -39,6 +39,7 @@ def create_base_tech_infos():
     tech_infos["cost_var_EH"] = 0.5
     tech_infos["Technical_minimum_EH"] = 0
     tech_infos["Percentage_ramp_up_down_EH"] = 1
+    tech_infos["cost_fuel_EH"] = 1.0
 
     ## Electrical heater 2 ##
 
@@ -50,6 +51,7 @@ def create_base_tech_infos():
     tech_infos["cost_var_EH_2"] = 0.7
     tech_infos["Technical_minimum_EH_2"] = 0
     tech_infos["Percentage_ramp_up_down_EH_2"] = 1
+    tech_infos["cost_fuel_EH_2"] = 1.0
 
     ## Heat pump ##
 
@@ -59,6 +61,7 @@ def create_base_tech_infos():
     tech_infos["cost_var_HP"] = 0.5
     tech_infos["Technical_minimum_HP"] = 0.0
     tech_infos["Percentage_ramp_up_down_HP"] = 1
+    tech_infos["cost_fuel_HP"] = 1
 
     ## Heat pump 2 ##
 
@@ -68,6 +71,7 @@ def create_base_tech_infos():
     tech_infos["cost_var_HP_2"] = 0.5
     tech_infos["Technical_minimum_HP_2"] = 0.0
     tech_infos["Percentage_ramp_up_down_HP_2"] = 1
+    tech_infos["cost_fuel_HP_2"] = 1
 
     ## Absorption heat pump ##
 
@@ -97,6 +101,7 @@ def create_base_tech_infos():
     tech_infos["cost_fuel_CHP"] = 20
     tech_infos["Tecnical_minimum_CHP"] = 0.2
     tech_infos["Percentage_ramp_up_down_CHP"] = 0.7
+    tech_infos["CHP_electricity_price"] = 1
 
     ## Solar thermal ##
 
@@ -113,6 +118,7 @@ def create_base_tech_infos():
     tech_infos["cost_var_HP_cool"] = 0.5
     tech_infos["Tecnical_minimum_HP_cool"] = 0.0
     tech_infos["Percentage_ramp_up_down_HP_cool"] = 1
+    tech_infos["cost_fuel_HP_cool"] = 1
 
     ## Cooling heat pump 2 ##
 
@@ -122,6 +128,7 @@ def create_base_tech_infos():
     tech_infos["cost_var_HP_cool_2"] = 0.5
     tech_infos["Tecnical_minimum_HP_cool_2"] = 0.0
     tech_infos["Percentage_ramp_up_down_HP_cool_2"] = 1
+    tech_infos["cost_fuel_HP_cool_2"] = 1
 
     ## Absorption Cooling heat pump ##
     tech_infos["P_max_HP_cool_absorption"] = 1.5
@@ -234,6 +241,7 @@ def create_base_tech_district():
     tech_infos["Percentage_ramp_up_down_EH"] = 0.95
     # Variable cost [EUR/MWh]
     tech_infos["cost_var_EH"] = 0.5
+    tech_infos["cost_fuel_EH"] = 1.0
 
     ## Electrical heater 2 ##
 
@@ -247,6 +255,7 @@ def create_base_tech_district():
     tech_infos["Percentage_ramp_up_down_EH_2"] = 0.9
     # Variable cost [EUR/MWh]
     tech_infos["cost_var_EH_2"] = 0.7
+    tech_infos["cost_fuel_EH_2"] = 1.0
 
     ## Electrical heater 3 ##
 
@@ -260,6 +269,7 @@ def create_base_tech_district():
     tech_infos["Percentage_ramp_up_down_EH_3"] = 0.99
     # Variable cost [EUR/MWh]
     tech_infos["cost_var_EH_3"] = 0.8
+    tech_infos["cost_fuel_EH_3"] = 1.0
 
     ## Heat pump ##
     # Installed capacity [MW]
@@ -270,6 +280,7 @@ def create_base_tech_district():
     tech_infos["Percentage_ramp_up_down_HP"] = 0.95
     # Variable cost [EUR/MWh]
     tech_infos["cost_var_HP"] = 0.5
+    tech_infos["cost_fuel_HP"] = 1.0
 
     ## Heat pump 2 ##
 
@@ -281,6 +292,7 @@ def create_base_tech_district():
     tech_infos["Percentage_ramp_up_down_HP_2"] = 0.95
     # Variable cost [EUR/MWh]
     tech_infos["cost_var_HP_2"] = 0.5
+    tech_infos["cost_fuel_HP_2"] = 1.0
 
     ## Heat pump 3 ##
     # Installed capacity [MW]
@@ -291,6 +303,7 @@ def create_base_tech_district():
     tech_infos["Percentage_ramp_up_down_HP_3"] = 0.95
     # Variable cost [EUR/MWh]
     tech_infos["cost_var_HP_3"] = 0.5
+    tech_infos["cost_fuel_HP_3"] = 1.0
 
     ## Absorption heat pump ##
 
@@ -323,6 +336,7 @@ def create_base_tech_district():
     tech_infos["cost_var_CHP"] = 3.9
     # Fuel cost [EUR/MWh]
     tech_infos["cost_fuel_CHP"] = 20
+    tech_infos["CHP_electricity_price"] = 1.0
 
     ## Cogeneration 2 ##
 
@@ -340,6 +354,7 @@ def create_base_tech_district():
     tech_infos["cost_var_CHP_2"] = 3.9
     # Fuel cost [EUR/MWh]
     tech_infos["cost_fuel_CHP_2"] = 15
+    tech_infos["CHP_electricity_price_2"] = 1.0
 
     ## ORC Cogeneration ##
 
@@ -355,6 +370,7 @@ def create_base_tech_district():
     tech_infos["Percentage_ramp_up_down_CHP_ORC"] = 0.2
     # Variable cost [EUR/MWh]
     tech_infos["cost_var_CHP_ORC"] = 0.5
+    tech_infos["CHP_ORC_electricity_price"] = 1.0
 
     ## Solar thermal ##
 
@@ -395,6 +411,7 @@ def create_base_tech_district():
     tech_infos["Percentage_ramp_up_down_HP_waste_heat_I_1"] = 0.95
     # Variable cost [EUR/MWh]
     tech_infos["cost_var_HP_waste_heat_I_1"] = 0.7
+    tech_infos["cost_fuel_HP_waste_heat_I_1"] = 1.0
 
     ## Waste heat - heat pumps 2 ##
 
@@ -405,6 +422,7 @@ def create_base_tech_district():
     # Ramp-up-down speed [MW/h]
     tech_infos["Percentage_ramp_up_down_HP_waste_heat_I_2"] = 0.95
     tech_infos["cost_var_HP_waste_heat_I_2"] = 1.5
+    tech_infos["cost_fuel_HP_waste_heat_I_2"] = 1.0
 
     ## Waste heat - heat pumps 3##
 
@@ -415,6 +433,7 @@ def create_base_tech_district():
     # Ramp-up-down speed [MW/h]
     tech_infos["Percentage_ramp_up_down_HP_waste_heat_I_3"]= 0.95  # 0.95
     tech_infos["cost_var_HP_waste_heat_I_3"] = 1.5
+    tech_infos["cost_fuel_HP_waste_heat_I_3"] = 1.0
 
 
     # Heat pump II_1 #
@@ -427,6 +446,7 @@ def create_base_tech_district():
     tech_infos["Percentage_ramp_up_down_HP_waste_heat_II_1"] = 0.95
     # Variable cost [EUR/MWh]
     tech_infos["cost_var_HP_waste_heat_II_1"] = 1.5
+    tech_infos["cost_fuel_HP_waste_heat_II_1"] = 1.0
 
 
     # Heat pump II_2 #
@@ -439,7 +459,7 @@ def create_base_tech_district():
     tech_infos["Percentage_ramp_up_down_HP_waste_heat_II_2"] = 0.95
     # Variable cost [EUR/MWh]
     tech_infos["cost_var_HP_waste_heat_II_2"] = 1.5
-
+    tech_infos["cost_fuel_HP_waste_heat_II_2"] = 1.0
 
     # Heat pump II_3 #
 
@@ -450,7 +470,7 @@ def create_base_tech_district():
     # Ramp-up-down speed [MW/h]
     tech_infos["Percentage_ramp_up_down_HP_waste_heat_II_3"] = 0.95
     tech_infos["cost_var_HP_waste_heat_II_3"] = 1.5
-
+    tech_infos["cost_fuel_HP_waste_heat_II_3"] = 1.0
 
     ## Waste heat - heat pumps - temperature group 3 ##
 
@@ -462,6 +482,7 @@ def create_base_tech_district():
     tech_infos["Percentage_ramp_up_down_HP_waste_heat_III_1"] = 0.95
     # Variable cost [EUR/MWh]
     tech_infos["cost_var_HP_waste_heat_III_1"] = 1.5
+    tech_infos["cost_fuel_HP_waste_heat_III_1"] = 1.0
 
     # Installed capacity [MW]
     tech_infos["P_max_HP_waste_heat_III_2"] = 0
@@ -470,7 +491,7 @@ def create_base_tech_district():
     # Ramp-up-down speed [MW/h]
     tech_infos["Percentage_ramp_up_down_HP_waste_heat_III_2"] = 0.95
     tech_infos["cost_var_HP_waste_heat_III_2"] = 1.5
-
+    tech_infos["cost_fuel_HP_waste_heat_III_2"] = 1.0
 
     # Heat pump III_3 #
 
@@ -481,6 +502,7 @@ def create_base_tech_district():
     # Ramp-up-down speed [MW/h]
     tech_infos["Percentage_ramp_up_down_HP_waste_heat_III_3"] = 0.95
     tech_infos["cost_var_HP_waste_heat_III_3"] = 1.5
+    tech_infos["cost_fuel_HP_waste_heat_III_3"] = 1.0
 
     ## Seasonal waste heat heat pumps ##
 
@@ -492,6 +514,7 @@ def create_base_tech_district():
     tech_infos["Percentage_ramp_up_down_HP_waste_heat_seasonal"] = 0.95
     # Variable cost [EUR/MWh]
     tech_infos["cost_var_HP_waste_heat_seasonal"] = 0.5
+    tech_infos["cost_fuel_HP_waste_heat_seasonal"] = 1.0
 
     ## Waste heat absorption heat pump ##
 
@@ -507,6 +530,7 @@ def create_base_tech_district():
     tech_infos["cost_var_HP_waste_heat_absorption"] = 0.5
     # Fuel cost [EUR/MWh]
     tech_infos["cost_fuel_HP_waste_heat_absorption"] = 25
+    tech_infos["cost_fuel_HP_waste_heat_absorption"] = 1.0
 
     ## Thermal energy storage ##
     # Thermal energy storage size [MWh]
@@ -619,6 +643,7 @@ def create_base_tech_cooling():
     tech_infos["Percentage_ramp_up_down_HP_3"] = 0.95
     # Variable cost [EUR/MWh]
     tech_infos["cost_var_HP_3"] = 0.5
+    tech_infos["cost_fuel_HP_3"] = 1.0
 
     ## Cogeneration ##
 
@@ -636,6 +661,7 @@ def create_base_tech_cooling():
     tech_infos["cost_var_CHP"] = 3.9
     # Fuel cost [EUR/MWh]
     tech_infos["cost_fuel_CHP"] = 20
+    tech_infos["CHP_electricity_price"] = 1.0
 
     ## Cogeneration 2 ##
 
@@ -653,6 +679,7 @@ def create_base_tech_cooling():
     tech_infos["cost_var_CHP_2"] = 3.9
     # Fuel cost [EUR/MWh]
     tech_infos["cost_fuel_CHP_2"] = 15
+    tech_infos["CHP_electricity_price_2"] = 1.0
 
     ## Absorption Heat pump ##
 

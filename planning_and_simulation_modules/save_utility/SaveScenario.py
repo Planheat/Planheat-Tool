@@ -5,16 +5,19 @@ from PyQt5.QtWidgets import QTreeWidget, QTreeWidgetItem, QTableWidget, QListWid
 from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal
 from ..city.src.FileManager import FileManager
+from .ZipManager import ZipManager
 
 
 class SaveScenario(QtCore.QObject):
 
     saved_done = pyqtSignal()
+    progressBarUpdate = pyqtSignal(int, int, bool)
 
-    def __init__(self, folder=None):
+    def __init__(self, folder=None, version=None):
         super(SaveScenario, self).__init__(parent=None)
         self.folder = ""
         self.data = {}
+        self.version = version
         if folder is None:
             self.folder = os.path.join(os.path.dirname(os.path.realpath(__file__)), "DefaultSaveFolder")
         else:
@@ -24,6 +27,10 @@ class SaveScenario(QtCore.QObject):
             except TypeError:
                 self.folder = os.path.join(os.path.dirname(os.path.realpath(__file__)), "DefaultSaveFolder")
         self.file_manager = FileManager(work_folder=self.folder)
+        self.zip_manager = ZipManager()
+
+    def add_file(self, source_type, source, relative_path: str):
+        self.zip_manager.add_file(source_type, source, relative_path)
 
     @staticmethod
     def make_directory(folder):
@@ -47,6 +54,9 @@ class SaveScenario(QtCore.QObject):
             print("ERROR! SaveScenario.py, save(). output file must be of type .json")
             return None
         exists = True
+        print("SaveScenario.save() zipfolde in", os.path.join(self.folder, "data"))
+        SaveScenario.make_directory(os.path.join(self.folder, "data"))
+        self.zip_manager.write(os.path.join(self.folder, "data", file[0:-5] + ".zip"))
         i = 0
         output_file = os.path.join(self.folder, file)
         while False:#exists:

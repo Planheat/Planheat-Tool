@@ -12,15 +12,13 @@
         email                : eglantina.metani@softeco.it   daniele.bonventre@softeco.it
  ***************************************************************************/
 """
-from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt
+from PyQt5.QtCore import Qt, QThread
 from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import QThread
-from PyQt5.QtWidgets import QAction, QMessageBox, QTabWidget
+from PyQt5.QtWidgets import QMessageBox, QTabWidget
 from qgis.core import QgsProject
 
 # Initialize Qt resources from file resources.py
 from .DPMplugin import DPMDialog
-from .resources import *
 # Import the code for the dialog
 from .Step0_dialog import Step0Dialog
 from .step1_v2 import PlanHeatDPMDockWidget
@@ -29,20 +27,19 @@ from .Step3_docwidget import Step3_widget
 from .Step4_docwidget import Step4_widget
 from .District import District_widget
 from .districtSimulation import DistrictSimunation_Widget
-#from .Heat_pump_COP import generate_fileEta_forJulia
 import os.path
-from .planning_and_simulation_modules_dialog import PlanningAndSimulationModulesDialog
 import os.path
+from .LoadInterface import LoadInterface
 from .save_utility.SaveDistrict import SaveDistrict
 from .save_utility.LoadDistrict import LoadDistrict
+from .utility.ProjectFolderBuilder import ProjectFolderBuilder
 from planheatclient import PlanHeatClient
 from .city.city_planningSimulation import PlanningAndSimulationCity
 from . import master_planning_config
 from .dhcoptimizerplanheat.ui import ui_utils
 
+
 from .Test import Test
-
-
 
 
 class PlanningAndSimulationModules:
@@ -55,31 +52,20 @@ class PlanningAndSimulationModules:
             which provides the hook by which you can manipulate the QGIS
             application at run time.
         :type iface: QgsInterface
+
         """
+        self.version = 0.36
         # Save reference to the QGIS interface
         self.iface = iface
-        # initialize plugin directory
+
         self.plugin_dir = os.path.dirname(__file__)
-        # initialize locale
-        locale = QSettings().value('locale/userLocale')[0:2]
-        locale_path = os.path.join(
-            self.plugin_dir,
-            'i18n',
-            'PlanningAndSimulationModules_{}.qm'.format(locale))
-
-        if os.path.exists(locale_path):
-            self.translator = QTranslator()
-            self.translator.load(locale_path)
-
-            if qVersion() > '4.3.3':
-                QCoreApplication.installTranslator(self.translator)
 
         # Declare instance attributes
-        self.actions = []
-        self.menu = self.tr(u'&Planning And Simulation Modules')
         self.dlg = None
-
         self.master_dlg = master_dlg
+
+        # check and create project folders
+        ProjectFolderBuilder.run()
 
         # Check if plugin was started the first time in current QGIS session
         # Must be set in initGui() to survive plugin reloads
@@ -117,122 +103,23 @@ class PlanningAndSimulationModules:
         self.work_folder_district = os.path.join(work_folder, master_planning_config.DISTRICT_FOLDER)
         os.makedirs(self.work_folder_district, exist_ok=True)
 
-        self.save_routine = SaveDistrict(folder = self.work_folder_district)
-        self.load_routine = LoadDistrict(folder = self.work_folder_city)
+        self.save_load = LoadInterface(work_folder=self.work_folder_district)
+        self.save_routine = SaveDistrict(folder=self.work_folder_district, version=self.version)
+        self.load_routine = LoadDistrict(folder=self.work_folder_district, version=self.version)
+        self.save_routine.progressBarUpdate.connect(self.save_load.progress_bar_update)
+        self.load_routine.progressBarUpdate.connect(self.save_load.progress_bar_update)
 
         # self.dhcoptimizerplanheat = DHCOptimizerPlanheat(self.iface)
 
 
-    # noinspection PyMethodMayBeStatic
-    def tr(self, message):
-        """Get the translation for a string using Qt translation API.
-
-        We implement this ourselves since we do not inherit QObject.
-
-        :param message: String for translation.
-        :type message: str, QString
-
-        :returns: Translated version of message.
-        :rtype: QString
-        """
-        # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return QCoreApplication.translate('PlanningAndSimulationModules', message)
-
-
-    def add_action(
-        self,
-        icon_path,
-        text,
-        callback,
-        enabled_flag=True,
-        add_to_menu=True,
-        add_to_toolbar=True,
-        status_tip=None,
-        whats_this=None,
-        parent=None):
-        """Add a toolbar icon to the toolbar.
-
-        :param icon_path: Path to the icon for this action. Can be a resource
-            path (e.g. ':/plugins/foo/bar.png') or a normal file system path.
-        :type icon_path: str
-
-        :param text: Text that should be shown in menu items for this action.
-        :type text: str
-
-        :param callback: Function to be called when the action is triggered.
-        :type callback: function
-
-        :param enabled_flag: A flag indicating if the action should be enabled
-            by default. Defaults to True.
-        :type enabled_flag: bool
-
-        :param add_to_menu: Flag indicating whether the action should also
-            be added to the menu. Defaults to True.
-        :type add_to_menu: bool
-
-        :param add_to_toolbar: Flag indicating whether the action should also
-            be added to the toolbar. Defaults to True.
-        :type add_to_toolbar: bool
-
-        :param status_tip: Optional text to show in a popup when mouse pointer
-            hovers over the action.
-        :type status_tip: str
-
-        :param parent: Parent widget for the new action. Defaults None.
-        :type parent: QWidget
-
-        :param whats_this: Optional text to show in the status bar when the
-            mouse pointer hovers over the action.
-
-        :returns: The action that was created. Note that the action is also
-            added to self.actions list.
-        :rtype: QAction
-        """
-
-        icon = QIcon(icon_path)
-        action = QAction(icon, text, parent)
-        action.triggered.connect(callback)
-        action.setEnabled(enabled_flag)
-
-        if status_tip is not None:
-            action.setStatusTip(status_tip)
-
-        if whats_this is not None:
-            action.setWhatsThis(whats_this)
-
-        if add_to_toolbar:
-            # Adds plugin icon to Plugins toolbar
-            self.iface.addToolBarIcon(action)
-
-        if add_to_menu:
-            self.iface.addPluginToMenu(
-                self.menu,
-                action)
-
-        self.actions.append(action)
-
-        return action
+    def add_action(self):
+        return None
 
     def initGui(self):
-        """Create the menu entries and toolbar icons inside the QGIS GUI."""
-
-        icon_path = ':/plugins/planning_and_simulation_modules/icons/icon.png'
-        self.add_action(
-            icon_path,
-            text=self.tr(u'Planning and Simulation modules'),
-            callback=self.run,
-            parent=self.iface.mainWindow())
-
-        # will be set False in run()
         self.first_start = True
 
     def unload(self):
-        """Removes the plugin menu item and icon from QGIS GUI."""
-        for action in self.actions:
-            self.iface.removePluginMenu(
-                self.tr(u'&PlanningModule'),
-                action)
-            self.iface.removeToolBarIcon(action)
+        pass
 
     def openDistrict(self):
         if self.district is not None:
@@ -401,6 +288,7 @@ class PlanningAndSimulationModules:
             self.step0_first_start = False
             self.step0.ok2.clicked.connect(self.onCloseStep0)
             self.step0.setWindowIcon(QIcon(icon_path))
+            self.step0.saveLoad.clicked.connect(lambda: self.save_load.show_dialog("STEP0"))
             # self.step0.ok2.clicked.connect(self.dpmdialog.button1_change)
             # self.step0.pushButton_5.clicked.connect(self.dhcoptimizerplanheat.run)
 
@@ -425,10 +313,11 @@ class PlanningAndSimulationModules:
             self.step1.checkBox_buildingSolution.stateChanged.connect(\
                 lambda : self.step1.Building_checked(self.step1.checkBox_buildingSolution.isChecked()))
             self.step0.buildings_shp_loaded_step1signal.connect(self.step1.load_dpm_layer)
+            self.step1.saveLoad.clicked.connect(lambda: self.save_load.show_dialog("STEP1"))
             self.step1_first_start = False
 
         if self.step2_first_start:
-            self.step2 = Step2_widget(work_folder=self.work_folder_district)
+            self.step2 = Step2_widget(work_folder=self.work_folder_district, iface=self.iface)
             self.step2.hide()
             self.step0.send_data_to_step2.connect(self.step2.get_step0_data)
             self.step2.okbtn.clicked.connect(self.step2.closeStep2)
@@ -441,10 +330,10 @@ class PlanningAndSimulationModules:
             self.step2.step0 = self.step0
             self.step2.step1 = self.step1
             self.step2_first_start = False
-            self.step1.checkBox.stateChanged.connect(\
-                lambda:self.step2.update_mode_networks(self.step1.checkBox.isChecked()))
-            self.step1.checkBox_buildingSolution.stateChanged.connect(\
-                lambda:self.step2.update_mode_single_buildings(self.step1.checkBox_buildingSolution.isChecked()))
+            self.step1.checkBox.stateChanged.connect(
+                lambda: self.step2.update_mode_networks(self.step1.checkBox.isChecked()))
+            self.step1.checkBox_buildingSolution.stateChanged.connect(
+                lambda: self.step2.update_mode_single_buildings(self.step1.checkBox_buildingSolution.isChecked()))
 
         if self.step3_first_start:
             self.step3 = Step3_widget()
@@ -462,6 +351,8 @@ class PlanningAndSimulationModules:
             self.step3.step2_environmental_tab = self.step2.tableWidget_2
             self.step3.step2_economic_tab = self.step2.tableWidget_3
             self.step3.step2_social_tab = self.step2.tableWidget_4
+            self.step3.saveLoad.clicked.connect(lambda: self.save_load.show_dialog("STEP3"))
+            self.step2.send_KPIs_to_future.connect(self.step3.receive_KPIs)
             self.step3_first_start = False
 
         if self.step4_first_start:
@@ -485,6 +376,7 @@ class PlanningAndSimulationModules:
             self.step0.step0_all_import_complete.connect(self.step4.get_data_transfer)
             self.step0.step0_all_import_complete.connect(self.step1.get_data_transfer)
             self.step4.step0_source_availability_table = self.step0.sources_available
+            self.step4.saveLoad.clicked.connect(lambda: self.save_load.show_dialog("STEP4"))
             self.step4_first_start = False
 
         if self.distSim_first_start:
@@ -518,6 +410,7 @@ class PlanningAndSimulationModules:
 
         if not self.save_routine_initialized:
             self.save_routine.work_folder = self.work_folder_district
+            self.save_routine.save_interface = self.save_load
             self.save_routine.dpmdialog = self.dpmdialog
             self.save_routine.district = self.district
             self.save_routine.step0 = self.step0
@@ -528,6 +421,7 @@ class PlanningAndSimulationModules:
             self.save_routine.simulation = self.distSim
             self.save_routine.initialize()
 
+            self.load_routine.save_interface = self.save_load
             self.load_routine.dpmdialog = self.dpmdialog
             self.load_routine.district = self.district
             self.load_routine.step0 = self.step0
@@ -538,8 +432,8 @@ class PlanningAndSimulationModules:
             self.load_routine.simulation = self.distSim
             self.load_routine.initialize()
 
-            self.save_routine.saved_done.connect(self.load_routine.saved_done)
-            self.step0.file_removed.connect(self.load_routine.saved_done)
+            # self.save_routine.saved_done.connect(self.load_routine.saved_done)
+            # self.step0.file_removed.connect(self.load_routine.saved_done)
             self.save_routine_initialized = True
 
         self.init_test()
@@ -553,9 +447,9 @@ class PlanningAndSimulationModules:
         # !!
         # HACK SECTION (be carefull !)
         # self.step1.show()
+        # self.step2.show()
+        # self.step3.show()
         # self.step4.show()
-        #self.step1.show()
-        #self.step4.show()
         # self.distSim.show()
         # self.distSim.grafico_for_district()
         # self.distSim.grafico_for_individualSolution()

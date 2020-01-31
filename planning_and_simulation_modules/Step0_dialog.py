@@ -3,20 +3,19 @@ import os.path
 import csv
 import pickle
 import processing
+from .Tjulia.test.MyLog import MyLog
 import geopandas as gpd
 import osmnx as ox
 from PyQt5 import uic, QtWidgets
 from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal, QVariant
-from PyQt5.QtWidgets import QFileDialog, QMessageBox, QTreeWidgetItem, QTableWidget, QTableWidgetItem, QHeaderView
-from PyQt5.QtGui import QColor, QPixmap, QIcon, QBrush
+from PyQt5.QtWidgets import QFileDialog, QTreeWidgetItem, QTableWidget, QTableWidgetItem
+from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtWidgets import QMessageBox
 from qgis.core import (QgsProject, QgsVectorLayer, QgsField, QgsRasterLayer, 
                     QgsFeature, QgsVertexId, QgsMultiPoint, QgsGeometry, QgsCoordinateTransform)
-from .Step3_docwidget import Step3_widget
-# from dialogs.message_box import showErrordialog
 from .dhcoptimizerplanheat.streets_downloader import streetsDownloader
-from .layer_utils import load_file_as_layer, load_open_street_maps, save_layer_to_shapefile
+from .layer_utils import load_file_as_layer, load_open_street_maps
 from .dialogSources import CheckSourceDialog
 from .utility.SourceAvailability import SourceAvailability
 from .utility.SourceAvailabilityPostCalculation import SourceAvailabilityPostCalculation
@@ -47,8 +46,6 @@ class Step0Dialog(QtWidgets.QDockWidget, FORM_CLASS):
     day_per_month = {28: [2], 30: [11, 4, 6, 9], 31: [1, 3, 5, 7, 8, 10, 12]}
 
 
-
-
     def __init__(self, iface, parent=None, work_folder=None):
         """Constructor."""
         super(Step0Dialog, self).__init__(parent)
@@ -62,15 +59,16 @@ class Step0Dialog(QtWidgets.QDockWidget, FORM_CLASS):
         self.work_folder = work_folder
 
         self.listWidget.hide()
+        self.comboLayer.hide()
 
         self.iface = iface
         self.district_shp_loaded.connect(self.fill_district_menu)
         self.buildings_shp_loaded.connect(self.fill_buildings_table)
         self.buildings_shp_loaded2.connect(self.fill_buildings_table_future)
         self.listWidget.itemChanged.connect(self.list_district_select)
-        QgsProject.instance().layersAdded.connect(self.fill_layers_combobox)
-        QgsProject.instance().layerWasAdded.connect(self.fill_layers_combobox)
-        QgsProject.instance().layerRemoved.connect(self.fill_layers_combobox)
+        # QgsProject.instance().layersAdded.connect(self.fill_layers_combobox)
+        # QgsProject.instance().layerWasAdded.connect(self.fill_layers_combobox)
+        # QgsProject.instance().layerRemoved.connect(self.fill_layers_combobox)
         self.btnSourcesAvailability.clicked.connect(self.source_availability)
         #self.pushButton_4.clicked.connect(self.download_streets_from_comboBox_selection)
         self.delete_file.clicked.connect(self.delete_import_file)
@@ -149,6 +147,9 @@ class Step0Dialog(QtWidgets.QDockWidget, FORM_CLASS):
         self.folder.setEnabled(False)
         self.btnSmm.setEnabled(False)
         self.folder.setText(os.path.join(default_root, "SMM"))
+
+        self.sources_availability = None
+        self.sources_temperature = None
 
         self.cancel.hide()
         self.pushButton_2.hide()
@@ -304,7 +305,7 @@ class Step0Dialog(QtWidgets.QDockWidget, FORM_CLASS):
             features = layer.getFeatures()
             building_item_list = []
             fields = ["BuildingID", "AHeatDem", "AHeatDemM2", "ACoolDem", "ACoolDemM2", "ADHWDem",
-                            "ADHWDemM2", "MaxDHWDem", "MaxCoolDem", "MaxDHWDem", "Use", "GrossFA"]
+                            "ADHWDemM2", "MaxHeatDem", "MaxCoolDem", "MaxDHWDem", "Use", "GrossFA"]
             missing_fields = set()
             for feature in features:
                 if len(feature.attributes()) > 13:
@@ -338,7 +339,7 @@ class Step0Dialog(QtWidgets.QDockWidget, FORM_CLASS):
             features2 = layer2.getFeatures()
             building_item_list2 = []
             fields = ["BuildingID", "AHeatDem", "AHeatDemM2", "ACoolDem", "ACoolDemM2", "ADHWDem",
-                            "ADHWDemM2", "MaxDHWDem", "MaxCoolDem", "MaxDHWDem", "Use", "GrossFA"]
+                            "ADHWDemM2", "MaxHeatDem", "MaxCoolDem", "MaxDHWDem", "Use", "GrossFA"]
             missing_fields = set()
             for feature in features2:
                 if len(feature.attributes()) > 13:
@@ -590,8 +591,6 @@ class Step0Dialog(QtWidgets.QDockWidget, FORM_CLASS):
                     except:
                         print("Step0, get_temperature_from_mapping_module: failed to interpreter param", param,
                               "File:", f)
-
-
         return sources_temperature
 
     def span_temperature(self, sources_temperature, source, suffix, integral):
@@ -670,9 +669,11 @@ class Step0Dialog(QtWidgets.QDockWidget, FORM_CLASS):
         self.worker = worker
 
         sources_availability = worker.source_availability()
+        self.sources_availability = sources_availability
         if sources_availability is None:
             return
         sources_temperature = self.get_temperature_from_mapping_module(self.folder.text())
+        self.sources_temperature = sources_temperature
 
         self.sources_available.clear()
 
@@ -808,6 +809,8 @@ class Step0Dialog(QtWidgets.QDockWidget, FORM_CLASS):
         return output_layer
 
     def delete_import_file(self):
+        print("STEP_0.delete_import_file(): this functionality has been disabled!")
+        return
         msgBox = QMessageBox()
         msgBox.setIcon(QMessageBox.Warning)
         main_text = "Delete selected file?"
