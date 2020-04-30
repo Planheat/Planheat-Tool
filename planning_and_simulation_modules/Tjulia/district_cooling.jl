@@ -9,43 +9,45 @@ module district_cooling
     using Cbc
 
     using CSV
+    using DelimitedFiles
+    csv_sep = ','
 
     function district_cooling_simulation(input_folder, output_folder, tech_infos, network_id, print_function = print)
-        m = Model(solver = CbcSolver(logLevel=1, seconds=600))
+        m = Model(with_optimizer(Cbc.Optimizer, logLevel=1, seconds=600))
 
         ####### Load distributions #########
 
-        DEM=readcsv(string(input_folder, "\\DEM_time.csv"))
+        DEM=readdlm(string(input_folder, "\\DEM_time.csv"), csv_sep)
         #DEM=DEM[4381:6570]
 
-        Electricity_price=readcsv(string(input_folder, "\\Electricity_price_time.csv"))
+        Electricity_price=readdlm(string(input_folder, "\\Electricity_price_time.csv"), csv_sep)
         #Electricity_price=Electricity_price[4381:6570]
 
-        Heat_exchanger_specific=readcsv(string(input_folder, "\\Heat_exchanger_specific_time.csv"))
+        Heat_exchanger_specific=readdlm(string(input_folder, "\\Heat_exchanger_specific_time.csv"), csv_sep)
         #Heat_exchanger_specific=Heat_exchanger_specific[4381:6570]
 
-        Heat_exchanger_specific_cool=readcsv(string(input_folder, "\\Heat_exchanger_specific_time_cool.csv"))
+        Heat_exchanger_specific_cool=readdlm(string(input_folder, "\\Heat_exchanger_specific_time_cool.csv"), csv_sep)
         #Heat_exchanger_specific_cool=Heat_exchanger_specific_cool[4381:6570]
 
-        eta_HP = readcsv(string(input_folder, "\\eta_HP_1.csv"))
+        eta_HP = readdlm(string(input_folder, "\\eta_HP_1.csv"), csv_sep)
         #eta_HP = eta_HP[4381:6570]
-        eta_HP_2 = readcsv(string(input_folder, "\\eta_HP_2.csv"))
+        eta_HP_2 = readdlm(string(input_folder, "\\eta_HP_2.csv"), csv_sep)
         #eta_HP_2 = eta_HP_2[4381:6570]
-        eta_HP_3 = readcsv(string(input_folder, "\\eta_HP_3.csv"))
+        eta_HP_3 = readdlm(string(input_folder, "\\eta_HP_3.csv"), csv_sep)
         #eta_HP_3 = eta_HP_3[4381:6570]
 
-        eta_HP_waste_heat_1=readcsv(string(input_folder, "\\COP_heat_pump_temperature_group_1.csv"))
+        eta_HP_waste_heat_1=readdlm(string(input_folder, "\\COP_heat_pump_temperature_group_1.csv"), csv_sep)
         #eta_HP_waste_heat_1=eta_HP_waste_heat_1[4381:6570]
-        eta_HP_waste_heat_2=readcsv(string(input_folder, "\\COP_heat_pump_temperature_group_2.csv"))
+        eta_HP_waste_heat_2=readdlm(string(input_folder, "\\COP_heat_pump_temperature_group_2.csv"), csv_sep)
         #eta_HP_waste_heat_2=eta_HP_waste_heat_2[4381:6570]
-        eta_HP_waste_heat_3=readcsv(string(input_folder, "\\COP_heat_pump_temperature_group_3.csv"))
+        eta_HP_waste_heat_3=readdlm(string(input_folder, "\\COP_heat_pump_temperature_group_3.csv"), csv_sep)
         #eta_HP_waste_heat_3=eta_HP_waste_heat_3[4381:6570]
 
-        Available_waste_heat_heat_pump_1=readcsv(string(input_folder, "\\Waste_heat_heat_pump_available_temperature_group_1.csv"))
+        Available_waste_heat_heat_pump_1=readdlm(string(input_folder, "\\Waste_heat_heat_pump_available_temperature_group_1.csv"), csv_sep)
         #Available_waste_heat_heat_pump_1=Available_waste_heat_heat_pump_1[4381:6570]
-        Available_waste_heat_heat_pump_2=readcsv(string(input_folder, "\\Waste_heat_heat_pump_available_temperature_group_2.csv"))
+        Available_waste_heat_heat_pump_2=readdlm(string(input_folder, "\\Waste_heat_heat_pump_available_temperature_group_2.csv"), csv_sep)
         #Available_waste_heat_heat_pump_2=Available_waste_heat_heat_pump_2[4381:6570]
-        Available_waste_heat_heat_pump_3=readcsv(string(input_folder, "\\Waste_heat_heat_pump_available_temperature_group_3.csv"))
+        Available_waste_heat_heat_pump_3=readdlm(string(input_folder, "\\Waste_heat_heat_pump_available_temperature_group_3.csv"), csv_sep)
         #Available_waste_heat_heat_pump_3=Available_waste_heat_heat_pump_3[4381:6570]
 
         ####### Technology input data ########
@@ -297,7 +299,7 @@ module district_cooling
         # Thermal storage charge/discharge capacity [MW]
         TES_charge_discharge_time = tech_infos["TES_charge_discharge_time"] #5
         TES_in_out_max = TES_size/TES_charge_discharge_time
-        TES_loss= tech_infos["TES_loss"] #0.1/(24*7)
+        TES_loss = tech_infos["TES_loss"] #0.1/(24*7)
 
         ######## Constraints and variables ########
 
@@ -361,7 +363,7 @@ module district_cooling
 
         # Thermal storage constraints
         t=2:(length(DEM)-1)
-        @constraint(m, SOC[t]-SOC[t-1]-TES[t]+SOC[t]*TES_loss .== 0)
+        @constraint(m, SOC[t]-SOC[t .- 1]-TES[t]+SOC[t]*TES_loss .== 0)
         @constraint(m, SOC[length(DEM)-1]+TES[length(DEM)] == TES_size*TES_start_end)
         @constraint(m, SOC[1]-TES[1] == TES_size*TES_start_end)
         @constraint(m, SOC[length(DEM)] == TES_size*TES_start_end)
@@ -406,101 +408,121 @@ module district_cooling
 
         # Ramp-up-down constraint for each technology
 
-        i=2:length(DEM-1)
+        i=2:(length(DEM)-1)
 
-        @constraint(m, HOB[i-1]-HOB[i].<=ramp_up_down_HOB*OnOffHOB[i]+(1-OnOffHOB[i])*P_min_HOB)
-        @constraint(m, HOB[i]-HOB[i-1].<=ramp_up_down_HOB*OnOffHOB[i-1]+(1-OnOffHOB[i-1])*P_min_HOB)
-        @constraint(m, HOB_2[i-1]-HOB_2[i].<=ramp_up_down_HOB_2*OnOffHOB_2[i]+(1-OnOffHOB_2[i])*P_min_HOB_2)
-        @constraint(m, HOB_2[i]-HOB_2[i-1].<=ramp_up_down_HOB_2*OnOffHOB_2[i-1]+(1-OnOffHOB_2[i-1])*P_min_HOB_2)
-        @constraint(m, HOB_3[i-1]-HOB_3[i].<=ramp_up_down_HOB_3*OnOffHOB_3[i]+(1-OnOffHOB_3[i])*P_min_HOB_3)
-        @constraint(m, HOB_3[i]-HOB_3[i-1].<=ramp_up_down_HOB_3*OnOffHOB_3[i-1]+(1-OnOffHOB_3[i-1])*P_min_HOB_3)
+        @constraint(m, HOB[i .- 1]-HOB[i].<=ramp_up_down_HOB*OnOffHOB[i]+(1 .- OnOffHOB[i])*P_min_HOB)
+        @constraint(m, HOB[i]-HOB[i .- 1].<=ramp_up_down_HOB*OnOffHOB[i .- 1]+(1 .- OnOffHOB[i .- 1])*P_min_HOB)
+        @constraint(m, HOB_2[i .- 1]-HOB_2[i].<=ramp_up_down_HOB_2*OnOffHOB_2[i]+(1 .- OnOffHOB_2[i])*P_min_HOB_2)
+        @constraint(m, HOB_2[i]-HOB_2[i .- 1].<=ramp_up_down_HOB_2*OnOffHOB_2[i .- 1]+(1 .- OnOffHOB_2[i .- 1])*P_min_HOB_2)
+        @constraint(m, HOB_3[i .- 1]-HOB_3[i].<=ramp_up_down_HOB_3*OnOffHOB_3[i]+(1 .- OnOffHOB_3[i])*P_min_HOB_3)
+        @constraint(m, HOB_3[i]-HOB_3[i .- 1].<=ramp_up_down_HOB_3*OnOffHOB_3[i .- 1]+(1 .- OnOffHOB_3[i .- 1])*P_min_HOB_3)
 
-        @constraint(m, HP[i-1]-HP[i].<=ramp_up_down_HP*OnOffHP[i]+(1-OnOffHP[i])*P_min_HP)
-        @constraint(m, HP[i]-HP[i-1].<=ramp_up_down_HP*OnOffHP[i-1]+(1-OnOffHP[i-1])*P_min_HP)
-        @constraint(m, HP_2[i-1]-HP_2[i].<=ramp_up_down_HP_2*OnOffHP_2[i]+(1-OnOffHP_2[i])*P_min_HP_2)
-        @constraint(m, HP_2[i]-HP_2[i-1].<=ramp_up_down_HP_2*OnOffHP_2[i-1]+(1-OnOffHP_2[i-1])*P_min_HP_2)
-        @constraint(m, HP_3[i-1]-HP_3[i].<=ramp_up_down_HP_3*OnOffHP_3[i]+(1-OnOffHP_3[i])*P_min_HP_3)
-        @constraint(m, HP_3[i]-HP_3[i-1].<=ramp_up_down_HP_3*OnOffHP_3[i-1]+(1-OnOffHP_3[i-1])*P_min_HP_3)
+        @constraint(m, HP[i .- 1]-HP[i].<=ramp_up_down_HP*OnOffHP[i]+(1 .- OnOffHP[i])*P_min_HP)
+        @constraint(m, HP[i]-HP[i .- 1].<=ramp_up_down_HP*OnOffHP[i .- 1]+(1 .- OnOffHP[i .- 1])*P_min_HP)
+        @constraint(m, HP_2[i .- 1]-HP_2[i].<=ramp_up_down_HP_2*OnOffHP_2[i]+(1 .- OnOffHP_2[i])*P_min_HP_2)
+        @constraint(m, HP_2[i]-HP_2[i .- 1].<=ramp_up_down_HP_2*OnOffHP_2[i .- 1]+(1 .- OnOffHP_2[i .- 1])*P_min_HP_2)
+        @constraint(m, HP_3[i .- 1]-HP_3[i].<=ramp_up_down_HP_3*OnOffHP_3[i]+(1 .- OnOffHP_3[i])*P_min_HP_3)
+        @constraint(m, HP_3[i]-HP_3[i .- 1].<=ramp_up_down_HP_3*OnOffHP_3[i .- 1]+(1 .- OnOffHP_3[i .- 1])*P_min_HP_3)
 
-        @constraint(m, HP_abs[i-1]-HP_abs[i].<=ramp_up_down_HP_abs*OnOffHP_abs[i]+(1-OnOffHP_abs[i])*P_min_HP_abs)
-        @constraint(m, HP_abs[i]-HP_abs[i-1].<=ramp_up_down_HP_abs*OnOffHP_abs[i-1]+(1-OnOffHP_abs[i-1])*P_min_HP_abs)
+        @constraint(m, HP_abs[i .- 1]-HP_abs[i].<=ramp_up_down_HP_abs*OnOffHP_abs[i]+(1 .- OnOffHP_abs[i])*P_min_HP_abs)
+        @constraint(m, HP_abs[i]-HP_abs[i .- 1].<=ramp_up_down_HP_abs*OnOffHP_abs[i .- 1]+(1 .- OnOffHP_abs[i .- 1])*P_min_HP_abs)
 
-        @constraint(m, CHP[i-1]-CHP[i].<=ramp_up_down_CHP*OnOffCHP[i]+(1-OnOffCHP[i])*P_min_CHP)
-        @constraint(m, CHP[i]-CHP[i-1].<=ramp_up_down_CHP*OnOffCHP[i-1]+(1-OnOffCHP[i-1])*P_min_CHP)
-        @constraint(m, CHP_2[i-1]-CHP_2[i].<=ramp_up_down_CHP_2*OnOffCHP_2[i]+(1-OnOffCHP_2[i])*P_min_CHP_2)
-        @constraint(m, CHP_2[i]-CHP_2[i-1].<=ramp_up_down_CHP_2*OnOffCHP_2[i-1]+(1-OnOffCHP_2[i-1])*P_min_CHP_2)
+        @constraint(m, CHP[i .- 1]-CHP[i].<=ramp_up_down_CHP*OnOffCHP[i]+(1 .- OnOffCHP[i])*P_min_CHP)
+        @constraint(m, CHP[i]-CHP[i .- 1].<=ramp_up_down_CHP*OnOffCHP[i .- 1]+(1 .- OnOffCHP[i .- 1])*P_min_CHP)
+        @constraint(m, CHP_2[i .- 1]-CHP_2[i].<=ramp_up_down_CHP_2*OnOffCHP_2[i]+(1 .- OnOffCHP_2[i])*P_min_CHP_2)
+        @constraint(m, CHP_2[i]-CHP_2[i .- 1].<=ramp_up_down_CHP_2*OnOffCHP_2[i .- 1]+(1 .- OnOffCHP_2[i .- 1])*P_min_CHP_2)
 
-        @constraint(m, HP_waste_heat_1[i-1]-HP_waste_heat_1[i].<=ramp_up_down_HP_waste_heat_1*OnOffHP_waste_heat_1[i]+(1-OnOffHP_waste_heat_1[i])*P_min_HP_waste_heat_1)
-        @constraint(m, HP_waste_heat_1[i]-HP_waste_heat_1[i-1].<=ramp_up_down_HP_waste_heat_1*OnOffHP_waste_heat_1[i-1]+(1-OnOffHP_waste_heat_1[i-1])*P_min_HP_waste_heat_1)
-        @constraint(m, HP_waste_heat_2[i-1]-HP_waste_heat_1[i].<=ramp_up_down_HP_waste_heat_2*OnOffHP_waste_heat_2[i]+(1-OnOffHP_waste_heat_2[i])*P_min_HP_waste_heat_2)
-        @constraint(m, HP_waste_heat_2[i]-HP_waste_heat_2[i-1].<=ramp_up_down_HP_waste_heat_2*OnOffHP_waste_heat_2[i-1]+(1-OnOffHP_waste_heat_2[i-1])*P_min_HP_waste_heat_2)
-        @constraint(m, HP_waste_heat_3[i-1]-HP_waste_heat_3[i].<=ramp_up_down_HP_waste_heat_3*OnOffHP_waste_heat_3[i]+(1-OnOffHP_waste_heat_3[i])*P_min_HP_waste_heat_3)
-        @constraint(m, HP_waste_heat_3[i]-HP_waste_heat_3[i-1].<=ramp_up_down_HP_waste_heat_3*OnOffHP_waste_heat_3[i-1]+(1-OnOffHP_waste_heat_3[i-1])*P_min_HP_waste_heat_3)
+        @constraint(m, HP_waste_heat_1[i .- 1]-HP_waste_heat_1[i].<=ramp_up_down_HP_waste_heat_1*OnOffHP_waste_heat_1[i]+(1 .- OnOffHP_waste_heat_1[i])*P_min_HP_waste_heat_1)
+        @constraint(m, HP_waste_heat_1[i]-HP_waste_heat_1[i .- 1].<=ramp_up_down_HP_waste_heat_1*OnOffHP_waste_heat_1[i .- 1]+(1 .- OnOffHP_waste_heat_1[i .- 1])*P_min_HP_waste_heat_1)
+        @constraint(m, HP_waste_heat_2[i .- 1]-HP_waste_heat_1[i].<=ramp_up_down_HP_waste_heat_2*OnOffHP_waste_heat_2[i]+(1 .- OnOffHP_waste_heat_2[i])*P_min_HP_waste_heat_2)
+        @constraint(m, HP_waste_heat_2[i]-HP_waste_heat_2[i .- 1].<=ramp_up_down_HP_waste_heat_2*OnOffHP_waste_heat_2[i .- 1]+(1 .- OnOffHP_waste_heat_2[i .- 1])*P_min_HP_waste_heat_2)
+        @constraint(m, HP_waste_heat_3[i .- 1]-HP_waste_heat_3[i].<=ramp_up_down_HP_waste_heat_3*OnOffHP_waste_heat_3[i]+(1 .- OnOffHP_waste_heat_3[i])*P_min_HP_waste_heat_3)
+        @constraint(m, HP_waste_heat_3[i]-HP_waste_heat_3[i .- 1].<=ramp_up_down_HP_waste_heat_3*OnOffHP_waste_heat_3[i .- 1]+(1 .- OnOffHP_waste_heat_3[i .- 1])*P_min_HP_waste_heat_3)
 
         ###### Objective function ######
 
         # Minimize total running costs
 
-        @objective(m,Min, sum(Error)*1e10+sum(HOB)*(cost_var_HOB+cost_fuel_HOB/eta_HOB)+sum(HOB_2)*(cost_var_HOB_2+cost_fuel_HOB_2/eta_HOB_2)+sum(HOB_3)*(cost_var_HOB_3+cost_fuel_HOB_3/eta_HOB_3)+sum(HP.*(cost_var_HP+cost_fuel_HP./eta_HP))+sum(HP_2.*(cost_var_HP_2+cost_fuel_HP_2./eta_HP_2))+sum(HP_3.*(cost_var_HP_3+cost_fuel_HP_3./eta_HP_3))+sum(HP_abs)*cost_var_HP_abs+sum(CHP)*(cost_var_CHP+cost_fuel_CHP/eta_CHP_th)+sum(CHP_2)*(cost_var_CHP_2+cost_fuel_CHP_2/eta_CHP_th_2)+sum(HEX)*cost_var_HEX+sum(HEX_cool)*cost_var_HEX_cool+sum(HP_waste_heat_1.*(cost_var_HP_waste_heat_1+cost_fuel_HP_waste_heat_1./eta_HP_waste_heat_1))+sum(HP_waste_heat_2.*(cost_var_HP_waste_heat_2+cost_fuel_HP_waste_heat_2./eta_HP_waste_heat_2))+sum(HP_waste_heat_3.*(cost_var_HP_waste_heat_3+cost_fuel_HP_waste_heat_3./eta_HP_waste_heat_3))-sum(CHP*cb_CHP.*CHP_electricity_price)-sum(CHP_2*cb_CHP_2.*CHP_electricity_price_2))
+        @objective(m,Min, sum(Error)*1e10
+                          + sum(HOB)*(cost_var_HOB .+ cost_fuel_HOB/eta_HOB)
+                          + sum(HOB_2)*(cost_var_HOB_2 .+ cost_fuel_HOB_2/eta_HOB_2)
+                          + sum(HOB_3)*(cost_var_HOB_3 .+ cost_fuel_HOB_3/eta_HOB_3)
+                          + sum(HP.*(cost_var_HP .+ cost_fuel_HP./eta_HP))
+                          + sum(HP_2.*(cost_var_HP_2 .+ cost_fuel_HP_2./eta_HP_2))
+                          + sum(HP_3.*(cost_var_HP_3 .+ cost_fuel_HP_3./eta_HP_3))
+                          + sum(HP_abs)*cost_var_HP_abs
+                          + sum(CHP)*(cost_var_CHP .+ cost_fuel_CHP/eta_CHP_th)
+                          + sum(CHP_2)*(cost_var_CHP_2 .+ cost_fuel_CHP_2/eta_CHP_th_2)
+                          + sum(HEX)*cost_var_HEX+sum(HEX_cool)*cost_var_HEX_cool
+                          + sum(HP_waste_heat_1.*(cost_var_HP_waste_heat_1 .+ cost_fuel_HP_waste_heat_1./eta_HP_waste_heat_1))
+                          + sum(HP_waste_heat_2.*(cost_var_HP_waste_heat_2 .+ cost_fuel_HP_waste_heat_2./eta_HP_waste_heat_2))
+                          + sum(HP_waste_heat_3.*(cost_var_HP_waste_heat_3 .+ cost_fuel_HP_waste_heat_3./eta_HP_waste_heat_3))
+                          - sum(CHP*cb_CHP.*CHP_electricity_price)
+                          - sum(CHP_2*cb_CHP_2.*CHP_electricity_price_2))
 
 
-        status = solve(m)
+        optimize!(m)
+        status = termination_status(m)
+        if primal_status(m) == MOI.NO_SOLUTION
+            print_function("No solution found.")
+            return
+        end
 
         ##### Result visualization ####
 
-        Result_HOB=getvalue(HOB)
-        Result_HOB_2=getvalue(HOB_2)
-        Result_HOB_3=getvalue(HOB_3)
+        Result_HOB=value.(HOB)
+        Result_HOB_2=value.(HOB_2)
+        Result_HOB_3=value.(HOB_3)
 
-        Result_HP=getvalue(HP)
-        Result_HP_2=getvalue(HP_2)
-        Result_HP_3=getvalue(HP_3)
+        Result_HP=value.(HP)
+        Result_HP_2=value.(HP_2)
+        Result_HP_3=value.(HP_3)
 
-        Result_HP_abs=getvalue(HP_abs)
+        Result_HP_abs=value.(HP_abs)
 
-        Result_CHP=getvalue(CHP)
-        Result_CHP_2=getvalue(CHP_2)
+        Result_CHP=value.(CHP)
+        Result_CHP_2=value.(CHP_2)
 
-        Result_HEX=getvalue(HEX)
-        Result_HEX_cool=getvalue(HEX_cool)
+        Result_HEX=value.(HEX)
+        Result_HEX_cool=value.(HEX_cool)
 
-        Result_HP_waste_heat_1=getvalue(HP_waste_heat_1)
-        Result_HP_waste_heat_2=getvalue(HP_waste_heat_2)
-        Result_HP_waste_heat_3=getvalue(HP_waste_heat_3)
+        Result_HP_waste_heat_1=value.(HP_waste_heat_1)
+        Result_HP_waste_heat_2=value.(HP_waste_heat_2)
+        Result_HP_waste_heat_3=value.(HP_waste_heat_3)
 
-        Result_SOC=getvalue(SOC)
+        Result_SOC=value.(SOC)
 
-        Result_Error=getvalue(Error)
+        Result_Error=value.(Error)
 
 
         ## Export results ##
 
-        writecsv(string(output_folder, "\\Result_HOB_", network_id, ".csv"), Result_HOB)
-        writecsv(string(output_folder, "\\Result_HOB_2_", network_id, ".csv"), Result_HOB_2)
-        writecsv(string(output_folder, "\\Result_HOB_3_", network_id, ".csv"), Result_HOB_3)
+        writedlm(string(output_folder, "\\Result_HOB_", network_id, ".csv"), Result_HOB, csv_sep)
+        writedlm(string(output_folder, "\\Result_HOB_2_", network_id, ".csv"), Result_HOB_2, csv_sep)
+        writedlm(string(output_folder, "\\Result_HOB_3_", network_id, ".csv"), Result_HOB_3, csv_sep)
 
-        writecsv(string(output_folder, "\\Result_HP_", network_id, ".csv"), Result_HP)
-        writecsv(string(output_folder, "\\Result_HP_2_", network_id, ".csv"), Result_HP_2)
-        writecsv(string(output_folder, "\\Result_HP_3_", network_id, ".csv"), Result_HP_3)
+        writedlm(string(output_folder, "\\Result_HP_", network_id, ".csv"), Result_HP, csv_sep)
+        writedlm(string(output_folder, "\\Result_HP_2_", network_id, ".csv"), Result_HP_2, csv_sep)
+        writedlm(string(output_folder, "\\Result_HP_3_", network_id, ".csv"), Result_HP_3, csv_sep)
 
-        writecsv(string(output_folder, "\\Result_HP_abs_", network_id, ".csv"), Result_HP_abs)
+        writedlm(string(output_folder, "\\Result_HP_abs_", network_id, ".csv"), Result_HP_abs, csv_sep)
 
-        writecsv(string(output_folder, "\\Result_CHP_", network_id, ".csv"), Result_CHP)
-        writecsv(string(output_folder, "\\Result_CHP_2_", network_id, ".csv"), Result_CHP_2)
+        writedlm(string(output_folder, "\\Result_CHP_", network_id, ".csv"), Result_CHP, csv_sep)
+        writedlm(string(output_folder, "\\Result_CHP_2_", network_id, ".csv"), Result_CHP_2, csv_sep)
 
-        writecsv(string(output_folder , "\\Result_HEX_", network_id, ".csv"), Result_HEX)
+        writedlm(string(output_folder , "\\Result_HEX_", network_id, ".csv"), Result_HEX, csv_sep)
 
-        writecsv(string(output_folder, "\\Result_HEX_cool_", network_id, ".csv"), Result_HEX_cool)
+        writedlm(string(output_folder, "\\Result_HEX_cool_", network_id, ".csv"), Result_HEX_cool, csv_sep)
 
-        writecsv(string(output_folder, "\\Result_HP_waste_heat_1_", network_id, ".csv"), Result_HP_waste_heat_1)
-        writecsv(string(output_folder, "\\Result_HP_waste_heat_2_", network_id, ".csv"), Result_HP_waste_heat_2)
-        writecsv(string(output_folder, "\\Result_HP_waste_heat_3_", network_id, ".csv"), Result_HP_waste_heat_3)
+        writedlm(string(output_folder, "\\Result_HP_waste_heat_1_", network_id, ".csv"), Result_HP_waste_heat_1, csv_sep)
+        writedlm(string(output_folder, "\\Result_HP_waste_heat_2_", network_id, ".csv"), Result_HP_waste_heat_2, csv_sep)
+        writedlm(string(output_folder, "\\Result_HP_waste_heat_3_", network_id, ".csv"), Result_HP_waste_heat_3, csv_sep)
 
-        writecsv(string(output_folder, "\\Result_DEM_", network_id, ".csv"), DEM)
+        writedlm(string(output_folder, "\\Result_DEM_", network_id, ".csv"), DEM, csv_sep)
 
-        writecsv(string(output_folder, "\\Result_SOC_", network_id, ".csv"), Result_SOC)
+        writedlm(string(output_folder, "\\Result_SOC_", network_id, ".csv"), Result_SOC, csv_sep)
 
-        writecsv(string(output_folder, "\\Result_Error_", network_id, ".csv"), Result_Error)
+        writedlm(string(output_folder, "\\Result_Error_", network_id, ".csv"), Result_Error, csv_sep)
 
     end
     export district_cooling_simulation

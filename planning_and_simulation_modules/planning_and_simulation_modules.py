@@ -54,7 +54,7 @@ class PlanningAndSimulationModules:
         :type iface: QgsInterface
 
         """
-        self.version = 0.36
+        self.version = 0.47
         # Save reference to the QGIS interface
         self.iface = iface
 
@@ -303,14 +303,14 @@ class PlanningAndSimulationModules:
             # self.step1.generatePoint_DCN.clicked.connect(self.step1.locate_sources_DCN)
             self.step1.step1_closing_signal.connect(self.openDPM)
             self.step1.checkBox.stateChanged.connect(self.step1.district_solution_checked)
-            self.step1.checkBox_3.stateChanged.connect(\
+            self.step1.checkBox_3.stateChanged.connect(
                 lambda : self.step1.DHN_checked(self.step1.checkBox_3.isChecked(), self.step1.checkBox_4.isChecked()))
-            self.step1.checkBox_4.stateChanged.connect(\
+            self.step1.checkBox_4.stateChanged.connect(
                 lambda : self.step1.DCN_checked(self.step1.checkBox_3.isChecked(), self.step1.checkBox_4.isChecked()))
             self.step1.dialog_source = self.step0.dialog_source
             self.step1.dialog_source.okButton.clicked.connect(self.step1.recived_sources_selected)
             self.step1.step0_table = self.step0.sources_available
-            self.step1.checkBox_buildingSolution.stateChanged.connect(\
+            self.step1.checkBox_buildingSolution.stateChanged.connect(
                 lambda : self.step1.Building_checked(self.step1.checkBox_buildingSolution.isChecked()))
             self.step0.buildings_shp_loaded_step1signal.connect(self.step1.load_dpm_layer)
             self.step1.saveLoad.clicked.connect(lambda: self.save_load.show_dialog("STEP1"))
@@ -363,11 +363,11 @@ class PlanningAndSimulationModules:
             self.step4.save_to_webserver.clicked.connect(self.district.button_change)
             self.step4.step4_closing_signal.connect(self.openDistrict)
             self.step4.futureDistrictSolution.stateChanged.connect(self.step4.district_solution_checked)
-            self.step4.futureDHN.stateChanged.connect(\
+            self.step4.futureDHN.stateChanged.connect(
                 lambda : self.step4.DHN_checked(self.step4.futureDHN.isChecked(), self.step4.futureDCN.isChecked()))
-            self.step4.futureDCN.stateChanged.connect(\
+            self.step4.futureDCN.stateChanged.connect(
                 lambda : self.step4.DCN_checked(self.step4.futureDHN.isChecked(), self.step4.futureDCN.isChecked()))
-            self.step4.futureBuildingSolution.stateChanged.connect(\
+            self.step4.futureBuildingSolution.stateChanged.connect(
                 lambda : self.step4.Building_checked(self.step4.futureBuildingSolution.isChecked()))
             self.step1.send_networks.connect(self.step4.receive_networks)
             self.step0.buildings_shp_loaded_step4signal.connect(self.step4.receive_future_scenario)
@@ -380,7 +380,7 @@ class PlanningAndSimulationModules:
             self.step4_first_start = False
 
         if self.distSim_first_start:
-            self.distSim = DistrictSimunation_Widget()
+            self.distSim = DistrictSimunation_Widget(self.iface)
             self.distSim.baseline_tech_tab = self.step1.dmmTree
             self.distSim.baseline_network_tech_tab = self.step1.dmmTreeNetwork
             self.distSim.ok.clicked.connect(self.openDistrict)
@@ -391,6 +391,7 @@ class PlanningAndSimulationModules:
             self.distSim.setWindowIcon(QIcon(icon_path))
             self.distSim.step4 = self.step4
             self.distSim.step0 = self.step0
+            self.distSim.step1 = self.step1
             self.distSim.target_input_table_en = self.step3.tableVisKpiEn
             self.distSim.target_input_table_env = self.step3.tableVisKpiEnv
             self.distSim.target_input_table_eco = self.step3.tableVisKpiEco
@@ -401,7 +402,7 @@ class PlanningAndSimulationModules:
            
             self.distSim_first_start = False
 
-        if self.first_start == True:
+        if self.first_start:
             if self.first_start_district:
                 self.openDistrict()
             elif self.first_start_city:
@@ -419,7 +420,9 @@ class PlanningAndSimulationModules:
             self.save_routine.step3 = self.step3
             self.save_routine.step4 = self.step4
             self.save_routine.simulation = self.distSim
+            self.step1.save.clicked.connect(self.save_routine.autosave)
             self.save_routine.initialize()
+
 
             self.load_routine.save_interface = self.save_load
             self.load_routine.dpmdialog = self.dpmdialog

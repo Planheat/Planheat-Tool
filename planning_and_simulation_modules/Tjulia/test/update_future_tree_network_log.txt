@@ -1,0 +1,6 @@
+data_transfer.network.get_supplies_names() [['NULLgf', 231312.0], ['NULL12123', 123132.0]]
+iterating over ['NULLgf', 231312.0]
+I did not found an item for that generation point. I'll reate a new one: ds - NULLgf a8bba3fc-7485-43eb-9d29-8b2d6040b8a8
+iterating over ['NULL12123', 123132.0]
+I did not found an item for that generation point. I'll reate a new one: ds - NULL12123 a8bba3fc-7485-43eb-9d29-8b2d6040b8a8
+adding new top level items 2

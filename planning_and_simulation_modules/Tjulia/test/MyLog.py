@@ -5,13 +5,14 @@ import json
 
 class MyLog:
 
-    def __init__(self, log_file, file_name=None):
+    def __init__(self, log_file, file_name=None, keep_file=False):
         self.log_file = log_file
         self.flag = True
         if file_name is not None:
-            self.log_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), file_name + ".txt")
+            self.log_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), "log", file_name + ".txt")
         try:
-            os.remove(self.log_file)
+            if not keep_file:
+                os.remove(self.log_file)
         except:
             pass
 

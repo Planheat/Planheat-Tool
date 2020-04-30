@@ -14,6 +14,7 @@
 """
 # Import PyQt5
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QFont, QBrush, QColor
 from PyQt5.QtWidgets import QTreeWidgetItem
 
 # Import numerical items
@@ -22,6 +23,8 @@ from numpy import average
 
 # Import qgis main libraries
 from qgis.core import *
+
+from ..utility.coordinates.Coordinates import Coordinates
 
 
 class Building(QTreeWidgetItem):
@@ -42,12 +45,23 @@ class Building(QTreeWidgetItem):
         else:
             QTreeWidgetItem.__init__(self, default_constructor["par1"], default_constructor["par2"])
 
+        self.scenario_type = "baseline"
+
+        self.connected_to_DHN: bool = False
+        self.connected_to_DCN: bool = False
+        self.modified_font = QFont()
+        self.modified_font.setItalic(True)
+        self.modified_font.setBold(True)
+        self.standard_font = QFont()
+        self.modified = False
+
         self.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
         self.dhcn = False
         self.feature = feature
-        self.building_id = self.feature.attribute(
+        self.layer = None
+        self.building_id = str(self.feature.attribute(
             self.feature.fieldNameIndex('BuildingID')
-        )
+        ))
         self.setText(0, str(feature.id()))
         cool_dem = self.feature.attribute('MaxCoolDem')
         heat_dem = self.feature.attribute('MaxHeatDem')
@@ -157,3 +171,29 @@ class Building(QTreeWidgetItem):
             if not service.childCount() == 0:
                 return True
         return False
+
+    def is_connected_to_any_network(self):
+        return self.connected_to_DCN or self.connected_to_DHN
+
+    def set_unmodified(self):
+        self.setFont(0, self.modified_font)
+        self.setForeground(0, QBrush(QColor(72, 89, 80)))
+        self.modified = False
+
+    def set_modified(self):
+        self.setFont(0, self.standard_font)
+        self.setForeground(0, QBrush(QColor(0, 0, 0)))
+        self.modified = True
+
+    def get_coordinates(self):
+        lon, lat = Coordinates.convert_to_EPSG4326(self.layer.crs(), self.feature.geometry().centroid().asPoint())
+        return [lat, lon]
+
+    def get_sector(self):
+        if self.feature.attribute("Use") == "Residential":
+            return "RES"
+        else:
+            return "TER"
+
+
+

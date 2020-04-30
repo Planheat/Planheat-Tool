@@ -1,7 +1,6 @@
-if !isdefined(:FCFP)
-    include("FCFP.jl")
+if !isdefined(Main, :FCFP)
+    include(joinpath(@__DIR__, "FCFP.jl"))
 end
-
 
 """
 The ``LocalOptimizer`` module define methods to optimize locally a Fixed
@@ -25,8 +24,8 @@ module LocalOptimizer
 
 
     #include("DSSP.jl")
-    include("graph_utils.jl")
-    import FCFP.FCFPInstance
+    include(joinpath(@__DIR__ , "graph_utils.jl"))
+    import Main.FCFP.FCFPInstance
     using DataStructures
 
     # TODO: catch errors (is not a DAG etc), and except with returning the initial flows
@@ -381,7 +380,7 @@ module LocalOptimizer
     Break cycles in a given flow dict by subtracting the minimal flow.
     """
     function break_cycles(loi::LocalOptimizerInstance, flows::FlowDictType,
-                          start_nodes=nothing::Union{Void, Set{VertexType}})
+                          start_nodes=nothing::Union{Nothing, Set{VertexType}})
         while true
             flow_dag = get_flow_dag(loi.optimization_graph, flows)
             cycle = find_cycle(flow_dag, start_nodes)

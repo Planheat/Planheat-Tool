@@ -47,10 +47,10 @@ class SourceAvailability(QtCore.QObject):
         # the interval is of kind [), first hour of year is 0
         return [total_min, total_max]
 
-    def span_integral(self, sources_availability, source, integral, suffix):
+    def span_integral(self, sources_availability, source, integral, suffix, coeff=1.0):
         if suffix == "":
             # print("integral", integral)
-            integral = integral/self.h8760
+            integral = (integral/self.h8760)/coeff
             for i in range(len(sources_availability[source])):
                 sources_availability[source][i] += integral
         else:
@@ -111,11 +111,11 @@ class SourceAvailability(QtCore.QObject):
             sources_availability = self.get_empty_source_availability_dict()
 
         # Read config excel sources file
-        confic_sources_file = os.path.join(os.path.dirname(__file__), "../", "config", "sources", "Csv_SMM.xlsm")
+        config_sources_file = os.path.join(os.path.dirname(__file__), "../", "config", "sources", "Csv_SMM.xlsm")
         try:
-            config_sources_data_frame = pandas.read_excel(confic_sources_file)
+            config_sources_data_frame = pandas.read_excel(config_sources_file)
         except Exception:
-            print("Source availability: errors with file:", confic_sources_file)
+            print("Source availability: errors with file:", config_sources_file)
             return sources_availability
 
         # Read the SMM csv sources availability
@@ -136,7 +136,7 @@ class SourceAvailability(QtCore.QObject):
                         dpm_source = source["planning_module_related_source"]
                         inside_availability = self.sum_row(row, 3)
                         sources_availability = self.span_integral(sources_availability,
-                                                                  dpm_source, inside_availability, "")
+                                                                  dpm_source, inside_availability, "", coeff=1000.0)
                         break
                 except Exception:
                     continue

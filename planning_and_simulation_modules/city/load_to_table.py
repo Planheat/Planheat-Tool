@@ -8,131 +8,71 @@ from PyQt5.QtWidgets import QMessageBox, QInputDialog, QLineEdit
 
 
 def insert_toTable(table, ncol, list):
+    flag = QtCore.Qt.ItemIsEnabled
+    empty_item = QTableWidgetItem()
+    empty_item.setFlags(flag)
+    cell = []
     if ncol == 1:
-        cell = QTableWidgetItem(str(list[0]) + " %")
-        cell1 = QTableWidgetItem(str(list[1]) + " %")
-        cell2 = QTableWidgetItem(str(list[2]) + " %")
-        cell3 = QTableWidgetItem(str(list[3]) + " %")
-        cell4 = QTableWidgetItem(str(list[4]) + " %")
-        cell5 = QTableWidgetItem(str(list[5]) + " %")
-        cell6 = QTableWidgetItem(str(list[6]) + " %")
-        cell7 = QTableWidgetItem(str(list[7]) + " %")
-        cell8 = QTableWidgetItem(str(list[8]) + " %")
-        cell9 = QTableWidgetItem(str(list[9]) + " %")
-        cell10 = QTableWidgetItem(str(list[10]) + " %")
-        cell11 = QTableWidgetItem(str(list[11]) + " %")
-        cell12 = QTableWidgetItem(str(list[12]) + " %")
-        cell13 = QTableWidgetItem(str(list[13]) + " %")
-        cell14 = QTableWidgetItem(str(list[14]) + " %")
-
+        for i in range(15):
+            try:
+                cell.append(QTableWidgetItem(str(list[i]) + " %"))
+                cell[i].setFlags(flag)
+            except Exception:
+                cell.append(empty_item.clone())
     else:
-        cell = QTableWidgetItem(str(list[0]))
-        cell1 = QTableWidgetItem(str(list[1]))
-        cell2 = QTableWidgetItem(str(list[2]))
-        cell3 = QTableWidgetItem(str(list[3]))
-        cell4 = QTableWidgetItem(str(list[4]))
-        cell5 = QTableWidgetItem(str(list[5]))
-        cell6 = QTableWidgetItem(str(list[6]))
-        cell7 = QTableWidgetItem(str(list[7]))
-        cell8 = QTableWidgetItem(str(list[8]))
-        cell9 = QTableWidgetItem(str(list[9]))
-        cell10 = QTableWidgetItem(str(list[10]))
-        cell11 = QTableWidgetItem(str(list[11]))
-        cell12 = QTableWidgetItem(str(list[12]))
-        cell13 = QTableWidgetItem(str(list[13]))
-        cell14 = QTableWidgetItem(str(list[14]))
+        for i in range(15):
+            try:
+                cell.append(QTableWidgetItem(str(list[i])))
+                cell[i].setFlags(flag)
+            except Exception:
+                cell.append(empty_item.clone())
 
-    cell.setFlags(QtCore.Qt.ItemIsEnabled)
-    table.setItem(2, ncol, cell)
+    table.setItem(2, ncol, cell[0])
+    table.setItem(3, ncol, cell[1])
+    table.setItem(4, ncol, cell[2])
+    table.setItem(5, ncol, cell[3])
+    table.setItem(7, ncol, cell[4])
+    table.setItem(8, ncol, cell[5])
+    table.setItem(9, ncol, cell[6])
+    table.setItem(10, ncol, cell[7])
+    table.setItem(11, ncol, cell[8])
+    table.setItem(13, ncol, cell[9])
+    table.setItem(14, ncol, cell[10])
+    table.setItem(16, ncol, cell[11])
+    table.setItem(18, ncol, cell[12])
+    table.setItem(20, ncol, cell[13])
+    table.setItem(22, ncol, cell[14])
 
-    cell1.setFlags(QtCore.Qt.ItemIsEnabled)
-    table.setItem(3, ncol, cell1)
-
-    cell2.setFlags(QtCore.Qt.ItemIsEnabled)
-    table.setItem(4, ncol, cell2)
-
-    cell3.setFlags(QtCore.Qt.ItemIsEnabled)
-    table.setItem(5, ncol, cell3)
-
-    cell4.setFlags(QtCore.Qt.ItemIsEnabled)
-    table.setItem(7, ncol, cell4)
-
-    cell5.setFlags(QtCore.Qt.ItemIsEnabled)
-    table.setItem(8, ncol, cell5)
-
-    cell6.setFlags(QtCore.Qt.ItemIsEnabled)
-    table.setItem(9, ncol, cell6)
-
-    cell7.setFlags(QtCore.Qt.ItemIsEnabled)
-    table.setItem(10, ncol, cell7)
-
-    cell8.setFlags(QtCore.Qt.ItemIsEnabled)
-    table.setItem(11, ncol, cell8)
-
-    cell9.setFlags(QtCore.Qt.ItemIsEnabled)
-    table.setItem(13, ncol, cell9)
-
-    cell10.setFlags(QtCore.Qt.ItemIsEnabled)
-    table.setItem(14, ncol, cell10)
-
-    cell11.setFlags(QtCore.Qt.ItemIsEnabled)
-    table.setItem(16, ncol, cell11)
-
-    cell12.setFlags(QtCore.Qt.ItemIsEnabled)
-    table.setItem(18, ncol, cell12)
-
-    cell13.setFlags(QtCore.Qt.ItemIsEnabled)
-    table.setItem(20, ncol, cell13)
-
-    cell14.setFlags(QtCore.Qt.ItemIsEnabled)
-    table.setItem(22, ncol, cell14)
 
 def insert_toTableCool(table, ncol, list):
+    flag = QtCore.Qt.ItemIsEnabled
+    empty_item = QTableWidgetItem()
+    empty_item.setFlags(flag)
+    cell = []
 
-        if ncol == 1:
-            cell = QTableWidgetItem(str(list[0]) + " %")
-            cell1 = QTableWidgetItem(str(list[1]) + " %")
-            cell2 = QTableWidgetItem(str(list[2]) + " %")
-            cell3 = QTableWidgetItem(str(list[3]) + " %")
-            cell4 = QTableWidgetItem(str(list[4]) + " %")
-            cell5 = QTableWidgetItem(str(list[5]) + " %")
-            cell6 = QTableWidgetItem(str(list[6]) + " %")
-            cell7 = QTableWidgetItem(str(list[7]) + " %")
+    if ncol == 1:
+        for i in range(8):
+            try:
+                cell.append(QTableWidgetItem(str(list[i]) + " %"))
+                cell[i].setFlags(flag)
+            except Exception:
+                cell.append(empty_item.clone())
+    else:
+        for i in range(15):
+            try:
+                cell.append(QTableWidgetItem(str(list[i])))
+                cell[i].setFlags(flag)
+            except Exception:
+                cell.append(empty_item.clone())
 
-        else:
-            cell = QTableWidgetItem(str(list[0]))
-            cell1 = QTableWidgetItem(str(list[1]))
-            cell2 = QTableWidgetItem(str(list[2]))
-            cell3 = QTableWidgetItem(str(list[3]))
-            cell4 = QTableWidgetItem(str(list[4]))
-            cell5 = QTableWidgetItem(str(list[5]))
-            cell6 = QTableWidgetItem(str(list[6]))
-            cell7 = QTableWidgetItem(str(list[7]))
-
-
-        cell.setFlags(QtCore.Qt.ItemIsEnabled)
-        table.setItem(2, ncol, cell)
-
-        cell1.setFlags(QtCore.Qt.ItemIsEnabled)
-        table.setItem(3, ncol, cell1)
-
-        cell2.setFlags(QtCore.Qt.ItemIsEnabled)
-        table.setItem(4, ncol, cell2)
-
-        cell3.setFlags(QtCore.Qt.ItemIsEnabled)
-        table.setItem(6, ncol, cell3)
-
-        cell4.setFlags(QtCore.Qt.ItemIsEnabled)
-        table.setItem(7, ncol, cell4)
-
-        cell5.setFlags(QtCore.Qt.ItemIsEnabled)
-        table.setItem(8, ncol, cell5)
-
-        cell6.setFlags(QtCore.Qt.ItemIsEnabled)
-        table.setItem(10, ncol, cell6)
-
-        cell7.setFlags(QtCore.Qt.ItemIsEnabled)
-        table.setItem(12, ncol, cell7)
+    table.setItem(2, ncol, cell[0])
+    table.setItem(3, ncol, cell[1])
+    table.setItem(4, ncol, cell[2])
+    table.setItem(6, ncol, cell[3])
+    table.setItem(7, ncol, cell[4])
+    table.setItem(8, ncol, cell[5])
+    table.setItem(10, ncol, cell[6])
+    table.setItem(12, ncol, cell[7])
 
 
 def table_and_check(table, lista_In, nCol):
@@ -143,24 +83,35 @@ def table_and_check(table, lista_In, nCol):
     dif34 = tot - ref2
     dif012 = tot - ref
 
+    flag = QtCore.Qt.ItemIsEnabled
+
     if nCol == 3 or nCol == 4:
         table.setItem(0, nCol, QTableWidgetItem(str(round(tot, 2))))
         table.setItem(1, nCol, QTableWidgetItem(str(round(ref2, 2)) + " %"))
         table.setItem(2, nCol, QTableWidgetItem(str(round(dif34, 2))))
+        table.item(0, nCol).setFlags(flag)
+        table.item(1, nCol).setFlags(flag)
+        table.item(2, nCol).setFlags(flag)
+
     if nCol == 0 or nCol == 1 or nCol == 2:
         table.setItem(0, nCol, QTableWidgetItem(str(round(tot, 2)) + " %"))
         table.setItem(1, nCol, QTableWidgetItem(str(ref) + " %"))
         table.setItem(2, nCol, QTableWidgetItem(str(round(dif012, 2))))
+        table.item(0, nCol).setFlags(flag)
+        table.item(1, nCol).setFlags(flag)
+        table.item(2, nCol).setFlags(flag)
 
 
     if dif34 == float(0.0) or dif012 == float(0.0):
         val = "ok!"
         table.setItem(3, nCol, QTableWidgetItem(str(val)))
         table.item(3, nCol).setForeground(QColor(0, 255, 0))
+        table.item(3, nCol).setFlags(flag)
     else:
         val = " Wrong!"
         table.setItem(3, nCol, QTableWidgetItem(str(val)))
         table.item(3, nCol).setForeground(QColor(0, 255, 0))
+        table.item(3, nCol).setFlags(flag)
 
 
 def copy_table(tab_in, tab_dest, col_in, col_dest):

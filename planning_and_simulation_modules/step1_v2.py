@@ -209,10 +209,10 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.dhwTechnology.setItemData(11, 0, Qt.UserRole - 1)
         self.dhwTechnology.setItemData(18, 0, Qt.UserRole - 1)
         self.networkTechnology.setItemData(0, 0, Qt.UserRole - 1)
-        self.networkTechnology.setItemData(9, 0, Qt.UserRole - 1)
-        self.networkTechnology.setItemData(13, 0, Qt.UserRole - 1)
-        self.networkTechnology.setItemData(29, 0, Qt.UserRole - 1)
-        self.networkTechnology.setItemData(39, 0, Qt.UserRole - 1)
+        self.networkTechnology.setItemData(8, 0, Qt.UserRole - 1)
+        self.networkTechnology.setItemData(12, 0, Qt.UserRole - 1)
+        self.networkTechnology.setItemData(28, 0, Qt.UserRole - 1)
+        self.networkTechnology.setItemData(36, 0, Qt.UserRole - 1)
         self.dialog = Form()
         self.dialog.InputDemand.connect(self.val_demand)
         # self.type_source_DHW.clicked.connect(self.allocate_sources_DHW)
@@ -325,6 +325,7 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
         self.tree_item_manager = TreeItemManager(self.iface, self.dmmTree, self.dmmTreeNetwork,
                                                  [self.DCN_network_list, self.DHN_network_list])
+        self.autosave_done = False
 
     def load_default_data(self):
         pass
@@ -534,7 +535,9 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             # Load features in the DMM tree
         dmm_tree_root = self.dmmTree.invisibleRootItem()
         for feature in self.dpm_layer.getFeatures():
-            dmm_tree_root.addChild(Building(feature))
+            building = Building(feature)
+            building.layer = self.dpm_layer
+            dmm_tree_root.addChild(building)
 
     def unload_dpm_layer(self):
         """
@@ -560,7 +563,6 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         selected = self.dmmTree.selectedItems()
         i = 0
         if demand == 'cooling':
-
             tech=self.coolingTechnology.currentText()
             source = self.sourceCool
             inclinazione=self.coolingInclinazione.value()
@@ -583,6 +585,7 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             tes_discharge = self.tes_discharge_cooling.value()
             COP_absorption = self.Cop_absorption_cooling.value()
             el_sale = 1
+            tes_loss = 1
 
         elif demand == 'heating':
             #i = 1
@@ -614,6 +617,7 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 tes_discharge = self.tes_discharge_heating.value()
                 COP_absorption = self.COP_heating.value()
                 el_sale = self.heatingElsale.value()
+                tes_loss = self.heatingTES_loss.value()
 
             if self.dhwhCheck.isChecked():
                 i = 3
@@ -647,15 +651,17 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 tes_discharge = self.dhwTes_discharge.value()
                 COP_absorption = self.dhwCop.value()
                 el_sale = self.dhwElsale.value()
+                tes_loss = self.DHWTES_loss.value()
 
                 i = 2
 
                 #source = ""
         technology = tech
+
         for b in selected:
             if b.isHidden():
                 continue
-            if b.child(i) is not None:
+            if b.child(i) is not None and not b.child(i).isHidden():
                 b.child(i).addChild(
                     Technology(
                         technology,
@@ -673,12 +679,13 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                         fix,
                         fuel,
                         variable,
-                       tes_size,
-                       soc_min,
-                       tes_startEnd,
-                       tes_discharge,
-                       COP_absorption,
-                       el_sale
+                        tes_size,
+                        soc_min,
+                        tes_startEnd,
+                        tes_discharge,
+                        COP_absorption,
+                        el_sale,
+                        tes_loss
                     )
                 )
 
@@ -1308,6 +1315,7 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         tes_discharge = self.networkTes_discharge.value()
         COP_absorption = self.networkCop_absorption.value()
         el_sale = self.network_el_sale.value()
+        tes_loss = self.networkTES_loss.value()
 
         child = [str(" "),
                  str(technology),
@@ -1330,8 +1338,11 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                  str(tes_startEnd),
                  str(tes_discharge),
                  str(COP_absorption),
-                 str(el_sale)]
+                 str(el_sale),
+                 str(tes_loss)]
         new_child = QTreeWidgetItem(child)
+
+        new_child.setData(2, Qt.UserRole, "old_tech")
 
         parent = self.dmmTreeNetwork.currentItem()
         if parent is None:
@@ -1488,6 +1499,8 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                         self.tes_startEnd_heating.setEnabled(True)
                         self.tes_discharge_heating.setEnabled(True)
                         self.heatingFixedCost.setEnabled(True)
+                        self.heatingTES_loss.setEnabled(True)
+                        self.heatingVariableCost.setEnabled(True)
                         self.sourceRead = self.simulator.sources_for_technology[0]
 
                     if key == list(key_list)[12]:  # absorption_heat_pump
@@ -1527,6 +1540,7 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.safe_disable_input(self.dhwTes_startEnd)
         self.safe_disable_input(self.dhwTes_discharge)
         self.safe_disable_input(self.dhwCop)
+        self.safe_disable_input(self.DHWTES_loss)
 
     def disable_all_heating_input(self):
         self.safe_disable_input(self.heatingElsale)
@@ -1549,6 +1563,7 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.safe_disable_input(self.tes_startEnd_heating)
         self.safe_disable_input(self.tes_discharge_heating)
         self.safe_disable_input(self.COP_heating)
+        self.safe_disable_input(self.heatingTES_loss)
 
     def disable_all_cooling(self):
         self.safe_disable_input(self.coolingInclinazione)
@@ -1572,6 +1587,7 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
     def disable_all_network_tech_input(self):
         self.safe_disable_input(self.networkarea)
+        self.safe_disable_input(self.networkP_min)
         self.safe_disable_input(self.networkTemp)
         self.safe_disable_input(self.networkEta)
         self.safe_disable_input(self.network1coeff)
@@ -1590,6 +1606,7 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.safe_disable_input(self.networkTes_discharge)
         self.safe_disable_input(self.networkCop_absorption)
         self.safe_disable_input(self.network_el_sale)
+        self.safe_disable_input(self.networkTES_loss)
 
     def safe_disable_input(self, widget):
         try:
@@ -1704,6 +1721,8 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                     self.dhwTes_startEnd.setEnabled(True)
                     self.dhwTes_discharge.setEnabled(True)
                     self.dhwFixedCost.setEnabled(True)
+                    self.DHWTES_loss.setEnabled(True)
+                    self.dhwVariableCost.setEnabled(True)
                     self.sourceDhw = self.simulator.sources_for_technology[0] # ' '
 
                 if key == list(key_list)[9] or key == list(key_list)[10] or key == list(key_list)[11]:
@@ -1821,6 +1840,7 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                     self.networkVariableCost.setEnabled(True)
                     self.networkFixedCost.setEnabled(True)
                     self.networkFuelCost.setEnabled(True)
+                    self.network_el_sale.setEnabled(True)
 
                     if t == z[0]: # Gas CHP
                         self.sourceNet = self.simulator.sources_for_technology[9]
@@ -1874,8 +1894,9 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 if key == list(key_list)[7] or key == list(key_list)[8]:  # 7 waste_heat_heat_exchangers # 8 waste_cooling_heat_exchangers
                     # self.networkCapacity.lineEdit().setEnabled(True)
                     print("step1_v2.py.active_source_dialogNetwork(). Found", t, "in:", list(key_list)[7])
-                    self.networkTechMin.setEnabled(True)
+                    #self.networkTechMin.setEnabled(True)
                     self.networkP_max.setEnabled(True)
+                    self.networkP_min.setEnabled(True)
                     self.networkVariableCost.setEnabled(True)
                     self.networkFixedCost.setEnabled(True)
                     self.networkFuelCost.setEnabled(True)
@@ -1930,6 +1951,8 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                     self.networkSocMin.setEnabled(True)
                     self.networkTesStartEnd.setEnabled(True)
                     self.networkTes_discharge.setEnabled(True)
+                    self.networkTES_loss.setEnabled(True)
+                    self.networkVariableCost.setEnabled(True)
                     self.sourceNet = self.simulator.sources_for_technology[2]
                     return
 
@@ -1940,6 +1963,7 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                     self.networkVariableCost.setEnabled(True)
                     self.networkFixedCost.setEnabled(True)
                     self.networkFuelCost.setEnabled(True)
+                    self.networkP_max.setEnabled(True)
                     self.simulator.ask_for_sources(t, serv="network")
                     self.sourceNet = self.simulator.selected_source
                     return
@@ -1955,7 +1979,8 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                     self.networkFuelCost.setEnabled(True)
                     self.network_el_sale.setEnabled(True)
                     self.networkcb_CHP.setEnabled(True)
-                    if t == z[0]:  # Waste heat ORC
+                    self.networkP_min.setEnabled(True)
+                    if t == z[0]:  # Industrial waste heat ORC
                         self.sourceNet = self.simulator.sources_for_technology[14]
                     if t == z[1]:  # Deep geothermal ORC
                         self.sourceNet = self.simulator.sources_for_technology[3]
@@ -2281,7 +2306,7 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                                         SourceTransfer(self.sourcesTable))
                 self.networks_send = True
                 confirm_baseline: QPushButton = self.save
-                confirm_baseline.setText("Go to step selection")
+                confirm_baseline.setText("Go to step selection" if self.networks_send else "Confirm baseline scenario")
         else:
             print("step1, save_clicked: check_tech_capacity or check_sources failed")
 
@@ -2328,10 +2353,6 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         else:
             return True
 
-    def insert_PeakDemandCooling(self):
-        self.dialog.show()
-        self.dialog.attribute_column_name = "MaxCoolDem"
-
     def val_demand(self, peak, peak_range, attribute_column_name):
         demand = []
         ids = []
@@ -2360,10 +2381,14 @@ class PlanHeatDPMDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
     def insert_PeakDemandDhw(self):
         self.dialog.show()
         self.dialog.attribute_column_name = "MaxDHWDem"
+
     def insert_PeakDemandHeating(self):
         self.dialog.show()
         self.dialog.attribute_column_name = "MaxHeatDem"
 
+    def insert_PeakDemandCooling(self):
+        self.dialog.show()
+        self.dialog.attribute_column_name = "MaxCoolDem"
 
     def allocate_sources_DHW(self):
         self.dialog_source.tech_source ="dhw"

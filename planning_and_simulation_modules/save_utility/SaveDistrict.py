@@ -2,6 +2,7 @@ from .SaveScenario import SaveScenario
 from ..LoadInterface import LoadInterface
 from ..step1_v2 import PlanHeatDPMDockWidget
 from ..Step4_docwidget import Step4_widget
+from ..building.TreeItemManager import TreeItemManager
 from PyQt5.QtWidgets import QMessageBox
 import os.path
 import os
@@ -50,7 +51,15 @@ class SaveDistrict(SaveScenario):
         else:
             self.override_save_plugin_state(project_name, file_name)
 
+    def autosave(self):
+        if not self.step1.autosave_done:
+            self.step1.autosave_done = True
+            self.save_interface.autosave()
+
     def override_save_plugin_state(self, project_name, file_name):
+        self.clear_data()
+        print("Ora raccolgo i dati da salvare:")
+        print(self.data)
         self.save_general_state(project_name, file_name)
         self.save_step0()
         self.save_step_1(str(file_name))
@@ -58,6 +67,8 @@ class SaveDistrict(SaveScenario):
         self.save_step_3()
         self.save_step_4(file_name)
         self.save_simulation()
+        print("Ora salvo:")
+        print(self.data)
         self.save(file_name + ".json")
 
     def save_general_state(self, project_name, file):
@@ -106,6 +117,7 @@ class SaveDistrict(SaveScenario):
         self.data["STEP_1"]["checkBox_3"] = self.step1.checkBox_3.isChecked()
         self.data["STEP_1"]["checkBox_4"] = self.step1.checkBox_4.isChecked()
         self.data["STEP_1"]["networks_send"] = self.step1.networks_send
+        self.data["STEP_1"]["autosave_done"] = self.step1.autosave_done
         self.add_list_widget_to_saved_data(self.step1.listWidget_4)
         self.add_list_widget_to_saved_data(self.step1.listNetworkDCN)
         self.add_tree_widget_to_saved_data(self.step1.dmmTreeNetwork)
@@ -136,7 +148,7 @@ class SaveDistrict(SaveScenario):
                       self.step1.KPIs_additional_data,
                       "step1/KPIs_additional_data.json")
         self.data["zipPath.baseline_networks"] = []
-        for network_list in [self.step1.DHN_network_list, self.step1.DCN_network_list]:
+        for network_list in [self.step1.DCN_network_list, self.step1.DHN_network_list]:
             for network in network_list:
                 if network.get_save_file_path() is None:
                     continue
@@ -145,11 +157,15 @@ class SaveDistrict(SaveScenario):
                                                                                network.n_type, str(network.get_ID())))
                     self.add_file(self.zip_manager.FOLDER, os.path.dirname(network.get_save_file_path()),
                                   os.path.join("step1", network.n_type, str(network.get_ID())))
-                    self.data["zipPath.network_infos." + str(network.get_ID())] = os.path.join("step1",
-                                                                                                 network.n_type, str(
-                            network.get_ID()) + ".json")
-                    self.add_file(self.zip_manager.OBJECT, network.export_network_data(),
-                                  os.path.join("step1", network.n_type, str(network.get_ID()) + ".json"))
+                    zip_path = "step1/" + network.n_type + "/" + str(network.get_ID()) + ".json"
+                    self.data["zipPath.network_infos." + str(network.get_ID())] = zip_path
+                    self.add_file(self.zip_manager.OBJECT, network.export_network_data(), zip_path)
+        tree_item_manager = TreeItemManager(self.step1.iface, self.step1.dmmTree, self.step1.dmmTreeNetwork,
+                                            [self.step1.DCN_network_list, self.step1.DHN_network_list])
+        self.data["zipPath.baseline_buildings_status"] = "step0/baseline_buildings_status.json"
+        self.add_file(self.zip_manager.OBJECT,
+                      tree_item_manager.get_building_status(),
+                      "step0/baseline_buildings_status.json")
         self.progressBarUpdate.emit(3, self.save_steps_number, True)
 
     def save_step_2(self):
@@ -200,7 +216,7 @@ class SaveDistrict(SaveScenario):
         self.data["checkBox_buildingSolution_future"] = self.step4.futureBuildingSolution.isChecked()
         self.data["futureDHN"] = self.step4.futureDHN.isChecked()
         self.data["futureDCN"] = self.step4.futureDCN.isChecked()
-        self.data["zipPath.KPIs_additional_data"] = os.path.join("step4", "KPIs_additional_data.json")
+        self.data["zipPath.KPIs_additional_data"] = "step4/KPIs_additional_data.json"
         self.add_file(self.zip_manager.OBJECT, self.step4.KPIs_additional_data,
                       self.data["zipPath.KPIs_additional_data"])
         self.add_list_widget_to_saved_data(self.step4.listWidget_future)
@@ -240,11 +256,15 @@ class SaveDistrict(SaveScenario):
                                                                                network.n_type, str(network.get_ID())))
                     self.add_file(self.zip_manager.FOLDER, os.path.dirname(network.get_save_file_path()),
                                   os.path.join("step4", network.n_type, str(network.get_ID())))
-                    self.data["zipPath.network_infos." + str(network.get_ID())] = os.path.join("step4",
-                                                                                                 network.n_type, str(
-                            network.get_ID()) + ".json")
-                    self.add_file(self.zip_manager.OBJECT, network.export_network_data(),
-                                  os.path.join("step4", network.n_type, str(network.get_ID()) + ".json"))
+                    zip_path = "step4/" + network.n_type + "/" + str(network.get_ID()) + ".json"
+                    self.data["zipPath.network_infos." + str(network.get_ID())] = zip_path
+                    self.add_file(self.zip_manager.OBJECT, network.export_network_data(), zip_path)
+        tree_item_manager = TreeItemManager(self.step1.iface, self.step4.dmmTree_future, self.step4.futureDmmTreeNetwork,
+                                            [self.step4.futureDCN_network_list, self.step4.futureDHN_network_list])
+        self.data["zipPath.future_buildings_status"] = "step4/future_buildings_status.json"
+        self.add_file(self.zip_manager.OBJECT,
+                      tree_item_manager.get_building_status(),
+                      "step4/future_buildings_status.json")
         self.progressBarUpdate.emit(6, self.save_steps_number, True)
 
     def save_simulation(self):

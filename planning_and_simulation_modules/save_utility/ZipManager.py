@@ -22,6 +22,9 @@ class ZipManager:
         with zipfile.ZipFile(zip_file_path_name, mode='w') as zf:
             for key in self.file_dict.keys():
                 if self.file_dict[key]["source_type"] == self.FILE:
+                    if not os.path.isfile(self.file_dict[key]["source"]):
+                        print("Error saving", self.file_dict[key]["source"], "not a file")
+                        continue
                     zf.write(self.file_dict[key]["source"],
                              arcname=key,
                              compress_type=zipfile.ZIP_DEFLATED)

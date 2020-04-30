@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1028</width>
-    <height>862</height>
+    <height>832</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -46,7 +46,7 @@
             <x>10</x>
             <y>40</y>
             <width>961</width>
-            <height>701</height>
+            <height>661</height>
            </rect>
           </property>
           <attribute name="horizontalHeaderDefaultSectionSize">
@@ -530,7 +530,7 @@ category</string>
          </rect>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="tab_2">
          <attribute name="title">

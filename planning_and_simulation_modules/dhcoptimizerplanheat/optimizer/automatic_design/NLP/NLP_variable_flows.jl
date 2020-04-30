@@ -91,7 +91,7 @@ module NLP
 
         # Sets of edges and nodes
         PIPE = keys(LENGTH)
-        NODE = vcat([p[1] for p in PIPE], [p[2] for p in PIPE])
+        NODE = [n for n=Set(vcat([p[1] for p in PIPE], [p[2] for p in PIPE]))]
         SUPPLY_NODE = keys(SUPPLY_MAX_INFLOW)
         BUILDING_NODE = keys(OUTFLOW)
 
@@ -112,7 +112,7 @@ module NLP
         # Optimization
         ########################################################################
 
-        m = Model(solver = IpoptSolver(output_file = output_file, 
+        m = Model(with_optimizer(Ipopt.Optimizer, output_file = output_file,
                                         mu_strategy = "adaptive",  # more successfull
                                         tol = 1e-3, # tolerance hasn't to be very high
                                         max_cpu_time=1.0*ConfParam["MAXTIME"])) # time limit
@@ -176,31 +176,38 @@ module NLP
         ########################################################################
         # Solve and collect the solution
         ########################################################################  
-        status = solve(m)
+        optimize!(m)
+        status = termination_status(m)
+
         NLP_Output = Dict()
         #print_function("2")
-        if status == :Optimal
-            NLP_Output["Diameter"] = Dict(p => getvalue(varDiameter[p]) for p=PIPE)
-            NLP_Output["Velocity"] = Dict(p => getvalue(varVelocity[p]) for p=PIPE)
-            NLP_Output["MassFlow"] = Dict(p => getvalue(varMassFlow[p]) for p=PIPE)
-            NLP_Output["Pressure"] = Dict(p => getvalue(varPressure[p]) for p=PIPE)
-            NLP_Output["PressureFriction"] = Dict(n => getvalue(varPressureFriction[n]) for n=NODE)
+        if status == MOI.OPTIMAL
+            NLP_Output["Diameter"] = Dict(p => value(varDiameter[p]) for p=PIPE)
+            NLP_Output["Velocity"] = Dict(p => value(varVelocity[p]) for p=PIPE)
+            NLP_Output["MassFlow"] = Dict(p => value(varMassFlow[p]) for p=PIPE)
+            NLP_Output["Pressure"] = Dict(p => value(varPressure[p]) for p=PIPE)
+            NLP_Output["PressureFriction"] = Dict(n => value(varPressureFriction[n]) for n=NODE)
             NLP_Output["TotalCost"] = getobjectivevalue(m)
 
-            NLP_Output["ConstructionCost"] = Dict(p => (A_LINEAR_COST * getvalue(varDiameter[p]) * CM_TO_MM + B_LINEAR_COST) * LENGTH[p] * EFFECT_COEF for p=PIPE)
+            NLP_Output["ConstructionCost"] = Dict(p => (A_LINEAR_COST * value(varDiameter[p]) * CM_TO_MM + B_LINEAR_COST) * LENGTH[p] * EFFECT_COEF for p=PIPE)
             if type_energy == "Heating"
-                NLP_Output["HeatLossCost"] = Dict(p => 2 * (A_TRANSIT_COEF * getvalue(varDiameter[p]) * CM_TO_MM + B_TRANSIT_COEF) * LENGTH[p] * 
+                NLP_Output["HeatLossCost"] = Dict(p => 2 * (A_TRANSIT_COEF * value(varDiameter[p]) * CM_TO_MM + B_TRANSIT_COEF) * LENGTH[p] * 
                                     W_TO_MW * (HC_PERIOD * DAY_TO_HOUR) * HC_COST for p=PIPE)
             elseif type_energy == "Cooling"
-                NLP_Output["CoolLossCost"] = Dict(p => 2 *(A_TRANSIT_COEF * getvalue(varDiameter[p]) * CM_TO_MM + B_TRANSIT_COEF) * LENGTH[p] * 
+                NLP_Output["CoolLossCost"] = Dict(p => 2 *(A_TRANSIT_COEF * value(varDiameter[p]) * CM_TO_MM + B_TRANSIT_COEF) * LENGTH[p] * 
                                     W_TO_MW * (HC_PERIOD * DAY_TO_HOUR) * HC_COST for p=PIPE)
             end
-            NLP_Output["PumpingCost"] = Dict(n => getvalue(sum(varPressure[p] for p=PIPE if n in p) - 1) * BAR_TO_PA * 
+            NLP_Output["PumpingCost"] = Dict(n => value(sum(varPressure[p] for p=PIPE if n in p) - 1) * BAR_TO_PA * 
                 SUPPLY_MAX_INFLOW[n] / RHO * W_TO_MW / PUMPING_EFFICIENCY * (HC_PERIOD * DAY_TO_HOUR) * ELECTRICITY_COST for n=SUPPLY_NODE)
 
         end
-
-        return NLP_Output, status
+        status_str = "Unkown"
+        if status == MOI.OPTIMAL
+            status_str = "Optimal"
+        elseif status == MOI.INFEASIBLE
+            status_str = "Infeasible"
+        end
+        return NLP_Output, status_str
     end
 
     export find_optimal_physical_parameters

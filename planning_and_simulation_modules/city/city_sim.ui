@@ -18,7 +18,7 @@
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -34,7 +34,7 @@
          </rect>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tab_7">
          <attribute name="title">
@@ -50,7 +50,7 @@
            </rect>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab_3">
            <attribute name="title">
@@ -60,7 +60,7 @@
             <property name="geometry">
              <rect>
               <x>20</x>
-              <y>110</y>
+              <y>100</y>
               <width>1151</width>
               <height>611</height>
              </rect>
@@ -371,28 +371,18 @@ per HP </string>
            <widget class="QPushButton" name="btn_fec">
             <property name="geometry">
              <rect>
-              <x>1020</x>
+              <x>940</x>
               <y>10</y>
-              <width>141</width>
-              <height>61</height>
+              <width>221</width>
+              <height>71</height>
              </rect>
             </property>
             <property name="text">
-             <string>Calculate Fec 
-and 
-Energy consumption</string>
+             <string>     Calculate Fec 
+     and 
+     Energy consumption</string>
             </property>
-            <layout class="QVBoxLayout" name="verticalLayout_8">
-             <item>
-              <widget class="QSpinBox" name="sbs_heat_h"/>
-             </item>
-             <item>
-              <widget class="QSpinBox" name="sbs_dhw_h"/>
-             </item>
-             <item>
-              <widget class="QSpinBox" name="sbs_cool_h"/>
-             </item>
-            </layout>
+            <layout class="QVBoxLayout" name="verticalLayout_8"/>
            </widget>
            <widget class="QWidget" name="verticalLayoutWidget_9">
             <property name="geometry">
@@ -475,10 +465,18 @@ Energy consumption</string>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_6">
              <item>
-              <widget class="QSpinBox" name="sbs_heat"/>
+              <widget class="QSpinBox" name="sbs_heat">
+               <property name="maximum">
+                <number>100</number>
+               </property>
+              </widget>
              </item>
              <item>
-              <widget class="QSpinBox" name="sbs_dhw"/>
+              <widget class="QSpinBox" name="sbs_dhw">
+               <property name="maximum">
+                <number>100</number>
+               </property>
+              </widget>
              </item>
             </layout>
            </widget>
@@ -808,7 +806,7 @@ consumption per HP </string>
            </rect>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab_9">
            <attribute name="title">
@@ -1186,7 +1184,11 @@ energy consumption
               </widget>
              </item>
              <item>
-              <widget class="QSpinBox" name="share_heat"/>
+              <widget class="QSpinBox" name="share_heat">
+               <property name="maximum">
+                <number>100</number>
+               </property>
+              </widget>
              </item>
             </layout>
            </widget>
@@ -1208,7 +1210,11 @@ energy consumption
               </widget>
              </item>
              <item>
-              <widget class="QSpinBox" name="share"/>
+              <widget class="QSpinBox" name="share">
+               <property name="maximum">
+                <number>100</number>
+               </property>
+              </widget>
              </item>
             </layout>
            </widget>
@@ -1225,12 +1231,16 @@ energy consumption
              <item>
               <widget class="QLabel" name="label">
                <property name="text">
-                <string>Gride efficency[%]</string>
+                <string>Grid efficency[%]</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QSpinBox" name="eff"/>
+              <widget class="QSpinBox" name="eff">
+               <property name="maximum">
+                <number>100</number>
+               </property>
+              </widget>
              </item>
             </layout>
            </widget>
@@ -1480,12 +1490,16 @@ consumption per HP[MWh/y]</string>
              <item>
               <widget class="QLabel" name="label_5">
                <property name="text">
-                <string>Gride efficency[%]</string>
+                <string>Grid efficency[%]</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QSpinBox" name="btn_eff"/>
+              <widget class="QSpinBox" name="btn_eff">
+               <property name="maximum">
+                <number>100</number>
+               </property>
+              </widget>
              </item>
             </layout>
            </widget>
@@ -1984,7 +1998,7 @@ factor</string>
          <item>
           <widget class="QLabel" name="label_14">
            <property name="text">
-            <string>Total gross floor area[m^2]</string>
+            <string>Total gross floor area [m^2]</string>
            </property>
           </widget>
          </item>
@@ -2019,7 +2033,7 @@ factor</string>
          </rect>
         </property>
         <property name="currentIndex">
-         <number>3</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tab_11">
          <attribute name="title">

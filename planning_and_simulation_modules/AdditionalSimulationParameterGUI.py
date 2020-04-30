@@ -33,7 +33,7 @@ class AdditionalSimulationParameterGUI(QtWidgets.QDockWidget, FORM_CLASS):
         except Exception:
             self.years.setValue(5)
         self.r_factor.setValue(0.11)
-        self.demo_factor.setValue(1.00)
+        self.demo_factor.setValue(0.00)
         self.FEavailability.setValue(1)
 
         self.cancel.clicked.connect(self.cancel_clicked_event_handler)

@@ -38,19 +38,27 @@ from .district.heating.Booster_heat_pump_COP import Booster_COP
 from .district.heating.Waste_heat_heat_pumps_heating import generate_file_Waste_heat_pump_heating
 from .single_building.Dem_cool_heating import gen_dem_time_district
 from .checks.JuliaOutputChecker import JuliaOutputChecker
+from .checks.JuliaBuildingsChecker import JuliaBuildingChecker
 from .test.MyLog import MyLog
 
 from .Heat_pump_COP import generate_fileEta_forJulia
 from .Heat_pump_cool_COP import genera_file_etaHP_cool
 
+from ..utility.pvgis.PvgisApi import PvgisApi
+from .services.PvgisParamsAdapter import PvgisParamsAdapter
+
 from .. import master_planning_config as mp_config
+from ..building.Building import Building
+from .Solar_thermal_production import generate_solar_thermal_forJulia
+from .services.SolarParameterBuilder import SolarParameterBuilder
+
 from ..python_julia_interface import JuliaQgisInterface
 
 
 class DistrictSimulator:
 
     # These lists are essential. Maybe put them in a config file?
-    heat_only_boiler = ["Gas Boiler", "Biomass Boiler", "Oil Boiler","Boiler"]  #[0]
+    heat_only_boiler = ["Gas Boiler", "Biomass Boiler", "Oil Boiler", "Boiler"]  #[0]
     electrical_heater = ["Electrical Heater"] #[1]
     heat_pump = ["Air Source Compression Heat Pump","Shallow geothermal compression heat pump", "Heat pump"] #[2]
     cogeneration = ["Gas CHP", "Oil CHP", "Biomass CHP", "Cogeneration"] #[3]
@@ -110,7 +118,7 @@ class DistrictSimulator:
                            "absorption_heat_pump": absorption_heat_pump,
                            "solar thermal": solar_thermal,
                            "seasonal solar thermal": seasonal_solar_thermal,
-                           "waste heat heat exchangers": waste_heat_heat_exchangers,
+                           "waste_heat_heat_exchangers": waste_heat_heat_exchangers,
                            "waste_heat_heat_pumps_temperature_group1": waste_heat_heat_pumps_temperature_group1,
                            "waste_heat_heat_pumps_temperature_group2": waste_heat_heat_pumps_temperature_group2,
                            "waste_heat_heat_pumps_temperature_group3": waste_heat_heat_pumps_temperature_group3,
@@ -128,7 +136,7 @@ class DistrictSimulator:
                          "solar thermal":solar_thermal,  # [4]
                          "seasonal solar thermal": seasonal_solar_thermal,  # [5]
                          "absorption_heat_pump":absorption_heat_pump,  # [6]
-                         "waste heat heat exchangers":waste_heat_heat_exchangers,  # [7]
+                         "waste_heat_heat_exchangers":waste_heat_heat_exchangers,  # [7]
                          "waste_cooling_heat_exchangers":waste_cooling_heat_exchangers,  # [8]
                          "waste_heat_heat_pumps_temperature_group1":waste_heat_heat_pumps_temperature_group1,
                          # [9]
@@ -148,6 +156,7 @@ class DistrictSimulator:
     def __init__(self):
         self.sim_time = 0
         self.baseline_tech_tab = None
+        self.baseline_tech_tab2 = None
         self.baseline_network_tech_tab = None
         self.future_tech_tab = None
         self.future_network_tech_tab = None
@@ -158,9 +167,9 @@ class DistrictSimulator:
         self.ef_sources_tab = None
         self.sources = None
         self.step1_network_tree_widget = None
-        self.step1_building_tree_widget = None
+        self.step1_building_tree_widget: QTreeWidget = None
         self.step4_network_tree_widget = None
-        self.step4_building_tree_widget = None
+        self.step4_building_tree_widget: QTreeWidget = None
         self.step0_district_sources_tab = None
 
         self.baseline_KPIs = None
@@ -178,6 +187,8 @@ class DistrictSimulator:
         self.heat = None
         self.temperature = None
 
+        self.pvgis_api: PvgisApi = None
+
         self.tech_infos_district_heating = None
         self.tech_infos_district_cooling = None
         self.tech_infos_individual = None
@@ -188,15 +199,15 @@ class DistrictSimulator:
                                      "absorption_heat_pump": self.DHN_absorption_heat_pump,
                                      "solar thermal": self.DHN_add_solar_thermal,
                                      "seasonal solar thermal": self.DHN_seasonal_solar_thermal,
-                                     "waste heat heat exchangers": self.DHN_waste_heat_heat_exchangers,
-                                     "waste heat_heat pumps temperature_group1": self.DHN_waste_heat_heat_pumps_temperature_group1,
-                                     "waste heat_heat pumps temperature_group2": self.DHN_waste_heat_heat_pumps_temperature_group2,
-                                     "waste heat heat pumps temperature_group3": self.DHN_waste_heat_heat_pumps_temperature_group3,
+                                     "waste_heat_heat_exchangers": self.DHN_waste_heat_heat_exchangers,
+                                     "waste_heat_heat_pumps_temperature_group1": self.DHN_waste_heat_heat_pumps_temperature_group1,
+                                     "waste_heat_heat_pumps_temperature_group2": self.DHN_waste_heat_heat_pumps_temperature_group2,
+                                     "waste_heat_heat_pumps_temperature_group3": self.DHN_waste_heat_heat_pumps_temperature_group3,
                                      "seasonal waste heat pump": self.DHN_seasonal_waste_heat_pump,
                                      "waste heat absorption heat pump": self.DHN_waste_heat_absorption_heat_pump,
                                      "thermal energy storage": self.DHN_thermal_energy_storage,
                                      "seasonal thermal energy storage": self.DHN_seasonal_thermal_energy_storage,
-                                     "ORC cogeneration": self.ORC_cogeneration   # 16
+                                     "ORC cogeneration": self.DHN_ORC_cogeneration   # 16
                                      }
 
         self.district_C_dict_func = {"heat only boiler": self.DCN_heat_only_boiler,
@@ -227,7 +238,7 @@ class DistrictSimulator:
         self.sources_for_technology = [' ', #[0]
                                        'Biomass Forestry',  #[1]
                                        'Solar thermal', #[2]
-                                       'Deep Geothermal' ,#[3]
+                                       'Deep geothermal' ,#[3]
                                        'Excess heat Industrial', #[4]
                                        'Air', #[5]
                                        'Rivers - Lakes - Waste water', #[6]
@@ -282,6 +293,7 @@ class DistrictSimulator:
 
         self.calc.input_reset()
         self.calc.baseline_tech_tab = self.step1_building_tree_widget
+        self.calc.baseline_tech_tab2 = self.baseline_tech_tab2
         self.calc.future_tech_tab = self.future_tech_tab
         self.calc.future_network_tech_tab = self.future_network_tech_tab
         self.calc.baseline_network_tech_tab = self.baseline_network_tech_tab
@@ -317,15 +329,20 @@ class DistrictSimulator:
         else:
             layer = self.future_scenario
         building_counter = 0
+        buildings_connection_checker = JuliaBuildingChecker()
+        log.log("Buildings:", buildings)
         for building in buildings:
+            log.log("Checking building:", building)
             building_counter += 1
-            # if building_counter > 1:
-            #     continue
-            if not self.is_building_connected(building):
+            if building_counter < 0:
+                continue
+            if buildings_connection_checker.building_needs_simulation(
+                    self.step1_building_tree_widget if self.step1_building_tree_widget is not None else self.step4_building_tree_widget,
+                    building, log=log):
                 log.log("Iteration:", str(building_counter), "/", str(len(buildings)))
                 log.log("Start computing building " + str(building) + ". Time: " + str(
                     time.time() - self.sim_time) + " seconds.")
-                item = self.single_building_simulation(dr, building)
+                item = self.single_building_simulation(dr, building, log)
                 log.log("Computation of building " + str(building) + " done. Time: " + str(
                     time.time() - self.sim_time) + " seconds.")
                 if item is None:
@@ -350,7 +367,7 @@ class DistrictSimulator:
         self.julia_output_checker.visualize()
 
     def run_district(self, dr):
-        district_log = MyLog(os.path.join(os.path.dirname(os.path.realpath(__file__)), "test", "last_district_log.txt"))
+        district_log = MyLog(os.path.join(os.path.dirname(os.path.realpath(__file__)), "test", "log", "last_district_log.txt"))
         time_0 = time.time()
         self.work_directory = dr
         if self.step1_network_tree_widget is not None:
@@ -411,7 +428,10 @@ class DistrictSimulator:
         if network is None:
             network_id = "toy"
         else:
-            self.update_district_H_C_tech(tech_infos, network)
+            self.pvgis_api = PvgisApi()
+            pvgis_param_adapter = PvgisParamsAdapter(self.pvgis_api)
+            pvgis_param_adapter.update_params(network, "baseline" if self.baseline_scenario is not None else "future")
+            self.update_district_H_C_tech(tech_infos, network, log)
             print("create_file_for_julia_district() called")
             self.create_file_for_julia_district(self.calc.tech_tab, self.calc.network, input_folder, result_folder, log)
             print("create_file_for_julia_district() exits")
@@ -422,7 +442,7 @@ class DistrictSimulator:
         log.log(tech_infos)
         with JuliaQgisInterface() as j:
             j.include(os.path.join(file_directory, "Absorption_heat_pump_district_heating.jl"))
-            j.using("Absorption_heat_pump_district_heating")
+            j.using("Main.Absorption_heat_pump_district_heating: district_solver")
             j.district_solver(input_folder, result_folder, tech_infos, network_id, self.logger.info)
             print("Exit optimization")
 
@@ -436,10 +456,10 @@ class DistrictSimulator:
         file_directory = os.path.dirname(os.path.realpath(__file__))
         with JuliaQgisInterface() as j:
             j.include(os.path.join(file_directory, "district_cooling.jl"))
-            j.using("district_cooling")
+            j.using("Main.district_cooling: district_cooling_simulation")
             j.district_cooling_simulation(input_folder, result_folder, tech_infos, network_id, self.logger.info)
 
-    def single_building_simulation(self, dr, building_id):
+    def single_building_simulation(self, dr, building_id, log: MyLog):
         expr = QgsExpression("BuildingID=" + building_id)
         if self.baseline_scenario is not None:
             layer = self.baseline_scenario
@@ -468,13 +488,18 @@ class DistrictSimulator:
         output_folder = os.path.join(dr, "Results")
         if not os.path.isdir(output_folder):
             os.makedirs(output_folder)
+        self.pvgis_api = PvgisApi()
+        pvgis_param_adapter = PvgisParamsAdapter(self.pvgis_api)
+        pvgis_param_adapter.update_params(item, "baseline" if self.baseline_scenario is not None else "future")
+        log.log("PVGIS params:", self.pvgis_api.params)
         self.update_tech_from_widget_item(tech_infos, item, input_folder=input_folder)
+        log.log("tech_infos:", tech_infos)
         
         output_file = os.path.join(dr, "TECH_INFOS" + str(building_id) + ".json")
         with open(output_file, 'w') as outfile:
             json.dump(tech_infos, outfile, indent=4)
         self.remove_file_for_julia_single_building(dr)
-        self.create_file_for_julia_single_building(item, dr, building_id)
+        self.create_file_for_julia_single_building(item, dr, building_id, log)
 
         # building_id = "toy"
         print("Running Julia single building simulation for feature: ", building_id)
@@ -482,7 +507,7 @@ class DistrictSimulator:
         file_directory = os.path.dirname(os.path.realpath(__file__))
         with JuliaQgisInterface() as j:
             j.include(os.path.join(file_directory, "Individual_heating_and_cooling.jl"))
-            j.using("individual_heating_and_cooling")
+            j.using("Main.individual_heating_and_cooling: individual_H_and_C")
             j.individual_H_and_C(input_folder, output_folder, tech_infos, building_id, self.logger.info)
         print("DONE!")
         return item
@@ -541,13 +566,14 @@ class DistrictSimulator:
                     self.tech_paramaters_conversion(val_list)
                     julia_category = self.individual_H_C_dict_func[key](tech_infos, val_list, input_folder=input_folder)
                     item.child(i).setData(0, Qt.UserRole, QVariant(julia_category))
+                    self.write_solar_panel_area_in_widget(item.child(i), tech_infos)
                 # generate_fileEta_forJulia(val_list, input_folder, output_folder)
                 #     genera_file_etaHP_cool(val_list, input_folder=self.work_directory,
                 #                            output_folder=os.path.join(self.work_directory, "input"))
 
 
     # beware: district_H_dict_var it's not used...
-    def update_district_H_C_tech(self, tech_infos, network):
+    def update_district_H_C_tech(self, tech_infos, network, log: MyLog):
         if self.step1_network_tree_widget is not None:
             widget = self.step1_network_tree_widget
         else:
@@ -557,21 +583,27 @@ class DistrictSimulator:
             if n.data(0, Qt.UserRole) == str(network.ID):
                 for j in range(n.childCount()):
                     item = n.child(j)
-                    for key in self.district_C_dict_var.keys():
-                            if item.text(1) in self.district_C_dict_var[key]:
-                                list_val = []
-                                for k in range(item.columnCount()):
-                                    try:
-                                       list_val.append(float(item.text(k)))
-                                    except:
-                                        list_val.append(item.text(k))
-                                if network.n_type == "DCN":
-                                    out_folder = os.path.join(self.work_directory, "cooling", "Input")
-                                    julia_category = self.district_C_dict_func[key](tech_infos, list_val, input_folder=out_folder)
-                                if network.n_type == "DHN":
-                                    out_folder = os.path.join(self.work_directory, "heating", "Input")
-                                    julia_category = self.district_H_dict_func[key](tech_infos, list_val, input_folder=out_folder)
-                                item.setData(1, Qt.UserRole, QVariant(julia_category))
+                    log.log("Technology found and tryin to add:", item.text(1))
+                    for key in self.district_function.keys():
+                        log.log("looking in", key, "wich contains:", self.district_function[key])
+                        if item.text(1) in self.district_function[key]:
+                            log.log(item.text(1), "is marked as", key)
+                            list_val = []
+                            for k in range(item.columnCount()):
+                                try:
+                                   list_val.append(float(item.text(k)))
+                                except:
+                                    list_val.append(item.text(k))
+                            self.tech_paramaters_district_conversion(list_val)
+                            if network.n_type == "DCN":
+                                out_folder = os.path.join(self.work_directory, "cooling", "Input")
+                                julia_category = self.district_C_dict_func[key](tech_infos, list_val, input_folder=out_folder)
+                            if network.n_type == "DHN":
+                                out_folder = os.path.join(self.work_directory, "heating", "Input")
+                                julia_category = self.district_H_dict_func[key](tech_infos, list_val, input_folder=out_folder)
+                            log.log("Technology added:", item.text(1))
+                            log.log("julia_category:", julia_category)
+                            item.setData(1, Qt.UserRole, QVariant(julia_category))
                             #Booster_COP.generate_fileEta_forHeating(list_val, julia_category, input_folder=self.work_directory, output_folder=out_folder)
                             #generate_solar_thermal_forJulia(list_val, input_folder=self.work_directory, output_folder=out_folder)
                             #generate_file_Waste_heat_pump_heating(list_val, julia_category, input_folder=self.work_directory, output_folder=out_folder)
@@ -666,6 +698,7 @@ class DistrictSimulator:
         print("DistrictSimulator, add_solar_thermal. area", area, "effective_area", effective_area)
         tech_infos["A_ST"] = effective_area
         tech_infos["cost_var_ST"] = val_list[self.name_to_index("variable_cost")]
+        self.pvgis_api.params["gsi_1"]["angle"] = val_list[self.name_to_index("inclination")]
         return "ST"
 
     def add_cooling_heat_pump(self, tech_infos, val_list, input_folder=None):
@@ -704,14 +737,16 @@ class DistrictSimulator:
         tech_infos["SOC_min"] = val_list[self.name_to_index("soc_min")]
         tech_infos["TES_start_end"] = val_list[self.name_to_index("tes_startEnd")]
         tech_infos["TES_charge_discharge_time"] = val_list[self.name_to_index("tes_discharge")]
+        tech_infos["Tes_loss"] = val_list[self.name_to_index("tes_loss")]
         return "SOC"
 
     def add_domestic_hot_water_thermal_energy_storage(self, tech_infos, val_list, input_folder=None):
         tech_infos["TES_size_DHW"] = val_list[self.name_to_index("tes_size")]
         tech_infos["SOC_min_DHW"] = val_list[self.name_to_index("soc_min")]  # soc_min si chiama tes_max!!!!
-        tech_infos["TES_start_end"] = val_list[self.name_to_index("tes_startEnd")]
-        tech_infos["TES_charge_discharge_time"] = val_list[self.name_to_index("tes_discharge")]
-        return "SOC"
+        tech_infos["TES_start_end_DHW"] = val_list[self.name_to_index("tes_startEnd")]
+        tech_infos["TES_charge_discharge_time_DHW"] = val_list[self.name_to_index("tes_discharge")]
+        tech_infos["Tes_loss_DHW"] = val_list[self.name_to_index("tes_loss")]
+        return "SOC_DHW"
 
     def name_to_index(self, column):
         switcher = {
@@ -736,7 +771,8 @@ class DistrictSimulator:
             "tes_startEnd": 18,
             "tes_discharge": 19,
             "cop_absorption": 20,
-            "el_sale": 21
+            "el_sale": 21,
+            "tes_loss": 22
         }
         return switcher.get(column, 8)
 
@@ -923,7 +959,7 @@ class DistrictSimulator:
             tech_infos["Percentage_ramp_up_down_HP"] = val_list[self.district_name_to_index("ramp_up_down")]
             tech_infos["cost_var_HP"] = val_list[self.district_name_to_index("variable_cost")]
             tech_infos["cost_fuel_HP"] = val_list[self.district_name_to_index("fuel_cost")]
-            return "HP"
+            return "HP_1"
         else:
             if tech_infos["P_max_HP_2"] == 0:
                 tech_infos["P_max_HP_2"] = val_list[self.district_name_to_index("p_max")]
@@ -966,32 +1002,32 @@ class DistrictSimulator:
     def DHN_absorption_heat_pump(self, tech_infos, val_list, input_folder=None):
         tech_infos["P_max_HP_absorption"] = val_list[self.district_name_to_index("p_max")]
         tech_infos["Technical_minimum_HP_absorption"] = val_list[self.district_name_to_index("tech_min")]
-        tech_infos["eta_HP_absorption"] = val_list[self.name_to_index("eta_optical")]
-        tech_infos["Percentage_ramp_up_down_HP_absorption"] = val_list[self.name_to_index("ramp_up_down")]
-        tech_infos["cost_var_HP_absorption"] = val_list[self.name_to_index("variable_cost")]
-        tech_infos["cost_fuel_HP_absorption"] = val_list[self.name_to_index("fuel_cost")]
+        tech_infos["eta_HP_absorption"] = val_list[self.district_name_to_index("eta_optical")]
+        tech_infos["Percentage_ramp_up_down_HP_absorption"] = val_list[self.district_name_to_index("ramp_up_down")]
+        tech_infos["cost_var_HP_absorption"] = val_list[self.district_name_to_index("variable_cost")]
+        tech_infos["cost_fuel_HP_absorption"] = val_list[self.district_name_to_index("fuel_cost")]
         return "HP_absorption"
 
     def DHN_add_solar_thermal(self, tech_infos, val_list, input_folder=None):
         if tech_infos["A_ST"] == 0:
-            tech_infos["A_ST"] = val_list[self.name_to_index("area")]
-            tech_infos["cost_var_ST"] = val_list[self.name_to_index("variable_cost")]
+            tech_infos["A_ST"] = val_list[self.district_name_to_index("area")]
+            tech_infos["cost_var_ST"] = val_list[self.district_name_to_index("variable_cost")]
             return "ST"
         else:
-            tech_infos["A_ST_2"] = val_list[self.name_to_index("p_max")]
-            tech_infos["cost_var_ST_2"] = val_list[self.name_to_index("variable_cost")]
+            tech_infos["A_ST_2"] = val_list[self.district_name_to_index("p_max")]
+            tech_infos["cost_var_ST_2"] = val_list[self.district_name_to_index("variable_cost")]
             return "ST_2"
 
     def DHN_seasonal_solar_thermal(self, tech_infos, val_list, input_folder=None):
-        tech_infos["A_ST_seasonal"] = val_list[self.name_to_index("area")]
-        tech_infos["cost_var_ST_seasonal"] = val_list[self.name_to_index("variable_cost")]
+        tech_infos["A_ST_seasonal"] = val_list[self.district_name_to_index("area")]
+        tech_infos["cost_var_ST_seasonal"] = val_list[self.district_name_to_index("variable_cost")]
         return "ST_seasonal"
 
     def DHN_waste_heat_heat_exchangers(self, tech_infos, val_list, input_folder=None):
         self.write_electricity_file_district(input_folder, val_list)
-        tech_infos["P_HEX_capacity"] = val_list[self.name_to_index("p_max")]
-        tech_infos["P_min_HEX"] = val_list[self.name_to_index("p_min")]
-        tech_infos["cost_var_HEX"] = val_list[self.name_to_index("variable_cost")]
+        tech_infos["P_HEX_capacity"] = val_list[self.district_name_to_index("p_max")]
+        tech_infos["P_min_HEX"] = val_list[self.district_name_to_index("p_min")]
+        tech_infos["cost_var_HEX"] = val_list[self.district_name_to_index("variable_cost")]
         return "HEX"
 
     def DHN_waste_heat_heat_pumps_temperature_group1(self, tech_infos, val_list, input_folder=None):
@@ -1002,21 +1038,21 @@ class DistrictSimulator:
             tech_infos["Percentage_ramp_up_down_HP_waste_heat_I_1"] = val_list[self.district_name_to_index("ramp_up_down")]
             tech_infos["cost_var_HP_waste_heat_I_1"] = val_list[self.district_name_to_index("variable_cost")]
             tech_infos["cost_fuel_HP_waste_heat_I_1"] = val_list[self.district_name_to_index("fuel_cost")]
-            return "HP_waste_heat_I_1"
+            return "HP_I_1"
         elif tech_infos["P_max_HP_waste_heat_I_2"] == 0.0:
             tech_infos["P_max_HP_waste_heat_I_2"] = val_list[self.district_name_to_index("p_max")]
             tech_infos["Technical_minimum_HP_waste_heat_I_2"] = val_list[self.district_name_to_index("tech_min")]
             tech_infos["Percentage_ramp_up_down_HP_waste_heat_I_2"] = val_list[self.district_name_to_index("ramp_up_down")]
             tech_infos["cost_var_HP_waste_heat_I_2"] = val_list[self.district_name_to_index("variable_cost")]
             tech_infos["cost_fuel_HP_waste_heat_I_2"] = val_list[self.district_name_to_index("fuel_cost")]
-            return "HP_waste_heat_I_2"
+            return "HP_I_2"
         else:
             tech_infos["P_max_HP_waste_heat_I_3"] = val_list[self.district_name_to_index("p_max")]
             tech_infos["Technical_minimum_HP_waste_heat_I_3"] = val_list[self.district_name_to_index("tech_min")]
             tech_infos["Percentage_ramp_up_down_HP_waste_heat_I_3"] = val_list[self.district_name_to_index("ramp_up_down")]
             tech_infos["cost_var_HP_waste_heat_I_3"] = val_list[self.district_name_to_index("variable_cost")]
             tech_infos["cost_fuel_HP_waste_heat_I_3"] = val_list[self.district_name_to_index("fuel_cost")]
-            return "HP_waste_heat_I_3"
+            return "HP_I_3"
 
     def DHN_waste_heat_heat_pumps_temperature_group2(self, tech_infos, val_list, input_folder=None):
         self.write_electricity_file_district(input_folder, val_list)
@@ -1026,21 +1062,21 @@ class DistrictSimulator:
             tech_infos["Percentage_ramp_up_down_HP_waste_heat_II_1"] = val_list[self.district_name_to_index("ramp_up_down")]
             tech_infos["cost_var_HP_waste_heat_II_1"] = val_list[self.district_name_to_index("variable_cost")]
             tech_infos["cost_fuel_HP_waste_heat_II_1"] = val_list[self.district_name_to_index("fuel_cost")]
-            return "HP_waste_heat_II_1"
+            return "HP_II_1"
         elif tech_infos["P_max_HP_waste_heat_II_2"] == 0.0:
             tech_infos["P_max_HP_waste_heat_II_2"] = val_list[self.district_name_to_index("p_max")]
             tech_infos["Technical_minimum_HP_waste_heat_II_2"] = val_list[self.district_name_to_index("tech_min")]
             tech_infos["Percentage_ramp_up_down_HP_waste_heat_II_2"] = val_list[self.district_name_to_index("ramp_up_down")]
             tech_infos["cost_var_HP_waste_heat_II_2"] = val_list[self.district_name_to_index("variable_cost")]
             tech_infos["cost_fuel_HP_waste_heat_II_2"] = val_list[self.district_name_to_index("fuel_cost")]
-            return "HP_waste_heat_II_2"
+            return "HP_II_2"
         else:
             tech_infos["P_max_HP_waste_heat_II_3"] = val_list[self.district_name_to_index("p_max")]
             tech_infos["Technical_minimum_HP_waste_heat_II_3"] = val_list[self.district_name_to_index("tech_min")]
             tech_infos["Percentage_ramp_up_down_HP_waste_heat_II_3"] = val_list[self.district_name_to_index("ramp_up_down")]
             tech_infos["cost_var_HP_waste_heat_II_3"] = val_list[self.district_name_to_index("variable_cost")]
             tech_infos["cost_fuel_HP_waste_heat_II_3"] = val_list[self.district_name_to_index("fuel_cost")]
-            return "HP_waste_heat_II_3"
+            return "HP_II_3"
 
     def DHN_waste_heat_heat_pumps_temperature_group3(self, tech_infos, val_list, input_folder=None):
         self.write_electricity_file_district(input_folder, val_list)
@@ -1050,21 +1086,21 @@ class DistrictSimulator:
             tech_infos["Percentage_ramp_up_down_HP_waste_heat_III_1"] = val_list[self.district_name_to_index("ramp_up_down")]
             tech_infos["cost_var_HP_waste_heat_III_1"] = val_list[self.district_name_to_index("variable_cost")]
             tech_infos["cost_fuel_HP_waste_heat_III_1"] = val_list[self.district_name_to_index("fuel_cost")]
-            return "HP_waste_heat_III_1"
+            return "HP_III_1"
         elif tech_infos["P_max_HP_waste_heat_III_2"] == 0.0:
             tech_infos["P_max_HP_waste_heat_III_2"] = val_list[self.district_name_to_index("p_max")]
             tech_infos["Technical_minimum_HP_waste_heat_III_2"] = val_list[self.district_name_to_index("tech_min")]
             tech_infos["Percentage_ramp_up_down_HP_waste_heat_III_2"] = val_list[self.district_name_to_index("ramp_up_down")]
             tech_infos["cost_var_HP_waste_heat_III_2"] = val_list[self.district_name_to_index("variable_cost")]
             tech_infos["cost_fuel_HP_waste_heat_III_2"] = val_list[self.district_name_to_index("fuel_cost")]
-            return "HP_waste_heat_III_2"
+            return "HP_III_2"
         else:
             tech_infos["P_max_HP_waste_heat_III_3"] = val_list[self.district_name_to_index("p_max")]
             tech_infos["Technical_minimum_HP_waste_heat_III_3"] = val_list[self.district_name_to_index("tech_min")]
             tech_infos["Percentage_ramp_up_down_HP_waste_heat_III_3"] = val_list[self.district_name_to_index("ramp_up_down")]
             tech_infos["cost_var_HP_waste_heat_III_3"] = val_list[self.district_name_to_index("variable_cost")]
             tech_infos["cost_fuel_HP_waste_heat_III_3"] = val_list[self.district_name_to_index("fuel_cost")]
-            return "HP_waste_heat_III_3"
+            return "HP_III_3"
 
     def DHN_seasonal_waste_heat_pump(self, tech_infos, val_list, input_folder=None):
         self.write_electricity_file_district(input_folder, val_list)
@@ -1100,14 +1136,15 @@ class DistrictSimulator:
         tech_infos["TES_loss_seasonal"] = val_list[self.district_name_to_index("tes_loss")]
         return "TES_seasonal"
 
-    def ORC_cogeneration(self, tech_infos, val_list, input_folder=None):
+    def DHN_ORC_cogeneration(self, tech_infos, val_list, input_folder=None):
         tech_infos["P_max_CHP_ORC"] = val_list[self.district_name_to_index("p_max")]
         tech_infos["Technical_minimum_CHP_ORC"] = val_list[self.district_name_to_index("tech_min")]
         tech_infos["eta_CHP_el"] = val_list[self.district_name_to_index("eta_optical")]
         tech_infos["cb_CHP_ORC"] = val_list[self.district_name_to_index("cop_absorption")]
         tech_infos["Percentage_ramp_up_down_CHP_ORC"] = val_list[self.district_name_to_index("ramp_up_down")]
         tech_infos["cost_var_CHP_ORC"] = val_list[self.district_name_to_index("variable_cost")]
-        return "ORC_cogeneration"
+        tech_infos["CHP_ORC_electricity_price"] = val_list[self.district_name_to_index("el_sale")]
+        return "CHP_ORC"
 
     def district_name_to_index(self, column):
         switcher = {
@@ -1131,32 +1168,11 @@ class DistrictSimulator:
             "tes_startEnd": 18,
             "tes_discharge": 19,
             "cop_absorption": 20,
-            "el_sale": 21
+            "el_sale": 21,
+            "tes_loss": 22,
+            "inclination": 23
         }
         return switcher.get(column, 8)
-
-    def is_building_connected(self, building_id):
-        root = QgsProject.instance().layerTreeRoot()
-        for lst in [self.DHN_network_list, self.DCN_network_list]:
-            for n in lst:
-                network_node = root.findGroup(n.get_group_name())
-                buildings_layer = None
-                for l in network_node.findLayers():
-                    if l.name()[0:19] == "selected_buildings_":
-                        buildings_layer = l.layer()
-                        break
-                if buildings_layer is None:
-                    for l in network_node.findLayers():
-                        if l.name()[0:14] == "all_buildings_":
-                            buildings_layer = l.layer()
-                            break
-                if buildings_layer is None:
-                    continue
-                for feature in buildings_layer.getFeatures():
-                    if str(feature.attribute("Status")) == str(2):
-                        if feature.attribute("BuildingID") == building_id:
-                            return True
-        return False
 
     def is_building_connected_type(self, building_id):
         root = QgsProject.instance().layerTreeRoot()
@@ -1229,11 +1245,11 @@ class DistrictSimulator:
                         pass
 
 
-    def create_file_for_julia_single_building(self, item, dr, building_id):
+    def create_file_for_julia_single_building(self, item, dr, building_id, log: MyLog):
+        solar_parameter_builder = SolarParameterBuilder()
         input_folder = os.path.join(dr, "input")
         output_folder = os.path.join(dr, "Results")
-        # print("DistrictSimulator.py, create_file_for_julia_single_building(), temperature:", self.temperature)
-        # print("DistrictSimulator.py, create_file_for_julia_single_building(), heat:", self.heat)
+
         COP_val_list = [90.0, 1.0, 90.0, 1.0, 90.0, 1.0]
         cool_COP_val_list = [90.0, 1.0, 90.0, 1.0, 90.0, 1.0]
         self.create_default_files(input_folder)
@@ -1247,12 +1263,18 @@ class DistrictSimulator:
                       "hidden data (Qt.UserRole)", technology.data(0, Qt.UserRole))
                 self.create_electricity_file(input_folder, price=technology.text(21))
                 julia_category = technology.data(0, Qt.UserRole)
+                solar_parameter_builder.update_param_from_tech_widget(julia_category, technology, self.name_to_index)
                 if julia_category in ["HP_1", "HP_2", "HP_3"]:
-                    self.build_file_HP(julia_category, technology, input_folder, COP_val_list)
+                    self.build_file_HP(julia_category, technology, input_folder, COP_val_list, item)
                 if julia_category in ["HP_cool", "HP_cool_2", "HP_cool_3"]:
                     self.build_file_HP_cool(julia_category, technology, input_folder, cool_COP_val_list)
+        pvgis_files = self.pvgis_api.write_to_files()
+        self.pvgis_api.gen_dummy_output(pvgis_files)
+        log.log("pvgis_files", pvgis_files)
+        generate_solar_thermal_forJulia(solar_parameter_builder.solar_params, pvgis_files,
+                                        output_folder=input_folder)
         #generate_fileEta_forJulia(COP_val_list, input_folder=input_folder, output_folder=output_folder)
-        genera_file_etaHP_cool(cool_COP_val_list, input_folder=input_folder, output_folder=input_folder)
+        genera_file_etaHP_cool(cool_COP_val_list, input_folder=input_folder, output_folder=input_folder, item=item)
 
     def create_default_files(self, folder):
         self.create_default_file_8760_rep(folder, "Electricity_price_time.csv", "1.0")
@@ -1304,7 +1326,7 @@ class DistrictSimulator:
             for t in self.temperature[source]:
                 file_object.write(str(t) + "\n")
 
-    def build_file_HP(self, julia_category, technology, input_folder, COP_val_list):
+    def build_file_HP(self, julia_category, technology, input_folder, COP_val_list, building):
         if julia_category == "HP_1":
             index = 0
         if julia_category == "HP_2":
@@ -1323,7 +1345,8 @@ class DistrictSimulator:
         file_path = os.path.realpath(os.path.join(input_folder, "../", "T_source_" + julia_category + ".csv"))
         self.gen_T_Source_X_file(source, file_path)
         generate_fileEta_forJulia(COP_val_list, input_folder=os.path.realpath(os.path.join(input_folder, "../")),
-                                  output_folder=os.path.realpath(os.path.join(input_folder, "../", "input")))
+                                  output_folder=os.path.realpath(os.path.join(input_folder, "../", "input")),
+                                  item=building)
 
     def build_file_HP_cool(self, julia_category, technology, input_folder, COP_val_list):
         if julia_category == "HP_cool":
@@ -1360,6 +1383,7 @@ class DistrictSimulator:
                 file_object.write("0.0\n")
 
     def create_file_for_julia_district(self, widget, network, input_folder, result_folder, log: MyLog):
+        solar_params_builder = SolarParameterBuilder()
         self.check_and_create_folders([input_folder, result_folder])
         cinput = ""
         if network.scenario_type == "baseline":
@@ -1379,7 +1403,8 @@ class DistrictSimulator:
                 services.append("Cooling")
 
             gen_dem_time_district(cinput=cinput, coutput=os.path.join(input_folder, "DEM_time.csv"), services=services,
-                                  buildings=[b.attribute("BuildingID") for b in network.get_connected_buildings()])
+                                  buildings=[str(b.attribute("BuildingID")) for b in network.get_connected_buildings()],
+                                  log=log)
             log.log("Demand profile created. Connected buildings:",
                     [b.attribute("BuildingID") for b in network.get_connected_buildings()])
         else:
@@ -1387,10 +1412,10 @@ class DistrictSimulator:
         COP_val_list = [90.0, 1.0, 90.0, 1.0, 90.0, 1.0]
         COP_val_list_temperature_groups = [20.0, 1.0, 20.0, 1.0, 20.0, 1.0, 50.0, 1.0, 50.0, 1.0, 50.0, 1.0, 90.0, 1.0,
                                            90.0, 1.0, 90.0, 1.0, 90.0, 1.0]
-        waste_heat_val_list = {"HP_waste_heat_I_1": 1.0, "HP_waste_heat_I_2": 1.0, "HP_waste_heat_I_3": 1.0,
-                               "HP_waste_heat_II_1": 1.0, "HP_waste_heat_II_2": 1.0,
-                               "HP_waste_heat_II_3": 1.0, "HP_waste_heat_III_1": 1.0,
-                               "HP_waste_heat_III_2": 1.0, "HP_waste_heat_III_3": 1.0,
+        waste_heat_val_list = {"HP_I_1": 1.0, "HP_I_2": 1.0, "HP_I_3": 1.0,
+                               "HP_II_1": 1.0, "HP_II_2": 1.0,
+                               "HP_II_3": 1.0, "HP_III_1": 1.0,
+                               "HP_III_2": 1.0, "HP_III_3": 1.0,
                                "HP_waste_heat_seasonal": 1.0, "COP_absorption": 10.0}
         log.log("Collecting file list...")
         files = self.waste_heat_file_list(os.path.realpath(os.path.join(input_folder, "../../")))
@@ -1401,21 +1426,34 @@ class DistrictSimulator:
                 for j in range(n.childCount()):
                     item: QTreeWidgetItem = n.child(j)
                     julia_category = item.data(1, Qt.UserRole)
+                    solar_params_builder.update_param_from_tech_widget(julia_category, item,
+                                                                       self.district_name_to_index)
                     if julia_category in ["HP", "HP_2", "HP_3"]:
                         self.build_file_HP_district(julia_category, item, input_folder, COP_val_list)
                     if julia_category in [key for key in waste_heat_val_list.keys()]:  # HP_waste_heat_V_X
                         if julia_category == "COP_absorption":
                             waste_heat_val_list[julia_category] = float(item.text(20))  # eta_absorption
+                        log.log("self.build_file_waste_heat_HP_district()...")
                         self.build_file_waste_heat_HP_district(julia_category, item, input_folder, files,
-                                                               COP_val_list_temperature_groups)
+                                                               COP_val_list_temperature_groups, log)
                     if julia_category in ["absorption_HP"]:
                         self.build_absorption_HP_district(item, input_folder)
+                    log.log("Generating file eta for julia...")
                     generate_fileEta_forJulia(COP_val_list,
                                               os.path.realpath(os.path.join(input_folder, "../../")),
-                                              input_folder)
-                    Booster_COP.generate_fileEta_forHeating(COP_val_list_temperature_groups, input_folder, input_folder)
+                                              input_folder, network)
+                    log.log("Booster_COP.generate_fileEta_forHeating()...")
+                    Booster_COP.generate_fileEta_forHeating(COP_val_list_temperature_groups,
+                                                            input_folder, input_folder, item=network)
                     self.check_and_fix_waste_heat_files(files, result_folder)
+                    log.log("generate_file_Waste_heat_pump_heating()...", waste_heat_val_list, input_folder,
+                            result_folder)
                     generate_file_Waste_heat_pump_heating(waste_heat_val_list, input_folder, result_folder)
+        pvgis_files = self.pvgis_api.write_to_files()
+        self.pvgis_api.gen_dummy_output(pvgis_files)
+        print(pvgis_files)
+        generate_solar_thermal_forJulia(solar_params_builder.solar_params, pvgis_files,
+                                        output_folder=input_folder)
 
     def build_absorption_HP_district(self, item, input_folder):
         source = item.text(2)
@@ -1449,26 +1487,28 @@ class DistrictSimulator:
                 os.makedirs(folder, exist_ok=True)
 
     def build_file_waste_heat_HP_district(self, julia_category, item, input_folder, files,
-                                          COP_val_list_temperature_groups):
-        julia_category_index = ["HP_waste_heat_I_1", "HP_waste_heat_I_2", "HP_waste_heat_I_3",
-                                "HP_waste_heat_II_1", "HP_waste_heat_II_2", "HP_waste_heat_II_3",
-                                "HP_waste_heat_III_1", "HP_waste_heat_III_2", "HP_waste_heat_III_3",
+                                          COP_val_list_temperature_groups, log: MyLog):
+        julia_category_index = ["HP_I_1", "HP_I_2", "HP_I_3",
+                                "HP_II_1", "HP_II_2", "HP_II_3",
+                                "HP_III_1", "HP_III_2", "HP_III_3",
                                 "HP_waste_heat_seasonal"].index(julia_category)
-        julia_category_index = 2*julia_category_index
+        double_julia_category_index = 2*julia_category_index
         try:
-            COP_val_list_temperature_groups[julia_category_index] = float(
+            COP_val_list_temperature_groups[double_julia_category_index] = float(
                 item.text(self.district_name_to_index("temperature")))
         except ValueError:
-            COP_val_list_temperature_groups[julia_category_index] = 90.0  # default
+            COP_val_list_temperature_groups[double_julia_category_index] = 90.0  # default
         try:
-            COP_val_list_temperature_groups[julia_category_index + 1] = float(
+            COP_val_list_temperature_groups[double_julia_category_index + 1] = float(
                 item.text(self.district_name_to_index("eta_optical")))
         except ValueError:
-            COP_val_list_temperature_groups[julia_category_index + 1] = 1.0  # default
+            COP_val_list_temperature_groups[double_julia_category_index + 1] = 1.0  # default
         file_path = os.path.join(input_folder, "T_source_" + julia_category + ".csv")
         source = item.text(2)
         self.gen_T_Source_X_file(source, file_path)
+        log.log("build_file_waste_heat_HP_district() julia_category_index:", julia_category_index, "files:", files)
         waste_heat_file_path = files[int(julia_category_index)]
+        log.log("waste_heat_file_path:", waste_heat_file_path)
         self.gen_HEAT_Source_X_file(source, waste_heat_file_path)
 
     def gen_HEAT_Source_X_file(self, source, waste_heat_file_path):
@@ -1488,10 +1528,16 @@ class DistrictSimulator:
             if test < -273.15:
                 print("DistrictSimulator.py, gen_HEAT_Source_X_file(): temperature is below 0 K")
                 return
-            file_object = open(waste_heat_file_path, "w")
-            print("DistrictSimulator.py, gen_HEAT_Source_X_file(): writing:", waste_heat_file_path)
-            for t in self.heat[source]:
-                file_object.write(str(t)+"\n")
+            try:
+                file_object = open(waste_heat_file_path, "w")
+                print("DistrictSimulator.py, gen_HEAT_Source_X_file(): writing:", waste_heat_file_path)
+                for t in self.heat[source]:
+                    file_object.write(str(t)+"\n")
+                file_object.close()
+            except Exception:
+                print("DistrictSimulator.py, gen_HEAT_Source_X_file(): problems writing file", waste_heat_file_path)
+                file_object.close()
+
 
     def build_file_HP_district(self, julia_category, technology, input_folder, COP_val_list):
         if julia_category == "HP":
@@ -1593,7 +1639,12 @@ class DistrictSimulator:
         # val_list[self.name_to_index("tech_min")] = val_list[self.name_to_index("tech_min")] / 1000
         val_list[self.name_to_index("ramp_up_down")] = val_list[self.name_to_index("ramp_up_down")] / 100  # 100 not 1000
         val_list[self.name_to_index("tes_size")] = val_list[self.name_to_index("tes_size")] / 1000
+        val_list[self.name_to_index("tes_loss")] = val_list[self.name_to_index("tes_loss")] / 100  # 100 not 1000
         val_list[self.name_to_index("tes_startEnd")] = val_list[self.name_to_index("tes_startEnd")] / 1000
+
+    def tech_paramaters_district_conversion(self, val_list):
+        val_list[self.district_name_to_index("ramp_up_down")] = val_list[self.district_name_to_index("ramp_up_down")] / 100  # 100 not 1000
+        val_list[self.district_name_to_index("tes_loss")] = val_list[self.district_name_to_index("tes_loss")] / 100  # 100 not 1000
 
     def write_electricity_file(self, dr, val_list):
         print("DistrictSImulator.write_electricity_file(), dr:", dr)
@@ -1642,7 +1693,7 @@ class DistrictSimulator:
 
             file_object = open(file_path, "w")
             for i in range(self.h8760):
-                file_object.write(str(input_default_data[i])+"\n")
+                file_object.write(str(input_default_data[i]))
             file_object.close()
 
         file_path = os.path.join(dr, "COP_heat_pump_temperature_group_seasonal.csv")
@@ -1658,6 +1709,10 @@ class DistrictSimulator:
             for i in range(self.h8760):
                 file_object.write(str("1.0\n"))
             file_object.close()
+
+    def write_solar_panel_area_in_widget(self, tech: QTreeWidgetItem, tech_infos: dict):
+        if tech.text(0) in ["Seasonal Solar Thermal", "Evacuated tube solar collectors", "Flat plate solar collectors"]:
+            tech.setData(3, Qt.UserRole, QVariant(str(tech_infos["A_ST"])))
 
             
 

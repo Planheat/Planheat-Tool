@@ -10,9 +10,11 @@ from .step2 import CityStep2Dialog
 from .step3 import CityStep3Dialog
 from .City_planning import CityPlanning
 from .src.StepConnector import StepConnector
+from.src.results.ResultWriter import ResultWriter
 from .city_simulation import CitySimulation
 from ..save_utility.save_city import SaveCityTab
 from ..save_utility.LoadCity import LoadCity
+from .config import tableConfig
 
 # This loads your .ui file so that PyQt can populate your plugin with the elements from Qt Designer
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -104,6 +106,7 @@ class PlanningAndSimulationCity(QtWidgets.QDialog, FORM_CLASS):
             self.Cstep2_first_start = False
             self.Cstep2.ok.clicked.connect(self.city_planning.button3_change)
             self.Cstep2.setWindowIcon(QIcon(icon_path))
+            self.Cstep01.ok.clicked.connect(self.Cstep2.format_tables)
 
 
         if self.Cstep3_first_start:
@@ -121,12 +124,14 @@ class PlanningAndSimulationCity(QtWidgets.QDialog, FORM_CLASS):
             self.citySim.simulation_closing_signal.connect(self.onCloseCitySimulationPlugin)
             self.Cstep01.citySim = self.citySim
             self.citySim.hide()
-            self.citySim.simulation_closing_signal.connect(self.citySim.closeSimulation)
+            # self.citySim.simulation_closing_signal.connect(self.citySim.closeSimulation)
             self.citySim_first_start = False
             self.Cstep3.send_toSim.connect(self.citySim.load_from_ste3)
             self.Cstep2.send_corrected_ued.connect(self.citySim.calculationKPIs)
             self.citySim.btn_ok.clicked.connect(self.citySim.closeSimulation)
             self.citySim.setWindowIcon(QIcon(icon_path))
+            self.btnCitySimulation.clicked.connect(self.citySim.format_tables)
+            self.citySim.simulation_closing_signal.connect(lambda: ResultWriter.export(self.Cstep2, self.citySim))
 
 
         work_folder = os.path.realpath(os.path.join(os.path.dirname(os.path.realpath(__file__)),
@@ -148,11 +153,11 @@ class PlanningAndSimulationCity(QtWidgets.QDialog, FORM_CLASS):
 
         self.Cstep01.load_city = self.load_routine
 
+        self.test_run(False)
+
     def close_step3(self):
         self.show()
         self.button_change()
-
-
 
     def openCity_planning(self):
         if self.city_planning is not None:
@@ -188,5 +193,67 @@ class PlanningAndSimulationCity(QtWidgets.QDialog, FORM_CLASS):
 
     def button_change(self):
         self.btnCitySimulation.setEnabled(True)
+
+    def fill_step2(self):
+        for table in [self.Cstep2.table_sd_target, self.Cstep2.table_sd_cool_targ]:
+            try:
+                table.setItem(1, 2, QtWidgets.QTableWidgetItem("50 %"))
+            except:
+                pass
+            try:
+                table.setItem(2, 2, QtWidgets.QTableWidgetItem("50 %"))
+            except:
+                pass
+        for i in tableConfig.data_rows:
+            try:
+                self.Cstep2.table_HeDHW_source_targ.setItem(i, 2, self.Cstep2.table_HeDHW_source_targ.item(i, 1).clone())
+            except:
+                pass
+        for i in tableConfig.data_rows_cool:
+            try:
+                self.Cstep2.table_cool_source.setItem(i, 2, self.Cstep2.table_cool_source.item(i, 1).clone())
+            except:
+                pass
+        self.Cstep2.calculate_dhw.clicked.emit()
+        self.Cstep2.btn_calculate_cool.clicked.emit()
+        for table in [self.Cstep2.table_dhw_source_targ, self.Cstep2.table_cool]:
+            for i in range(table.rowCount()):
+                try:
+                    table.setItem(i, 2, table.item(i, 1).clone())
+                except:
+                    pass
+        self.Cstep2.btn_ued.clicked.emit()
+        self.Cstep2.pushButton.clicked.emit()
+        self.Cstep2.btn_ued_cool.clicked.emit()
+        self.Cstep2.ok.clicked.emit()
+
+    def fille_step3(self):
+        for table in [self.Cstep3.sbs_hdhw_Source, self.Cstep3.dist_hdhw_source]:
+            for i in range(table.rowCount()):
+                if i in tableConfig.data_rows:
+                    table.item(i, 1).setText("100 %")
+                    table.item(i, 3).setText("generic")
+        self.Cstep3.sbs_hdhw_Source.item(14, 2).setText("100 %")
+        self.Cstep3.dist_hdhw_source.item(14, 2).setText("100 %")
+        for table in [self.Cstep3.sbs_cool_source, self.Cstep3.dist_cool_source]:
+            for i in range(table.rowCount()):
+                if i in tableConfig.data_rows_cool:
+                    table.item(i, 1).setText("100 %")
+        self.Cstep3.ok.clicked.emit()
+
+    def test_run(self, flag):
+        if not flag:
+            return
+        self.city_planning.btn_step2.clicked.connect(self.fill_step2)
+        self.city_planning.btn_step3.clicked.connect(self.fille_step3)
+
+
+
+
+
+
+
+
+
 
 

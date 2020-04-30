@@ -33,6 +33,7 @@ from .Tjulia.DistrictSimulator import DistrictSimulator
 from .Tjulia.test.MyLog import MyLog
 
 from .utility.pvgis.PvgisApiWorker import PvgisApiWorker
+from .utility.exceptions.UserInterruptException import UserInterruptException
 
 from . import master_planning_config
 
@@ -48,12 +49,15 @@ class Step2_widget(QtWidgets.QDockWidget, FORM_CLASS):
     update_progress_bar = pyqtSignal(int)
     stop_progress_bar = pyqtSignal()
 
+    def attivati(self):
+        print("ciao")
+
     def __init__(self, work_folder=None, parent=None, iface=None):
         """Constructor."""
         super(Step2_widget, self).__init__(parent)
 
         self.logger = logging.getLogger(__name__)
-        self.my_log = MyLog(os.path.join(os.path.dirname(os.path.realpath(__file__)), "Tjulia", "test",
+        self.my_log = MyLog(os.path.join(os.path.dirname(os.path.realpath(__file__)), "Tjulia", "test", "log",
                                          "log_simulator.txt"))
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
@@ -181,11 +185,6 @@ class Step2_widget(QtWidgets.QDockWidget, FORM_CLASS):
             #dr_sim = os.path.join(os.path.dirname(os.path.realpath(__file__)), "Tjulia", "district")
             dr_sim = os.path.join(kpis_folder, "Tjulia", "district")
 
-            if len(self.DHN_network_list) > 0:
-                self.district_heating_preprocessing(dr_sim)
-            if len(self.DCN_network_list) > 0:
-                self.district_cooling_preprocessing(dr_sim)
-
             print("Step2.py, KPIs_baselineScenario(): setting up simulator")
             self.set_up_simulator()
             print("Step2.py, KPIs_baselineScenario(): running district simulator")
@@ -214,14 +213,12 @@ class Step2_widget(QtWidgets.QDockWidget, FORM_CLASS):
             cinput = os.path.join(  master_planning_config.CURRENT_MAPPING_DIRECTORY,
                                     master_planning_config.DMM_FOLDER,
                                     master_planning_config.DMM_PREFIX+master_planning_config.DMM_HOURLY_SUFFIX+".csv")
-            n, buildings = generafile(cinput=cinput, coutput=os.path.join(dr, "input"))
+            n, buildings = generafile(self.step1.dmmTree, cinput=cinput, coutput=os.path.join(dr, "input"))
             self.my_log.log("Hourly profiles processed in " + str(time.time()-now) + " seconds.")
             now = time.time()
             self.remove_files(os.path.join(dr, "Results"), "Result")
             self.my_log.log("Old results removed in " + str(time.time() - now) + " seconds.")
             now = time.time()
-            print("Step2.py, KPIs_baselineScenario(): single building common precalculations")
-            self.single_building_common_precalculation(dr)
             self.my_log.log("Common precaltulations done in " + str(time.time() - now) + " seconds.")
             print("Step2.py, KPIs_baselineScenario(): running building calculation*")
             self.simulator.run_buildings(buildings, dr, log=self.my_log)
@@ -328,9 +325,9 @@ class Step2_widget(QtWidgets.QDockWidget, FORM_CLASS):
         self.tableWidget_5.setItem(9, 4, cellt)
         self.tableWidget_5.setItem(9, 5, cell)
 
-        cellr = QTableWidgetItem(str(KPIs["EN_5.2R"]))
-        cellt = QTableWidgetItem(str(KPIs["EN_5.2T"]))
-        cell = QTableWidgetItem(str(KPIs["EN_5.2"]))
+        cellr = QTableWidgetItem('{:.2f}'.format(KPIs["EN_5.2R"]))
+        cellt = QTableWidgetItem('{:.2f}'.format(KPIs["EN_5.2T"]))
+        cell = QTableWidgetItem('{:.2f}'.format(KPIs["EN_5.2"]))
         cellr.setFlags(QtCore.Qt.ItemIsEnabled)
         cellt.setFlags(QtCore.Qt.ItemIsEnabled)
         cell.setFlags(QtCore.Qt.ItemIsEnabled)
@@ -605,101 +602,6 @@ class Step2_widget(QtWidgets.QDockWidget, FORM_CLASS):
 
         self.simulator.set_up_new_simulation()
 
-    def district_cooling_preprocessing(self, dr):
-
-        # Global_solar_irradiation.csv
-        # Global_solar_irradiation_2.csv
-        # Global_solar_irradiation_seasonal.csv
-        # Outside_temperature.csv
-        # default (Antwerp): lat=51, lon=4, startyear=2015, endyear=2015, peakpower=3, loss=0, angle=0
-        self.download_data_from_PVGIS(dr=dr)
-
-
-    def district_heating_preprocessing(self, dr):
-        # Global_solar_irradiation.csv
-        # Global_solar_irradiation_2.csv
-        # Global_solar_irradiation_seasonal.csv
-        # Outside_temperature.csv
-        # default (Antwerp): lat=51, lon=4, startyear=2015, endyear=2015, peakpower=3, loss=0, angle=0
-        self.download_data_from_PVGIS(dr=dr)
-
-
-        generate_solar_thermal_forJulia(None, input_folder=dr, output_folder=os.path.join(dr, "heating", "input"))
-
-        # ==> Available_waste_heat_heat_pump_source_group_1.csv
-        # ==> Available_waste_heat_heat_pump_source_group_2.csv
-        # ==> Available_waste_heat_heat_pump_source_group_3.csv
-        # ==> Available_waste_heat_heat_pump_source_group_seasonal.csv
-        # ==> Available_waste_heat_heat_pump_absorption.csv
-        # ==> COP_heat_pump_temperature_group_1.csv
-        # ==> COP_heat_pump_temperature_group_2.csv
-        # ==> COP_heat_pump_temperature_group_3.csv
-        # ==> COP_heat_pump_temperature_group_seasonal.csv
-        # Waste_heat_heat_pump_available_temperature_group_1.csv
-        # Waste_heat_heat_pump_available_temperature_group_2.csv
-        # Waste_heat_heat_pump_available_temperature_group_3.csv
-        # Waste_heat_heat_pump_available_temperature_group_seasonal.csv
-        # Waste_heat_heat_pump_available_absorption.csv
-        #generate_file_Waste_heat_pump_heating(None, input_folder=dr, output_folder=os.path.join(dr, "heating", "input"))
-
-    # def single_building_preprocessing(self, j, dr, building_id):
-    #     expr = QgsExpression("BuildingID=" + building_id)
-    #     if self.baseline_scenario is None:
-    #
-    #         return
-    #     fs = [ft for ft in self.baseline_scenario.getFeatures(QgsFeatureRequest(expr))]
-    #
-    #     if len(fs) > 0:
-    #         feature_0 = fs[0]
-    #     else:
-    #
-    #         return
-    #
-    #     item = self.get_widget_item_from_feature(feature_0)
-    #     if item is None:
-    #
-    #         return None
-    #     tech_infos = self.create_base_tech_infos()
-    #
-    #     self.update_tech_from_widget_item(tech_infos, item)
-    #
-    #     input_folder = os.path.join(dr, "input")
-    #     output_folder = os.path.join(dr, "Results")
-    #
-    #     # building_id = "toy"
-    #     j.individual_H_and_C(input_folder, output_folder, tech_infos, building_id, self.logger.info)
-    #
-    #     return item
-
-    def single_building_common_precalculation(self, dr):
-        # Global_solar_irradiation.csv
-        # Global_solar_irradiation_2.csv
-        # Global_solar_irradiation_seasonal.csv
-        # Outside_temperature.csv
-        # default (Antwerp): lat=51, lon=4, startyear=2015, endyear=2015, peakpower=3, loss=0, angle=0
-        self.download_data_from_PVGIS(dr=dr)
-
-        # ==> Outside_temperature.csv
-        # eta_HP_1.csv
-        # eta_HP_2.csv
-        # eta_HP_3.csv
-        # generate_fileEta_forJulia(None, input_folder=dr, output_folder=os.path.join(dr, "input"))
-
-        # ==> Outside_temperature.csv
-        # eta_HP_cool.csv
-        # eta_HP_cool_2.csv
-        # eta_cool_heat_pump(input_folder=dr, output_folder=os.path.join(dr, "input"))
-
-        # ==> Global_solar_irradiation.csv
-        # ==> Global_solar_irradiation_2.csv
-        # ==> Global_solar_irradiation_seasonal.csv
-        # ==> Outside_temperature.csv
-        # ST_specific_time_seasonal.csv
-        # ST_specific_time_2.csv
-        # ST_specific_time.csv
-        generate_solar_thermal_forJulia(None, input_folder=dr, output_folder=os.path.join(dr, "input"))
-
-
     def get_area(self, building_id):
         expr = QgsExpression("BuildingID=" + building_id)
         if self.baseline_scenario is None:
@@ -709,7 +611,6 @@ class Step2_widget(QtWidgets.QDockWidget, FORM_CLASS):
         if len(fs) > 0:
             feature_0 = fs[0]
         else:
-
             return 0
         return feature_0.geometry().area()
 
@@ -720,10 +621,8 @@ class Step2_widget(QtWidgets.QDockWidget, FORM_CLASS):
                 for i, line in enumerate(fp):
                     total = total + float(line.split(separator)[column])
         except:
-
             print("file", file, "column", column, "separator", separator)
             return 0.0
-
         return total
 
     def get_source_infos(self, widget, source):
@@ -734,7 +633,6 @@ class Step2_widget(QtWidgets.QDockWidget, FORM_CLASS):
                             float(widget.item(i, 1).text())]
                 except:
                     print("Step2_dockwidget.py, get_source_infos: impossible to get row", i)
-
         return [0, 0]
 
     def remove_files(self, dr, start):
@@ -780,82 +678,8 @@ class Step2_widget(QtWidgets.QDockWidget, FORM_CLASS):
               [n.name for n in self.DCN_network_list])
         print("Step2.py, receive_widget(). widget, sources:", widget, sources)
 
-
     def receive_baseline_scenario(self, layer):
         self.baseline_scenario = layer
-
-    def PVGIS_url_gen(self, lat=51, lon=4, startyear=2015, endyear=2015, peakpower=3, loss=0, angle=0):
-        # for documentation refer to http://re.jrc.ec.europa.eu/pvg_static/web_service.html#HR
-        url_PVGIS = 'http://re.jrc.ec.europa.eu/pvgis5/seriescalc.php?'
-        url_PVGIS = url_PVGIS + "lat=" + str(lat)
-        url_PVGIS = url_PVGIS + "&lon=" + str(lon)
-        url_PVGIS = url_PVGIS + "&startyear=" + str(startyear)
-        url_PVGIS = url_PVGIS + "&endyear=" + str(endyear)
-        url_PVGIS = url_PVGIS + "&peakpower=" + str(peakpower)
-        url_PVGIS = url_PVGIS + "&loss=" + str(loss)
-        url_PVGIS = url_PVGIS + "&angle=" + str(angle)
-        return url_PVGIS
-
-    def download_data_from_PVGIS(self, dr, lat=51, lon=4, startyear=2015, endyear=2015, peakpower=3, loss=0, angle=0):
-        try:
-            geom = self.baseline_scenario.getFeature(0).geometry().centroid().asPoint()
-            lon = geom.x()
-            lat = geom.y()
-        except:
-            pass
-        # url_PVGIS = self.PVGIS_url_gen(lat, lon, startyear, endyear, peakpower, loss, angle)
-        url_PVGIS = self.PVGIS_url_gen(lat, lon, startyear, endyear, peakpower, loss, angle)
-
-        # pvgis_api_worker = PvgisApiWorker(url_PVGIS, dr)
-        # pvgis_api_thread = QThread()
-        # pvgis_api_worker.moveToThread(pvgis_api_thread)
-        # pvgis_api_thread.started.connect(pvgis_api_worker.process)
-        # pvgis_api_worker.finished.connect(work_done)
-        # pvgis_api_worker.finished.connect(pvgis_api_thread.quit)
-        # pvgis_api_worker.finished.connect(pvgis_api_worker.deleteLater)
-        # pvgis_api_thread.finished.connect(pvgis_api_thread.deleteLater)
-
-        # do the magic
-        # pvgis_api_thread.start()
-
-
-        # url_PVGIS = 'http://re.jrc.ec.europa.eu/pvgis5/seriescalc.php?lat=51&lon=4&startyear=2015&endyear=2015&peakpower=3&loss=0&angle=0'
-
-        r = requests.get(url_PVGIS)
-        if r.status_code == 200:
-            global_solar_irradiation = dr + "\\Global_solar_irradiation.csv"
-            outside_temperature = dr + "\\Outside_temperature.csv"
-            global_solar_irradiation_2 = dr + "\\Global_solar_irradiation_2.csv"
-            global_solar_irradiation_seasonal = dr + "\\Global_solar_irradiation_seasonal.csv"
-            gsi = open(global_solar_irradiation, 'w')
-            ot = open(outside_temperature, 'w')
-            gsi2 = open(global_solar_irradiation_2, 'w')
-            gsis = open(global_solar_irradiation_seasonal, 'w')
-            data = r.text.split("\r\n")
-            header_rows = 9
-            for i in range(8760):
-                try:
-                    value = data[header_rows+i].split(",")[1]
-                except:
-                    print("Critical error retrieving data from PVGIS: unexpected kind or data format. "
-                          "Output may be corrupted at index", i)
-                    break
-                gsi.write(value + "\n")
-                gsi2.write(value + "\n")
-                gsis.write(value + "\n")
-                try:
-                  ot.write(data[header_rows+i].split(",")[3] + "\n")
-                except:
-                    print("Critical error retrieving data from PVGIS: unexpected kind or data format. "
-                        "Output may be corrupted at index", i)
-                    break
-            gsi.close()
-            gsi2.close()
-            gsis.close()
-            ot.close()
-        else:
-            print("Error connecting", url_PVGIS, "Status code: ", r.status_code)
-            print("Solar irradiation could not be retrieved.")
 
     def get_step0_data(self, heat, temperature):
         self.heat = heat

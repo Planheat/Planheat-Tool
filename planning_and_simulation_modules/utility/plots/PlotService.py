@@ -1,6 +1,8 @@
 import os
 import os.path
 from ...result_utils import PlotCanvas
+from ..DataPlotBuilder import DataPlotBuilder
+from PyQt5.QtCore import QThread
 
 
 class PlotService:
@@ -12,6 +14,8 @@ class PlotService:
     ST = "Result_ST"
     SOC = "Result_SOC"
     DEM = "Result_DEM"
+    DEM_cool = "Result_DEM_cool"
+    DEM_DHW = "Result_DEM_DHW"
     HEX = "Result_HEX"
     EH = "Result_EH"
     HP_COOL = "Result_HP_cool"
@@ -24,6 +28,7 @@ class PlotService:
 
     def __init__(self, folder, sim_ui):
         self.work_folder = folder
+        self.iface = sim_ui.iface
 
         self.plot = PlotCanvas(sim_ui, width=self.canvas_width, height=self.canvas_height, dpi=self.canvas_dpi)
         sim_ui.gridLayout.addWidget(self.plot)
@@ -43,12 +48,24 @@ class PlotService:
         self.plot6 = PlotCanvas(sim_ui, width=self.canvas_width, height=self.canvas_height, dpi=self.canvas_dpi)
         sim_ui.gridIndiv3.addWidget(self.plot6)
 
+        self.plot7 = PlotCanvas(sim_ui, width=self.canvas_width, height=self.canvas_height, dpi=self.canvas_dpi)
+        sim_ui.buildingsCoolLayout1.addWidget(self.plot7)
+
+        self.plot8 = PlotCanvas(sim_ui, width=self.canvas_width, height=self.canvas_height, dpi=self.canvas_dpi)
+        sim_ui.buildingsCoolLayout2.addWidget(self.plot8)
+
+        # self.plot9 = PlotCanvas(sim_ui, width=self.canvas_width, height=self.canvas_height, dpi=self.canvas_dpi)
+        # sim_ui.buildingsCoolLayout3.addWidget(self.plot9)
+
         self.district_min_spinBox = sim_ui.district_min_spinBox
         self.district_max_spinBox = sim_ui.district_max_spinBox
         self.building_min_spinBox = sim_ui.building_min_spinBox
         self.building_max_spinBox = sim_ui.building_max_spinBox
 
         self.h8760 = 8760
+
+        self.data_plot_builder: DataPlotBuilder = None
+        self.thread: QThread = None
 
     def plot_district(self, var=None):
         PATH = os.path.join(self.work_folder, "district", "heating", "Results")
@@ -60,7 +77,8 @@ class PlotService:
         data = self.build_data(PATH, self.district_file_to_data_key(fileNames))
 
         grafici_splitter = {1: [self.DEM], 2: [self.HOB, self.HP, self.EH],
-                            3: [self.HP_WASTE_HEAT, self.CHP, self.ST, self.SOC, self.HEX]}
+                            3: [self.HP_WASTE_HEAT, self.CHP, self.ST, self.SOC, self.HEX],
+                            4: [self.DEM_cool], 5: [self.HP_COOL]}
 
         PlotService.plot_distric_single_graph(self.plot, data, grafici_splitter[1],
                                               {"title": "Demand profile",
@@ -75,17 +93,33 @@ class PlotService:
                                                "xmin": self.district_min_spinBox.value(),
                                                "xmax": self.district_max_spinBox.value()})
 
-    def plot_buildings(self, var=None):
-        PATH = os.path.join(self.work_folder, "single_building", "Results")
-        if not os.path.isdir(PATH):
-            return
-        if self.building_min_spinBox.value() == self.building_max_spinBox.value():
-            return
-        fileNames = [file for file in os.listdir(PATH) if '.csv' in file]
-        data = self.build_data(PATH, self.buildings_file_to_data_key(fileNames))
 
-        grafici_splitter = {1: [self.DEM], 2: [self.HOB, self.HP, self.HP_COOL, self.EH],
-                            3: [self.CHP, self.ST, self.SOC]}
+    def plot_buildings(self, var=None):
+        self.data_plot_builder = DataPlotBuilder(self.work_folder)
+        self.thread = QThread(self.iface.mainWindow())
+
+        self.data_plot_builder.moveToThread(self.thread)
+        self.data_plot_builder.calulation_done.connect(self.do_plot_buildings)
+        self.thread.started.connect(self.data_plot_builder.run)
+        self.data_plot_builder.finished.connect(self.thread.quit)
+        self.data_plot_builder.finished.connect(self.data_plot_builder.deleteLater)
+        self.thread.finished.connect(self.thread.deleteLater)
+
+        self.thread.start()
+
+        # PATH = os.path.join(self.work_folder, "single_building", "Results")
+        # if not os.path.isdir(PATH):
+        #     return
+        # if self.building_min_spinBox.value() == self.building_max_spinBox.value():
+        #     return
+        # fileNames = [file for file in os.listdir(PATH) if '.csv' in file]
+        # data = self.build_data(PATH, self.buildings_file_to_data_key(fileNames))
+
+    def do_plot_buildings(self, data):
+        grafici_splitter = {1: [self.DEM],
+                            2: [self.HOB, self.HP, self.EH],
+                            3: [self.CHP, self.ST, self.SOC],
+                            4: [self.DEM_cool], 5: [self.HP_COOL]}
 
         PlotService.plot_distric_single_graph(self.plot4, data, grafici_splitter[1],
                                               {"title": "Demand profile",
@@ -99,6 +133,18 @@ class PlotService:
                                               {"title": "Load",
                                                "xmin": self.building_min_spinBox.value(),
                                                "xmax": self.building_max_spinBox.value()})
+        PlotService.plot_distric_single_graph(self.plot7, data, grafici_splitter[4],
+                                              {"title": "Demand profile",
+                                               "xmin": self.district_min_spinBox.value(),
+                                               "xmax": self.district_max_spinBox.value()})
+        PlotService.plot_distric_single_graph(self.plot8, data, grafici_splitter[5],
+                                              {"title": "Load",
+                                               "xmin": self.district_min_spinBox.value(),
+                                               "xmax": self.district_max_spinBox.value()})
+        #PlotService.plot_distric_single_graph(self.plot9, data, grafici_splitter[5],
+        #                                      {"title": "Load",
+        #                                       "xmin": self.district_min_spinBox.value(),
+        #                                       "xmax": self.district_max_spinBox.value()})
 
     def build_data(self, folder, file_to_data_key):
         data = {}
@@ -123,7 +169,7 @@ class PlotService:
     def district_file_to_data_key(self, files):
         file_to_data_key = {}
         for file in files:
-            prefix = file[0:-41]
+            prefix = file[0:-4]
             if prefix.startswith(self.HOB):
                 file_to_data_key[file] = self.HOB
             if prefix.startswith(self.HP):
@@ -163,7 +209,10 @@ class PlotService:
             if prefix.startswith(self.SOC):
                 file_to_data_key[file] = self.SOC
             if prefix.startswith(self.DEM):
-                file_to_data_key[file] = self.DEM
+                if prefix.startswith(self.DEM_cool):
+                    file_to_data_key[file] = self.DEM_cool
+                else:  # Heating (DEM) and DHW (DEM_DHW) count as DEM
+                    file_to_data_key[file] = self.DEM
             if prefix.startswith(self.EH):
                 file_to_data_key[file] = self.EH
         return file_to_data_key

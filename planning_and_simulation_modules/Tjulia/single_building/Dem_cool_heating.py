@@ -1,3 +1,4 @@
+from PyQt5.QtWidgets import QTreeWidget
 
 from qgis.core import *
 from qgis.gui import *
@@ -9,9 +10,11 @@ from qgis.core import *
 from qgis.gui import *
 from qgis.utils import *
 
+from ...building.Building import Building
+
 import os.path
 
-def generafile(cinput="", coutput=""):
+def generafile(widget: QTreeWidget, cinput="", coutput=""):
     # Fields csv
     ProjectID   = "ProjectID"
     BuildingID  = "BuildingID"
@@ -34,19 +37,39 @@ def generafile(cinput="", coutput=""):
 
     # profile per building
     for b, df_building in df.groupby(BuildingID):
+        b = str(b)
+        for i in range(widget.topLevelItemCount()):
+            building: Building = widget.topLevelItem(i)
+            if building.building_id == b:
+                break
+        else:
+            continue
         df_building = df_building.reset_index(drop=True).fillna(0)
-        (df_building[Heating].apply(lambda x: float(x)/1000))\
+
+        if not building.connected_to_DHN:
+            conversion_DHN = lambda x: float(x)/1000
+        else:
+            conversion_DHN = to_zero
+        if not building.connected_to_DCN:
+            conversion_DCN = lambda x: float(x)/1000
+        else:
+            conversion_DCN = to_zero
+
+        (df_building[Heating].apply(conversion_DHN))\
             .to_csv(coutput + "\\DEM_time_" + b + ".csv", sep=";", index=False)
-        (df_building[Cooling].apply(lambda x: float(x)/1000))\
-            .to_csv(coutput + "\\DEM_cool_time_" + b + ".csv", sep=";", index=False)
-        (df_building[DHW].apply(lambda x: float(x)/1000))\
+        (df_building[DHW].apply(conversion_DHN))\
             .to_csv(coutput + "\\DEM_DHW_time_" + b + ".csv", sep=";", index=False)
+        (df_building[Cooling].apply(conversion_DCN))\
+            .to_csv(coutput + "\\DEM_cool_time_" + b + ".csv", sep=";", index=False)
         buildings.append(b)
 
     return [len(buildings), buildings]
 
+def to_zero(x):
+    return 0.0
 
-def gen_dem_time_district(cinput="", coutput="", services=[], buildings=[], conversion_factor=1/1000):
+
+def gen_dem_time_district(cinput="", coutput="", services=[], buildings=[], conversion_factor=1/1000, log=None):
 
     print("Generating aggregated file ...")
     # Fields csv
@@ -59,7 +82,8 @@ def gen_dem_time_district(cinput="", coutput="", services=[], buildings=[], conv
     HourOfDay   = "HourOfDay"
     DayOfYear   = "DayOfYear"
     Season      = "Season"
-    
+
+    # cinput = "C://Users//qgis1///AppData//Local//QGIS//QGIS3//planheat_data//c36e42a4-4993-4a7a-a771-8c2aa1a0da12//mapping//DMM//DMM_result_hourly.csv"
     df = pd.read_csv(cinput, sep=';', decimal=',')
     df.drop(columns=[ProjectID, Season], inplace=True)
     building_list = df.groupby(by=[BuildingID], as_index=False, sort=False).agg({})
@@ -67,10 +91,12 @@ def gen_dem_time_district(cinput="", coutput="", services=[], buildings=[], conv
     acceptance_table = []
     while True:
         try:
-            acceptance_table.append(building_list[BuildingID][index] in buildings)
+            acceptance_table.append(str(building_list["BuildingID"][index]) in buildings)
             index += 1
         except KeyError:
             break
+    log.log("gen_dem_time_district(): acceptance_table", acceptance_table)
+    log.log("gen_dem_time_district(): building_list[\"BuildingID\"]", building_list["BuildingID"])
 
     columns = {}
     for service in services:

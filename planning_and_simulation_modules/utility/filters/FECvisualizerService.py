@@ -43,5 +43,8 @@ class FECvisualizerService:
     def get_fec(self):
         return [FECfilterService.get_from_key(self.KPIs, "EN_2.1_s" + str(i)) for i in range(23)]
 
+    def get_fec_fut(self):
+        return [FECfilterService.get_from_key(self.KPIs, "EN_2.3_s" + str(i)) for i in range(23)]
+
     def get_sources(self):
         return FECfilterService.get_from_key(self.KPIs, "sources")

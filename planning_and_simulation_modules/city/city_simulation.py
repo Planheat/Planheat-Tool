@@ -21,6 +21,7 @@ from .load_to_table import updata_dic
 from .load_to_table import Qdialog_save_file
 from .KPIsCalculatorCity import KPIsCalculator
 from .updataTableKpi import update_KPIs_visualization_tab
+from .config import tableConfig
 
 
 # This loads your .ui file so that PyQt can populate your plugin with the elements from Qt Designer
@@ -104,7 +105,7 @@ class CitySimulation(QtWidgets.QDockWidget, FORM_CLASS):
         self.dial_8.valueChanged.connect(self.sliderMoved)
         self.dial_9.valueChanged.connect(self.sliderMoved)
 
-
+        self.tables_formatted = False
 
     def sliderMoved(self):
         self.val = self.dial.value()
@@ -137,8 +138,8 @@ class CitySimulation(QtWidgets.QDockWidget, FORM_CLASS):
 
     def load_from_ste3(self, table, table_cool):
         tabStep3 =table
-        tabSim = self.sim_sbs_hdhw_Source
-        tab_sim_DHCN = self.dist_heat_source
+        tabSim: QtWidgets.QTableWidget = self.sim_sbs_hdhw_Source
+        tab_sim_DHCN: QtWidgets.QTableWidget = self.dist_heat_source
 
         for i in range(tabStep3.rowCount()):
                 item = tabStep3.item(i, 0)
@@ -147,14 +148,22 @@ class CitySimulation(QtWidgets.QDockWidget, FORM_CLASS):
                 item3 = tabStep3.item(i, 3)
                 try:
                     tabSim.setItem(i, 0, QTableWidgetItem(item))
+                    tabSim.item(i, 0).setFlags(QtCore.Qt.ItemIsEnabled)
                     tabSim.setItem(i, 1, QTableWidgetItem(item1))
+                    tabSim.item(i, 1).setFlags(QtCore.Qt.ItemIsEnabled)
                     tabSim.setItem(i, 2, QTableWidgetItem(item2))
+                    tabSim.item(i, 2).setFlags(QtCore.Qt.ItemIsEnabled)
                     tabSim.setItem(i, 3, QTableWidgetItem(item3))
+                    tabSim.item(i, 3).setFlags(QtCore.Qt.ItemIsEnabled)
 
                     tab_sim_DHCN.setItem(i, 0, QTableWidgetItem(item))
+                    tab_sim_DHCN.item(i, 0).setFlags(QtCore.Qt.ItemIsEnabled)
                     tab_sim_DHCN.setItem(i, 1, QTableWidgetItem(item1))
+                    tab_sim_DHCN.item(i, 1).setFlags(QtCore.Qt.ItemIsEnabled)
                     tab_sim_DHCN.setItem(i, 2, QTableWidgetItem(item2))
+                    tab_sim_DHCN.item(i, 2).setFlags(QtCore.Qt.ItemIsEnabled)
                     tab_sim_DHCN.setItem(i, 3, QTableWidgetItem(item3))
+                    tab_sim_DHCN.item(i, 3).setFlags(QtCore.Qt.ItemIsEnabled)
                 except:
                     pass
 
@@ -165,84 +174,73 @@ class CitySimulation(QtWidgets.QDockWidget, FORM_CLASS):
         for i in range(DHCN_tab_cool_step3.rowCount()):
                 item = DHCN_tab_cool_step3.item(i, 0)
                 item1 = DHCN_tab_cool_step3.item(i, 1)
-
                 try:
                     tab_sbs_cool.setItem(i, 0, QTableWidgetItem(item))
+                    tab_sbs_cool.item(i, 0).setFlags(QtCore.Qt.ItemIsEnabled)
                     tab_sbs_cool.setItem(i, 1, QTableWidgetItem(item1))
+                    tab_sbs_cool.item(i, 1).setFlags(QtCore.Qt.ItemIsEnabled)
+                except:
+                    pass
+                try:
                     DHCN_dist_coll.setItem(i, 0, QTableWidgetItem(item))
+                    DHCN_dist_coll.item(i, 0).setFlags(QtCore.Qt.ItemIsEnabled)
                     DHCN_dist_coll.setItem(i, 1, QTableWidgetItem(item1))
-
+                    DHCN_dist_coll.item(i, 1).setFlags(QtCore.Qt.ItemIsEnabled)
                 except:
                     pass
 
 
  # SBS solution
     def calculate_fec(self):
-        table = self.sim_sbs_hdhw_Source
+        table: QtWidgets.QTableWidget = self.sim_sbs_hdhw_Source
         self.ued = []
         self.avg_cop = []
-        for j in range(table.rowCount()):
-            try:
-                currItem = float(table.item(j, 0).text())
-                self.ued.append(currItem)
-            except:
-                pass
         for i in range(table.rowCount()):
-            try:
-                currItem1 = (table.item(i, 1)).text()
-                val_vero = float(currItem1.strip(' %')) / 100.0
-                self.avg_cop.append(val_vero)
-            except:
-                pass
+            if i in tableConfig.data_rows:
+                try:
+                    currItem = float(table.item(i, 0).text())
+                    currItem1 = (table.item(i, 1)).text()
+                    val_vero = float(currItem1.strip(' %')) / 100.0
+                    self.ued.append(currItem)
+                    self.avg_cop.append(val_vero)
+                except:
+                    self.ued.append(0.0)
+                    self.avg_cop.append(0.0)
         self.fec_cal(self.ued, self.avg_cop)
 
 
     def fec_cal(self, ued, avg_cop):
         table = self.sim_sbs_hdhw_Source
         self.fec = []
-        for i in ued:
-            for j in avg_cop:
-                try:
-                    val = (i/j)
-
-                except ZeroDivisionError:
-                    val = 0.0
+        for i in range(len(ued)):
+            try:
+                val = ued[i]/avg_cop[i]
+            except ZeroDivisionError:
+                val = 0.0
             self.fec.append(val)
         insert_toTable(table, 4, self.fec)
-
         self.fec_hp()
 
     def fec_hp(self):
         table = self.sim_sbs_hdhw_Source
 
-        avg_air = float(((table.item(3, 1)).text()).strip(' %')) / 100.0
-        avg_wast = float(((table.item(4, 1)).text()).strip(' %')) / 100.0
-        avg_ground = float(((table.item(5, 1)).text()).strip(' %')) / 100.0
-        avg_GAHp = float(((table.item(9, 1)).text()).strip(' %')) / 100.0
-        avg_GAHPw = float(((table.item(10, 1)).text()).strip(' %')) / 100.0
-        avg_GAHPg = float(((table.item(11, 1)).text()).strip(' %')) / 100.0
+        self.single_fec_hp(table, 3)
+        self.single_fec_hp(table, 4)
+        self.single_fec_hp(table, 5)
+        self.single_fec_hp(table, 9)
+        self.single_fec_hp(table, 10)
+        self.single_fec_hp(table, 11)
 
-        ued_airHp = float(table.item(3, 0).text())
-        ued_wast = float(table.item(4, 0).text())
-        ued_ground = float(table.item(5, 0).text())
-        ued_airGAHP= float(table.item(9, 0).text())
-        ued_wastGAHP =float(table.item(10, 0).text())
-        ued_ground_GAHP = float(table.item(11, 0).text())
-
-        fec_air=round(((avg_air-1)/avg_air * ued_airHp), 2)
-        fec_wast = round(((avg_wast-1)/avg_wast*ued_wast), 2)
-        fec_ground = round(((avg_ground - 1) / avg_ground * ued_ground), 2)
-        fec_wastG = round(((avg_GAHp - 1) / avg_GAHp * ued_airGAHP), 2)
-        fec_airG = round(((avg_GAHPw - 1) / avg_GAHPw * ued_wastGAHP), 2)
-        fec_graundG = round(((avg_GAHPg - 1) / avg_GAHPg * ued_ground_GAHP), 2)
-
-        table.setItem(3, 5, QTableWidgetItem(str(fec_air)))
-        table.setItem(4, 5, QTableWidgetItem(str(fec_wast)))
-        table.setItem(5, 5, QTableWidgetItem(str(fec_ground)))
-        table.setItem(9, 5, QTableWidgetItem(str(fec_wastG)))
-        table.setItem(10, 5, QTableWidgetItem(str(fec_airG)))
-        table.setItem(11, 5, QTableWidgetItem(str(fec_graundG)))
-
+    def single_fec_hp(self, table, row):
+        try:
+            cop = float(((table.item(row, 1)).text()).strip(' %')) / 100.0
+            ued = float(table.item(row, 0).text())
+            fec = round(((cop-1)/cop * ued), 2)
+            table.setItem(row, 5, QTableWidgetItem(str(fec)))
+            table.item(row, 5).setFlags(QtCore.Qt.ItemIsEnabled)
+        except:
+            table.setItem(row, 5, QTableWidgetItem())
+            table.item(row, 5).setFlags(QtCore.Qt.ItemIsEnabled)
 
     def calculate_fec_cooling(self):
         table = self.sim_sbs_cool_source
@@ -258,24 +256,24 @@ class CitySimulation(QtWidgets.QDockWidget, FORM_CLASS):
                 val_vero = float(currItem1.strip(' %')) / 100.0
                 self.avg_cop.append(val_vero)
             except:
-                pass
+                self.ued.append(0.0)
+                self.avg_cop.append(0.0)
         self.fec_calc_cool(self.ued, self.avg_cop)
-
-
 
     def fec_calc_cool(self, ued, avg_cop):
         table = self.sim_sbs_cool_source
 
         self.fec_cool = []
         self.list_hp_cool = []
-        val=0
-        hp_cool=0
-        for i in ued:
-            for j in avg_cop:
-                val = round((i / j), 2)
-                hp_cool = round((i-1)/(i*j), 2)
-            self.fec_cool.append(val)
-            self.list_hp_cool.append(hp_cool)
+        for i in range(len(ued)):
+            try:
+                val = round((ued[i] / avg_cop[i]), 2)
+                hp_cool = round((avg_cop[i]-1)/(ued[i]*avg_cop[i]), 2)
+                self.fec_cool.append(val)
+                self.list_hp_cool.append(hp_cool)
+            except:
+                self.fec_cool.append(0.0)
+                self.list_hp_cool.append(0.0)
 
         insert_toTableCool(table, 2, self.fec_cool)
         insert_toTableCool(table, 3,  self.list_hp_cool)
@@ -294,40 +292,43 @@ class CitySimulation(QtWidgets.QDockWidget, FORM_CLASS):
                 currItem = float((table.item(i, 0)).text())
                 self.ued.append(currItem)
             except:
-                pass
+                self.ued.append(0.0)
         self.Col1Tab2()
 
     def Col1Tab2(self):
         table = self.dist_heat_source
-        gridEfficency = float(self.eff.value())/1000
+        gridEfficency = float(self.eff.value())/100
         for j in range(table.rowCount()):
             try:
                 currItem1 = (table.item(j, 1)).text()
                 val_vero = float(currItem1.strip(' %')) / 100.0
                 self.avg_cop.append(val_vero)
             except:
-                pass
-        for k in self.ued:
+                self.avg_cop.append(0.0)
+        for i in len(self.ued):
             try:
-                for z in self.avg_cop:
-                    fec_dis = (k/z)/gridEfficency
+                fec_dis = (self.ued[i]/self.avg_cop[i])/gridEfficency
                 self.fec_dhcn.append(fec_dis)
             except:
-                pass
+                self.fec_dhcn.append(0.0)
 
         insert_toTable(table, 4, self.fec_dhcn)
 
-        afec1 = round(((self.avg_cop[1] - 1) / self.avg_cop[1] * (self.ued[1] / gridEfficency)),2)
-        afec2 = round(((self.avg_cop[2] - 1) / self.avg_cop[2] * (self.ued[2] / gridEfficency)),2)
-        afec3 =round(((self.avg_cop[3] - 1) / self.avg_cop[3] * (self.ued[3] / gridEfficency)),2)
-        afec7 = round(((self.avg_cop[7] - 1) / self.avg_cop[7] * (self.ued[7] / gridEfficency)),2)
-        afec8 = round(((self.avg_cop[8] - 1) / self.avg_cop[8] * (self.ued[8] / gridEfficency)),2)
+        self.single_fec_district(table, 3, gridEfficency)
+        self.single_fec_district(table, 4, gridEfficency)
+        self.single_fec_district(table, 5, gridEfficency)
+        self.single_fec_district(table, 10, gridEfficency)
+        self.single_fec_district(table, 11, gridEfficency)
 
-        table.setItem(3, 5, QTableWidgetItem(str(afec1)))
-        table.setItem(4, 5, QTableWidgetItem(str(afec2)))
-        table.setItem(5, 5, QTableWidgetItem(str(afec3)))
-        table.setItem(10, 5, QTableWidgetItem(str(afec7)))
-        table.setItem(11, 5, QTableWidgetItem(str(afec8)))
+    def single_fec_district(self, table, row, gridEfficency):
+        try:
+            cop = float(table.item(row, 1).text().strip(' %')) /100.0
+            ued = float(table.item(row, 0).text())
+            afec = round(((cop - 1) / cop * (ued / gridEfficency)), 2)
+            table.setItem(row, 5, QTableWidgetItem(str(afec)))
+            table.item(row, 5).setFlags(QtCore.Qt.ItemIsEnabled)
+        except:
+            pass
 
     def calculate_netLosses(self):
         table = self.dist_heat_source
@@ -336,42 +337,41 @@ class CitySimulation(QtWidgets.QDockWidget, FORM_CLASS):
         for f in self.fec_dhcn:
             for c in self.avg_cop:
                 for b in self.ued:
-                    loss = round((f * c - b), 2)
+                    loss += round((f * c - b), 2)
             self.dh_losses_heating.append(loss)
         insert_toTable(table, 6,  self.dh_losses_heating)
-
 
     def calculate_fec_afec_cool_net(self):
         table = self.dist_cool_net
         self.ued_cool = []
         for i in range(table.rowCount()):
-            try:
-                currItem = float((table.item(i, 0)).text())
-                self.ued_cool.append(currItem)
-            except:
-                pass
+            if i in tableConfig.data_rows_cool:
+                try:
+                    currItem = float((table.item(i, 0)).text())
+                    self.ued_cool.append(currItem)
+                except:
+                    self.ued_cool.append(0.0)
         self.cal_uedAndInsert(table,  self.ued_cool)
 
     def cal_uedAndInsert(self,table, ued_cool):
         self.avg_cop_cool = []
         for i in range(table.rowCount()):
-            try:
-                currItem1 = (table.item(i, 1)).text()
-                val_vero = float(currItem1.strip(' %')) / 100.0
-                self.avg_cop_cool.append(val_vero)
-            except:
-                pass
-
+            if i in tableConfig.data_rows_cool:
+                try:
+                    currItem1 = (table.item(i, 1)).text()
+                    val_vero = float(currItem1.strip(' %')) / 100.0
+                    self.avg_cop_cool.append(val_vero)
+                except:
+                    self.avg_cop_cool.append(0.0)
         self.ued_cool = ued_cool
         efficency = float(self.btn_eff.value()) / 100
 
         self.fec_dhcn_cool =[]
-        for i in self.ued_cool:
-            for j in self.avg_cop_cool:
-                try:
-                    fec = (i / j)/(efficency)
-                except ZeroDivisionError:
-                    fec = 0
+        for i in range(len(ued_cool)):
+            try:
+                fec = (ued_cool[i] / self.avg_cop_cool[i])/efficency
+            except ZeroDivisionError:
+                fec = 0.0
             self.fec_dhcn_cool.append(fec)
 
         insert_toTableCool(table, 2,  self.fec_dhcn_cool)
@@ -387,15 +387,18 @@ class CitySimulation(QtWidgets.QDockWidget, FORM_CLASS):
         table.setItem(7, 3, QTableWidgetItem(str(round(afec3, 2))))
         table.setItem(8, 3, QTableWidgetItem(str(round(afec7, 2))))
         table.setItem(10, 3, QTableWidgetItem(str(round(afec8, 2))))
+        table.item(3, 3).setFlags(QtCore.Qt.ItemIsEnabled)
+        table.item(4, 3).setFlags(QtCore.Qt.ItemIsEnabled)
+        table.item(7, 3).setFlags(QtCore.Qt.ItemIsEnabled)
+        table.item(8, 3).setFlags(QtCore.Qt.ItemIsEnabled)
+        table.item(10, 3).setFlags(QtCore.Qt.ItemIsEnabled)
 
 
     def calculate_netDHCNLosses_cool(self):
         table = self.dist_cool_net
         self.dh_losses_cool = []
-        for f in self.fec_dhcn_cool:
-            for c in self.avg_cop_cool:
-                for b in self.ued_cool:
-                    loss = round((f * c - b), 2)
+        for i in range(len(self.fec_dhcn_cool)):
+            loss = round((self.fec_dhcn_cool[i] * self.avg_cop_cool[i] - self.ued_cool[i]), 2)
             self.dh_losses_cool.append(loss)
 
         insert_toTableCool(table, 4, self.dh_losses_cool)
@@ -437,25 +440,26 @@ class CitySimulation(QtWidgets.QDockWidget, FORM_CLASS):
         table = self.table_source
         sum_fec_biomass = self.fec[9] + self.fec[10] + self.fec_dhcn[9] + self.fec_dhcn[10]
         table.setItem(0, 2, QTableWidgetItem(str(sum_fec_biomass)))
+        table.item(0, 2).setFlags(QtCore.Qt.ItemIsEnabled)
 
         tab_sbs_fec = self.sim_sbs_hdhw_Source
         fec_hp_sbs = []
         for i in range(tab_sbs_fec.rowCount()):
-            try:
-                val = i
-                fec_hp_sbs.append(val)
-            except:
-                pass
-
-
+            if i in tableConfig.data_rows:
+                try:
+                    val = i
+                    fec_hp_sbs.append(val)
+                except:
+                    fec_hp_sbs.append(0.0)
         fec_hp_dist=[]
         tab_fec = self.dist_cool_net
         for i in range(tab_fec.rowCount()):
-            try:
-                val = i
-                fec_hp_dist.append(val)
-            except:
-                pass
+            if i in tableConfig.data_rows_cool:
+                try:
+                    val = i
+                    fec_hp_dist.append(val)
+                except:
+                    fec_hp_dist.append(0.0)
         tab = self.dist_heat_source
         fec_wh_industry = self.fec[11] + self.list_hp_cool[7] + self.fec_dhcn[11] + self.fec_cool[6]
 
@@ -470,12 +474,15 @@ class CitySimulation(QtWidgets.QDockWidget, FORM_CLASS):
         sum_fec_wH = fechp_sbs + fecCol_sbs + fechp_dist + fecCool_dist
 
         table.setItem(1, 2, QTableWidgetItem(str(sum_fec_wH)))
+        table.item(1, 2).setFlags(QtCore.Qt.ItemIsEnabled)
 
         sum_fec_geothermal = fec_hp_sbs[2] + fec_hp_sbs[5] + self.fec[12] + self.list_hp_cool[2] + self.fec_cool[5] + self.fec_cool[7] + \
                              fec_hp_dist[2] + fec_hp_dist[4] + self.fec_dhcn[12] + fec_hp_dist[1] + fec_hp_dist[3] + self.fec_dhcn_cool[7]
 
         table.setItem(2, 2, QTableWidgetItem(str(sum_fec_geothermal)))
         table.setItem(4, 2, QTableWidgetItem(str(fec_wh_industry)))
+        table.item(2, 2).setFlags(QtCore.Qt.ItemIsEnabled)
+        table.item(4, 2).setFlags(QtCore.Qt.ItemIsEnabled)
 
         try:
             sbs_sol1 = float(self.sim_sbs_hdhw_Source.item(24,4).text())
@@ -490,6 +497,7 @@ class CitySimulation(QtWidgets.QDockWidget, FORM_CLASS):
             sum_fec_solar = 0.0
 
         table.setItem(3, 2, QTableWidgetItem(str(sum_fec_solar)))
+        table.item(3, 2).setFlags(QtCore.Qt.ItemIsEnabled)
         source_future=[sum_fec_biomass, sum_fec_wH, sum_fec_geothermal, sum_fec_solar,fec_wh_industry]
 
         self.check_source()
@@ -530,13 +538,16 @@ class CitySimulation(QtWidgets.QDockWidget, FORM_CLASS):
         self.calcola_en_12_3(self.val_ser)
 
     def vis_cat_wh(self, wh_base, wh_ind, val_bio, val_geoth, val_sol):
-
         self.table_sutil.setItem(0, 2, QTableWidgetItem(str(val_bio)))
         self.table_sutil.setItem(1, 2, QTableWidgetItem(str(wh_base)))
         self.table_sutil.setItem(2, 2, QTableWidgetItem(str(val_geoth)))
         self.table_sutil.setItem(3, 2, QTableWidgetItem(str(val_sol)))
         self.table_sutil.setItem(4, 2, QTableWidgetItem(str(wh_ind)))
-
+        for i in range(5):
+            try:
+                self.table_sutil.item(i, 2).setFlags(QtCore.Qt.ItemIsEnabled)
+            except:
+                pass
 
 
     def calcola_en_12_3(self, val_ser):
@@ -939,5 +950,42 @@ class CitySimulation(QtWidgets.QDockWidget, FORM_CLASS):
         table.setItem(3, 1, QTableWidgetItem(str(round(tot_sol, 2))))
         table.setItem(4, 1, QTableWidgetItem(str(round(tot_whInd, 2))))
         #table.setItem(0, 1, QTableWidgetItem(str(round(tot_wh, 2))))
+
+    def format_tables(self):
+        if self.tables_formatted:
+            return
+
+        r = tableConfig.no_imput_rows_color[0]
+        g = tableConfig.no_imput_rows_color[1]
+        b = tableConfig.no_imput_rows_color[2]
+
+        for table in [self.sim_sbs_hdhw_Source, self.dist_heat_source]:
+            for i in range(1, table.rowCount()-1):
+                if i not in tableConfig.data_rows:
+                    for j in range(table.columnCount()):
+                        if table.item(i, j) is None:
+                            table.setItem(i, j, QtWidgets.QTableWidgetItem())
+                        table.item(i, j).setFlags(QtCore.Qt.ItemIsEnabled)
+                        table.item(i, j).setBackground(QtGui.QBrush(QColor(r, g, b)))
+        for table in [self.sim_sbs_hdhw_Source, self.sim_sbs_cool_source, self.dist_heat_source, self.dist_cool_net]:
+            for i in range(table.rowCount()):
+                for j in range(table.columnCount()):
+                    try:
+                        table.item(i, j).setFlags(QtCore.Qt.ItemIsEnabled)
+                    except:
+                        table.setItem(i, j, QtWidgets.QTableWidgetItem())
+                        table.item(i, j).setFlags(QtCore.Qt.ItemIsEnabled)
+
+        for table in [self.sim_sbs_cool_source, self.dist_cool_net]:
+            for i in range(1, table.rowCount()-1):
+                if i not in tableConfig.data_rows_cool:
+                    for j in range(table.columnCount()):
+                        if table.item(i, j) is None:
+                            table.setItem(i, j, QtWidgets.QTableWidgetItem())
+                        table.item(i, j).setFlags(QtCore.Qt.ItemIsEnabled)
+                        table.item(i, j).setBackground(QtGui.QBrush(QColor(r, g, b)))
+
+        self.tables_formatted = True
+
 
 

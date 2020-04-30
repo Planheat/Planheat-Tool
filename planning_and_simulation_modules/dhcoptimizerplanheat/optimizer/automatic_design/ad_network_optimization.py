@@ -297,7 +297,7 @@ class ADNetworkOptimizer:
             self.fill_edges_with_NLP(NLP_Output)
             return True
         else:
-            self.logger.warning("NLP optimization exits with status: " + status)
+            self.logger.warning("NLP optimization exits with status: %s" % str(status))
             self.fill_edges_with_NLP({'Diameter': lb_diam})
             return False
 
@@ -785,8 +785,8 @@ class ADNetworkOptimizer:
         optimizer_directory = os.path.dirname(os.path.realpath(__file__))
         with JuliaQgisInterface() as j:
             j.include(os.path.join(optimizer_directory, "DSSP.jl"))
-            j.using("DSSP")
-            assert ("optimize_with_DSSP" in dir(j))
+            j.using("Main.DSSP: optimize_with_DSSP")
+            assert (hasattr(j, "optimize_with_DSSP"))
             self.logger.info("\tJulia instantiating time: %.2fs" % (time.time() - julia_instantiate_start))
             dssp_start = time.time()
             #print("old_buildings", old_buildings)
@@ -822,9 +822,9 @@ class ADNetworkOptimizer:
         # Use NLP module
         optimizer_directory = os.path.dirname(os.path.realpath(__file__))
         with JuliaQgisInterface() as j:
-            j.include(os.path.join(optimizer_directory, "NLP","NLP_variable_flows.jl"))
-            j.using("NLP")
-            assert ("find_optimal_physical_parameters" in dir(j))
+            j.include(os.path.join(optimizer_directory, "NLP", "NLP_variable_flows.jl"))
+            j.using("Main.NLP: find_optimal_physical_parameters")
+            assert (hasattr(j, "find_optimal_physical_parameters"))
             nlp_start = time.time()
             NLP_Output, status = j.find_optimal_physical_parameters(GraphParam,
                                                                     self.conf,
@@ -832,7 +832,7 @@ class ADNetworkOptimizer:
                                                                     self.energy,
                                                                     self.logger.info)
             nlp_end = time.time()
-            self.logger.info("nlp time: " + str(nlp_end - nlp_start))
+            self.logger.info("nlp time: %s" % str(nlp_end - nlp_start))
         return NLP_Output, status
 
 if __name__ == "__main__":

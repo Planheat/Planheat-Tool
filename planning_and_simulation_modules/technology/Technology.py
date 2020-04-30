@@ -50,7 +50,8 @@ class Technology(QTreeWidgetItem):
             tes_startEnd: float=100,
             tes_discharge: float=100,
             cop_absorption: float=100.0,
-            el_sale : float=100.0
+            el_sale : float=100.0,
+            tes_loss : float = 1
 
     ):
         """
@@ -94,6 +95,7 @@ class Technology(QTreeWidgetItem):
         self.tes_discharge = tes_discharge
         self.cop_absorption = cop_absorption
         self.el_sale = el_sale
+        self.tes_loss = tes_loss
 
         # Set data in the tree item
         self.setText(2, source)
@@ -116,6 +118,7 @@ class Technology(QTreeWidgetItem):
         self.setData(19, Qt.EditRole, tes_discharge)
         self.setData(20, Qt.EditRole, cop_absorption)
         self.setData(21, Qt.EditRole, el_sale)
+        self.setData(22, Qt.EditRole, tes_loss)
 
 
         self.setFlags(

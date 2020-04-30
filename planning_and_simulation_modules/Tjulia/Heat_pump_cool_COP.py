@@ -7,8 +7,18 @@ Created on Wed May 23 13:17:20 2018
 import numpy as np
 import os.path
 
-def genera_file_etaHP_cool(val_list=None, input_folder="", output_folder=""):
+from ..utility.pvgis.PvgisApi import PvgisApi
+from .services.PvgisParamsAdapter import PvgisParamsAdapter
+
+def genera_file_etaHP_cool(val_list=None, input_folder="", output_folder="", item=None):
     max_COP = 10.0
+
+    pvgis_api = PvgisApi()
+    pvgis_adapter = PvgisParamsAdapter(pvgis_api)
+    pvgis_adapter.update_params(item)
+    pvgis_adapter.set_only_ot()
+    files = pvgis_api.write_to_files()
+    temperature_file = files["ot"]
 
     if val_list is None:
         return
@@ -20,7 +30,7 @@ def genera_file_etaHP_cool(val_list=None, input_folder="", output_folder=""):
     try:
         T_source_1 = np.genfromtxt(input_folder + "\\T_source_HP_cool.csv")
     except OSError:
-        T_source_1 = np.genfromtxt(os.path.realpath(os.path.join(input_folder, "../", "Outside_temperature.csv")))
+        T_source_1 = np.genfromtxt(temperature_file)
     T_source_1=T_source_1+273.15
     # Heat sink temperature [°C]
     T_sink1 = val_list[0]
@@ -41,7 +51,7 @@ def genera_file_etaHP_cool(val_list=None, input_folder="", output_folder=""):
     try:
         T_source_2 = np.genfromtxt(input_folder + "\\T_source_HP_cool_2.csv")
     except OSError:
-        T_source_2 = np.genfromtxt(os.path.realpath(os.path.join(input_folder, "../", "Outside_temperature.csv")))
+        T_source_2 = np.genfromtxt(temperature_file)
     T_source_2=T_source_2+273.15
     # Heat sink temperature [°C]
     T_sink2 = val_list[2]
@@ -62,7 +72,7 @@ def genera_file_etaHP_cool(val_list=None, input_folder="", output_folder=""):
     try:
         T_source_3 = np.genfromtxt(input_folder + "\\T_source_HP_cool_3.csv")
     except OSError:
-        T_source_3 = np.genfromtxt(os.path.realpath(os.path.join(input_folder, "../", "Outside_temperature.csv")))
+        T_source_3 = np.genfromtxt(temperature_file)
     T_source_3=T_source_3+273.15
     # Heat sink temperature [°C]
     T_sink3 = val_list[4]

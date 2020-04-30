@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QTreeWidget, QMessageBox
 from ...layer_utils import read_layer_attribute_by_id
+from ...building.Building import Building
 from PyQt5 import QtCore
 
 
@@ -40,13 +41,14 @@ class TechnologiesTransfer:
             #print("TechnologiesTransfer.buildings_tree_widget_transfer(). building_input_id:", building_input_id)
             dic_building_input_id[building_input_id] = building_input
         for j in range(widget_output.topLevelItemCount()):
-            building_target = widget_output.topLevelItem(j)
+            building_target: Building = widget_output.topLevelItem(j)
             building_target_id = read_layer_attribute_by_id(future_layer, building_target.text(0), "BuildingID")
             if building_target_id in dic_building_input_id:
                 self.transfer_single_building(dic_building_input_id[building_target_id], building_target)
         self.buildings_transferred = True
 
-    def transfer_single_building(self, building_input, building_target):
+    def transfer_single_building(self, building_input, building_target: Building):
+        building_target.set_unmodified()
         # I'll tanke only the first 3 childs
         for i in range(3):
             input_service = building_input.child(i)
@@ -86,14 +88,24 @@ class TechnologiesTransfer:
             return False
 
     def update_network_id_user_role_data(self, future_networks):
+        print("TechologiesTransfer:")
+        for lista in future_networks:
+            for n in lista:
+                print(n.get_ID(), "-", n.cloned_from)
         for i in range(self.widget_output.topLevelItemCount()):
             future_network_id = self.widget_output.topLevelItem(i).data(0, QtCore.Qt.UserRole)
+            print("---")
+            print("future_network_id:", future_network_id)
             for j in range(self.widget_input.topLevelItemCount()):
                 baseline_network_id = self.widget_input.topLevelItem(j).data(0, QtCore.Qt.UserRole)
+                print("baseline_network_id:", baseline_network_id)
                 if baseline_network_id == future_network_id:
+                    print("FOUND")
                     for future_networks_service in future_networks:
                         for network in future_networks_service:
+                            print("network.cloned_from vs baseline_network_id", network.cloned_from, baseline_network_id)
                             if network.cloned_from == baseline_network_id:
+                                print("FOUND and start to replace")
                                 self.widget_output.topLevelItem(i).setData(0, QtCore.Qt.UserRole,
                                                                            QtCore.QVariant(network.get_ID()))
                                 break

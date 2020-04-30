@@ -1,4 +1,5 @@
 from ..SourcesTableFactors import SourcesTableFactors
+from ...db.DatabaseService import DatabaseService
 from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem
 import traceback
 
@@ -11,7 +12,9 @@ class SourcesTableDefaultLoader:
     @staticmethod
     def load_default(sourcesTable: QTableWidget):
         try:
+            db = DatabaseService()
             default_data = SourcesTableFactors()
+            db.set_sources_table_factors_params(default_data)
             for i in range(sourcesTable.rowCount()):
                 data = default_data.get_params(sourcesTable.verticalHeaderItem(i).text())
                 for j, value in enumerate(data):
@@ -26,8 +29,6 @@ class SourcesTableDefaultLoader:
             for row in default_data.get_hidden_rows():
                 for i in range(sourcesTable.rowCount()):
                     if sourcesTable.verticalHeaderItem(i).text() == row:
-                        if row == "Excess heat - Data centers":
-                            print("Excess heat - Data centers !!! Excess heat - Data centers", i)
                         sourcesTable.hideRow(i)
                         break
         except Exception:

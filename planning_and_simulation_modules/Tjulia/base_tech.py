@@ -152,6 +152,7 @@ def create_base_tech_infos():
     tech_infos["TES_start_end"] = 0.5
     # Thermal storage charge/discharge capacity [MW]
     tech_infos["TES_charge_discharge_time"] = 5
+    tech_infos["TES_loss"] = 0.5 / (24 * 7)
 
     ## Domestic hot water thermal energy storage ##
 
@@ -163,6 +164,7 @@ def create_base_tech_infos():
     tech_infos["TES_start_end_DHW"] = 0.0
     # Thermal storage charge/discharge capacity [MW]
     tech_infos["TES_charge_discharge_time_DHW"] = 5
+    tech_infos["TES_loss_DHW"] = 0.5/(24*7)
 
     # Setting stuff to 0!
     tech_infos["TES_size_DHW"] = 0.0

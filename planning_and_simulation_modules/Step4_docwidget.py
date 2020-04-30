@@ -32,14 +32,19 @@ from .Tjulia.DistrictSimulator import DistrictSimulator
 from .Tjulia.test.MyLog import MyLog
 from .Transport.Transport_electrical_vehicles_demand import Transport_sector
 from .AdditionalSimulationParameterGUI import AdditionalSimulationParameterGUI
+from .VITO.mapping.MappingModuleInterface import MappingModuleInterface
 
 from .dhcoptimizerplanheat.ui.ui_utils import add_group
 from .dhcoptimizerplanheat.dhcoptimizer_planheat import DHCOptimizerPlanheat
 from .building.CustomContextMenu import CustomContextMenu
 from .utility.BuildingCharacterization.BuildingCharacterizationService import BuildingCharacterizationService
 from .utility.NetworkCharacterization.NetworkCharacterizationService import NetworkCharacterizationService
+from .utility.NetworkCharacterization.NetworkEfficiency import NetworkEfficiency
 from .utility.DataTransfer import DataTransfer
 from .config.services.SourcesTableDefaultLoader import SourcesTableDefaultLoader
+
+
+from .test.QtTreeWidgetPrinter import QtTreeWidgetPrinter
 
 from .save_utility.AoutLoadNetwork import AutoLoadNetwork
 
@@ -155,6 +160,7 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
         self.futurePeakDemandCooling.clicked.connect(self.insert_PeakDemandCooling_future)
         self.futurePeakDemandDhw.clicked.connect(self.insert_PeakDemandDhw_future)
         self.futurePeakDemandHeating.clicked.connect(self.insert_PeakDemandHeating_future)
+        self.dmmTree_future.itemChanged.connect(self.building_characterizzation_changed)
 
         self.futureDmmTreeNetwork.itemClicked.connect(self.network_tree_widget_clicked)
 
@@ -203,10 +209,10 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
         self.dhwTechnology.setItemData(11, 0, Qt.UserRole - 1)
         self.dhwTechnology.setItemData(18, 0, Qt.UserRole - 1)
         self.networkTechnology.setItemData(0, 0, Qt.UserRole - 1)
-        self.networkTechnology.setItemData(9, 0, Qt.UserRole - 1)
-        self.networkTechnology.setItemData(13, 0, Qt.UserRole - 1)
-        self.networkTechnology.setItemData(29, 0, Qt.UserRole - 1)
-        self.networkTechnology.setItemData(39, 0, Qt.UserRole - 1)
+        self.networkTechnology.setItemData(8, 0, Qt.UserRole - 1)
+        self.networkTechnology.setItemData(12, 0, Qt.UserRole - 1)
+        self.networkTechnology.setItemData(28, 0, Qt.UserRole - 1)
+        self.networkTechnology.setItemData(36, 0, Qt.UserRole - 1)
         # self.saveDCN_future.clicked.connect(self.future_DCN_to_save)
         # self.saveDhn_future.clicked.connect(self.future_DHN_to_save)
 
@@ -228,17 +234,26 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
         self.technology_temp_40 = ["Flat plate solar collectors", "Waste heat compression heat pump low T",
                                    "Waste heat - heat pump – temperature group 1 "]
 
-        self.KPIs_additional_data = {}
+        mapping_module_interface = MappingModuleInterface()
+        self.KPIs_additional_data = {
+            "years": mapping_module_interface.get_future_year() - mapping_module_interface.get_baseline_year()}
 
 
         SourcesTableDefaultLoader.load_default(self.suppliesTable_future)
         SourcesTableDefaultLoader.hide_default_rows(self.suppliesTable_future)
         self.suppliesTable_future.hideRow(7)
-        self.show
+        # self.show
 
         self.step0_source_availability_table = None
         self.tree_item_manager = TreeItemManager(self.iface, self.dmmTree_future, self.futureDmmTreeNetwork,
                                                  [self.futureDCN_network_list, self.futureDHN_network_list])
+        self.network_efficiency = NetworkEfficiency(self.efficiency_label, self.efficiency_spin_box,
+                                                    self.futureDHN_network_list, self.futureDCN_network_list,
+                                                    self.futureDmmTreeNetwork)
+        self.efficiency_push_button.clicked.connect(self.network_efficiency.update_network_efficiency)
+
+        self.print_network_tree.clicked.connect(lambda: QtTreeWidgetPrinter.printer(self.futureDmmTreeNetwork))
+        self.print_network_tree.hide()
 
     def closeEvent(self, event):
         #self.closingPlugin.emit()
@@ -417,7 +432,10 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
         # Load features in the DMM tree
         dmm_tree_root = self.dmmTree_future.invisibleRootItem()
         for feature in self.dpm_layer.getFeatures():
-            dmm_tree_root.addChild(Building(feature))
+            building = Building(feature)
+            building.scenario_type = "future"
+            building.layer = self.dpm_layer
+            dmm_tree_root.addChild(building)
 
     def unload_dpm_layer(self):
         """
@@ -473,6 +491,7 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
             tes_discharge = self.tes_discharge_cooling.value()
             COP_absorption = self.Cop_absorption_cooling.value()
             el_sale = 1
+            tes_loss = 1
 
 
         elif demand == 'heating':
@@ -502,6 +521,7 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
             tes_discharge = self.tes_discharge_heating.value()
             COP_absorption = self.COP_heating.value()
             el_sale = self.heatingElsale.value()
+            tes_loss = self.heatingTES_loss.value()
 
             if self.dhwhCheck.isChecked():
                 i = 3
@@ -540,6 +560,7 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
             tes_discharge = self.dhwTes_discharge.value()
             COP_absorption = self.dhwCop.value()
             el_sale = self.dhwElsale.value()
+            tes_loss = self.DHWTES_loss.value()
 
             i=2
 
@@ -547,7 +568,7 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
         for b in selected:
             if b.isHidden():
                 continue
-            if b.child(i) is not None:
+            if b.child(i) is not None and not b.child(i).isHidden():
                 b.child(i).addChild(
                     Technology(
                         technology,
@@ -570,9 +591,11 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
                         tes_startEnd,
                         tes_discharge,
                         COP_absorption,
-                        el_sale
+                        el_sale,
+                        tes_loss
                     )
                 )
+                b.set_modified()
 
             # tmp = pandas.DataFrame()
         if technology in self.technology_temp40_70:
@@ -1068,6 +1091,20 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
             self.phases.setTabEnabled(2, True)
 
     def insert_technology(self):
+        old_data = "old_tech"
+        msgBox = QMessageBox()
+        msgBox.setIcon(QMessageBox.Question)
+        msgBox.setText("Is this a new technology?")
+        msgBox.setInformativeText("")
+        msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        msgBox.setDefaultButton(QMessageBox.Yes)
+        msgBox.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
+        ret = msgBox.exec()
+        if ret == QMessageBox.Yes:
+            old_data = "new_tech"
+        self.apply_technology(old_data)
+
+    def apply_technology(self, old_data: str):
             technology = self.networkTechnology.currentText()
             source = self.future_sourceNet
             area = self.networkarea.value()
@@ -1091,6 +1128,7 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
             tes_discharge = self.networkTes_discharge.value()
             COP_absorption = self.networkCop_absorption.value()
             el_sale = self.network_el_sale.value()
+            tes_loss = self.networkTES_loss.value()
 
             child = [str(" "),
                      str(technology),
@@ -1105,7 +1143,6 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
                      str(powerToRatio),
                      str(tech_min),
                      str(ramp_up),
-                     str(ramp_down),
                      str(fix),
                      str(variable),
                      str(fuel),
@@ -1114,8 +1151,11 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
                      str(tes_startEnd),
                      str(tes_discharge),
                      str(COP_absorption),
-                     str(el_sale)]
+                     str(el_sale),
+                     str(tes_loss)]
             new_child = QTreeWidgetItem(child)
+
+            new_child.setData(2, Qt.UserRole, old_data)
 
             parent = self.futureDmmTreeNetwork.currentItem()
             if parent is None:
@@ -1265,11 +1305,10 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
                       os.path.realpath(os.path.join(n.save_file_path, "../")),
                       e)
 
-        self.futureDHN_network_list = None
-        self.futureDCN_network_list = None
-
         self.futureDHN_network_list = []
         self.futureDCN_network_list = []
+        self.network_efficiency.DCN_network_list = self.futureDCN_network_list
+        self.network_efficiency.DHN_network_list = self.futureDHN_network_list
 
         for dhn in networks[0]:
             new_dhn = Network(orig=dhn)
@@ -1900,6 +1939,8 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
                     self.tes_startEnd_heating.setEnabled(True)
                     self.tes_discharge_heating.setEnabled(True)
                     self.heatingFixedCost.setEnabled(True)
+                    self.heatingTES_loss.setEnabled(True)
+                    self.heatingVariableCost.setEnabled(True)
                     self.future_sourceRead = self.future_simulator.sources_for_technology[0]
 
                 if key == list(key_list)[12]:  # absorption_heat_pump
@@ -2025,6 +2066,8 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
                     self.dhwTes_startEnd.setEnabled(True)
                     self.dhwTes_discharge.setEnabled(True)
                     self.dhwFixedCost.setEnabled(True)
+                    self.DHWTES_loss.setEnabled(True)
+                    self.dhwVariableCost.setEnabled(True)
                     self.future_sourceDhw = self.future_simulator.sources_for_technology[0]  # ' '
 
                 if key == list(key_list)[9] or key == list(key_list)[10] or key == list(key_list)[11]:
@@ -2125,6 +2168,7 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
                     self.networkVariableCost.setEnabled(True)
                     self.networkFixedCost.setEnabled(True)
                     self.networkFuelCost.setEnabled(True)
+                    self.network_el_sale.setEnabled(True)
 
                     if t == z[0]:  # Gas CHP
                         self.future_sourceNet = self.future_simulator.sources_for_technology[9]
@@ -2178,8 +2222,8 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
                 if key == list(key_list)[7] or key == list(key_list)[
                     8]:  # 7 waste_heat_heat_exchangers # 8 waste_cooling_heat_exchangers
                     # self.networkCapacity.lineEdit().setEnabled(True)
-
-                    self.networkTechMin.setEnabled(True)
+                    self.networkP_min.setEnabled(True)
+                    #self.networkTechMin.setEnabled(True)
                     self.networkP_max.setEnabled(True)
                     self.networkVariableCost.setEnabled(True)
                     self.networkFixedCost.setEnabled(True)
@@ -2229,21 +2273,22 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
                 # seasonal_solar_thermal energy storage
                 # thermal energy storage
                 if key == list(key_list)[14] or key == list(key_list)[12]:  # seasonal_solar_thermal
-
                     self.networkTes_size.setEnabled(True)
                     self.networkSocMin.setEnabled(True)
                     self.networkTesStartEnd.setEnabled(True)
                     self.networkTes_discharge.setEnabled(True)
+                    self.networkTES_loss.setEnabled(True)
+                    self.networkVariableCost.setEnabled(True)
                     self.future_sourceNet = self.future_simulator.sources_for_technology[2]
                     return
 
                 if key == list(key_list)[15]:  # waste_heat_absorption_heat_pump
-
                     self.networkTechMin.setEnabled(True)
                     self.networkCop_absorption.setEnabled(True)
                     self.networkVariableCost.setEnabled(True)
                     self.networkFixedCost.setEnabled(True)
                     self.networkFuelCost.setEnabled(True)
+                    self.networkP_max.setEnabled(True)
                     self.future_simulator.ask_for_sources(t, serv="network")
                     self.future_sourceNet = self.future_simulator.selected_source
                     return
@@ -2259,6 +2304,7 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
                     self.networkFuelCost.setEnabled(True)
                     self.network_el_sale.setEnabled(True)
                     self.networkcb_CHP.setEnabled(True)
+                    self.networkP_min.setEnabled(True)
                     if t == z[0]:  # Waste heat ORC
                         self.future_sourceNet = self.future_simulator.sources_for_technology[14]
                     if t == z[1]:  # Deep geothermal ORC
@@ -2366,10 +2412,11 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
     def network_tree_widget_clicked(self, item, _):
         try:
             P_max = round(float(item.data(8, Qt.UserRole)), 2)
-        except ValueError:
+        except:
             P_max = None
         if P_max is not None:
             self.networkP_max.setValue(P_max)
+        self.network_efficiency.change_spin_box_value(item)
 
     def disable_all_dhw_input(self):
         self.safe_disable_input(self.dhwElsale)
@@ -2392,6 +2439,7 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
         self.safe_disable_input(self.dhwTes_startEnd)
         self.safe_disable_input(self.dhwTes_discharge)
         self.safe_disable_input(self.dhwCop)
+        self.safe_disable_input(self.DHWTES_loss)
 
     def disable_all_heating_input(self):
         self.safe_disable_input(self.heatingElsale)
@@ -2414,6 +2462,7 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
         self.safe_disable_input(self.tes_startEnd_heating)
         self.safe_disable_input(self.tes_discharge_heating)
         self.safe_disable_input(self.COP_heating)
+        self.safe_disable_input(self.heatingTES_loss)
 
     def disable_all_cooling(self):
         self.safe_disable_input(self.coolingInclinazione)
@@ -2437,6 +2486,7 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
 
     def disable_all_network_input(self):
         self.networkarea.setEnabled(False)
+        self.networkP_min.setEnabled(False)
         self.networkTemp.setEnabled(False)
         self.networkEta.setEnabled(False)
         self.network1coeff.setEnabled(False)
@@ -2455,6 +2505,7 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
         self.networkTes_discharge.setEnabled(False)
         self.networkCop_absorption.setEnabled(False)
         self.network_el_sale.setEnabled(False)
+        self.safe_disable_input(self.networkTES_loss)
 
     def safe_disable_input(self, widget):
         try:
@@ -2463,8 +2514,10 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
             print("Step4_dockwidget.py, safe_disable_input():", e)
 
     def remove_tech(self, service):
-        CustomContextMenu.erode_method(CustomContextMenu.get_top_level(self.dmmTree_future.currentItem()),
-                                       service=service)
+        item: Building = CustomContextMenu.get_top_level(self.dmmTree_future.currentItem())
+        removed = CustomContextMenu.erode_method(item, service=service)
+        if removed and not item.modified:
+            item.set_modified()
 
     def remove_tech_from_network(self):
         selected = self.futureDmmTreeNetwork.currentItem()
@@ -2550,3 +2603,11 @@ class Step4_widget(QtWidgets.QDockWidget, FORM_CLASS):
         except:
             pass
         return output
+
+    def building_characterizzation_changed(self, item: QTreeWidgetItem, column: int):
+        try:
+            building: Building = item.parent().parent()
+            if not building.modified:
+                building.set_modified()
+        except:
+            pass

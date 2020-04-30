@@ -6,6 +6,7 @@ import sys
 import julia
 import logging
 
+
 class JuliaQgisInterface:
     """This object provides an interface between Planheat embedded julia and QGIS python with the help of the
     python "julia" package. Here is an example of how to use it:
@@ -27,12 +28,16 @@ class JuliaQgisInterface:
         self.old_env = os.environ.copy()
         self.set_julia_environment_variables()
         self.set_julia_working_directory()
-        j = julia.Julia()
-        if "include" not in dir(j):
-            j.add_module_functions("Base")
-        if "include" not in dir(j):
-            raise RuntimeError("Unable to setup julia interface.")
-        return j
+        from julia.libjulia import get_libjulia, LibJulia
+        from julia.juliainfo import JuliaInfo
+        # For the first julia launch, initialize the api with no popup window
+        if get_libjulia() is None:
+            CREATE_NO_WINDOW = 0x08000000
+            j_info = JuliaInfo.load(creationflags=CREATE_NO_WINDOW)
+            api = LibJulia.from_juliainfo(j_info)
+            api.init_julia()
+        from julia import Main as j_main
+        return j_main
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         """Reset the state of the execution as before."""
@@ -55,19 +60,21 @@ class JuliaQgisInterface:
         plugin_deps_path = os.path.normpath(os.path.join(dhcoptimizer_directory, "deps"))
         self.logger.info("\tplugin_deps_path=%s" % str(plugin_deps_path))
         # Setting julia environment variable
-        os.environ["JULIA_HOME"] = os.path.join(plugin_deps_path, "Julia-0.6.2/bin")
+        os.environ["JULIA_HOME"] = os.path.join(plugin_deps_path, "Julia-1.4.1/bin")
+        os.environ["JULIA_BINDIR"] = os.environ["JULIA_HOME"]
         julia_package_directory = os.path.join(plugin_deps_path, ".julia")
         os.environ["JULIA_PKGDIR"] = julia_package_directory
+        os.environ["JULIA_DEPOT_PATH"] = julia_package_directory
         self.logger.info("\tos.environ[\"JULIA_HOME\"]=%s" % str(os.environ["JULIA_HOME"]))
         self.logger.info("\tos.environ[\"JULIA_PKGDIR\"]=%s" % str(os.environ["JULIA_PKGDIR"]))
         # Adding variables to the environment path
         qgis_bin = os.path.join(qgis_directory, "bin")
         os.environ["PATH"] = os.environ["JULIA_HOME"] + ";" + qgis_bin + ";" + os.environ["PATH"]
-        self.logger.info("\tos.environ[\"PATH\"]=%s" % str(os.environ["PATH"]))
+        self.logger.debug("\tos.environ[\"PATH\"]=%s" % str(os.environ["PATH"]))
         # Modify the libpython path for Pycall
-        if sys.version_info.minor == 7:
-            pycall_deps_file = os.path.join(julia_package_directory, "v0.6/PyCall/deps/deps.jl")
-            self.set_pycall_python_dll_path(pycall_deps_file)
+        # if sys.version_info.minor == 7:
+        #     pycall_deps_file = os.path.join(julia_package_directory, "v0.6/PyCall/deps/deps.jl")
+        #     self.set_pycall_python_dll_path(pycall_deps_file)
 
     @staticmethod
     def set_pycall_python_dll_path(file_path: str):

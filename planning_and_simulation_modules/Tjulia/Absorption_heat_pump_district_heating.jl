@@ -4,69 +4,70 @@ module Absorption_heat_pump_district_heating
     using Cbc
 
     using CSV
+    using DelimitedFiles
+    csv_sep = ','
 
     function district_solver(input_folder, output_folder, tech_infos, network_id, print_function = print)
-#         example_file = readcsv(string(input_folder, "\\example_file.csv"))
+#         example_file = readdlm(string(input_folder, "\\example_file.csv"), csv_sep)
 #         write_results_example(output_folder, network_id, example_file)
 # 	end
-        m = Model(solver = CbcSolver(logLevel=1, ratioGap = 1e+1))
+        m = Model(with_optimizer(Cbc.Optimizer, logLevel=1, ratioGap = 1e+1))
 
         ####### Load distributions #########
+        DEM=readdlm(string(input_folder, "\\DEM_time.csv"), csv_sep)
 
-        DEM=readcsv(string(input_folder, "\\DEM_time.csv"))
+        ST_specific=readdlm(string(input_folder, "\\ST_specific_time.csv"), csv_sep)
 
-        ST_specific=readcsv(string(input_folder, "\\ST_specific_time.csv"))
+        ST_specific_2=readdlm(string(input_folder, "\\ST_specific_time_2.csv"), csv_sep)
 
-        ST_specific_2=readcsv(string(input_folder, "\\ST_specific_time_2.csv"))
-
-        ST_specific_seasonal=readcsv(string(input_folder, "\\ST_specific_time_seasonal.csv"))
+        ST_specific_seasonal=readdlm(string(input_folder, "\\ST_specific_time_seasonal.csv"), csv_sep)
 
 
         #28/01/2020:  from tech_infos
-        #Electricity_price=readcsv(string(input_folder, "\\Electricity_price_time.csv"))
+        #Electricity_price=readdlm(string(input_folder, "\\Electricity_price_time.csv"), csv_sep)
 
-        Heat_exchanger_specific=readcsv(string(input_folder, "\\Heat_exchanger_specific_time.csv"))
+        Heat_exchanger_specific=readdlm(string(input_folder, "\\Heat_exchanger_specific_time.csv"), csv_sep)
 
-        eta_HP = readcsv(string(input_folder, "\\eta_HP_1.csv"))
-        eta_HP_2 = readcsv(string(input_folder, "\\eta_HP_2.csv"))
-        eta_HP_3 = readcsv(string(input_folder, "\\eta_HP_3.csv"))
+        eta_HP = readdlm(string(input_folder, "\\eta_HP_1.csv"), csv_sep)
+        eta_HP_2 = readdlm(string(input_folder, "\\eta_HP_2.csv"), csv_sep)
+        eta_HP_3 = readdlm(string(input_folder, "\\eta_HP_3.csv"), csv_sep)
 
-        eta_HP_waste_heat_I_1 = readcsv(string(input_folder, "\\eta_HP_I_1.csv"))
-        eta_HP_waste_heat_I_2 = readcsv(string(input_folder, "\\eta_HP_I_1.csv"))
-        eta_HP_waste_heat_I_3 = readcsv(string(input_folder, "\\eta_HP_I_1.csv"))
+        eta_HP_waste_heat_I_1 = readdlm(string(input_folder, "\\eta_HP_I_1.csv"), csv_sep)
+        eta_HP_waste_heat_I_2 = readdlm(string(input_folder, "\\eta_HP_I_1.csv"), csv_sep)
+        eta_HP_waste_heat_I_3 = readdlm(string(input_folder, "\\eta_HP_I_1.csv"), csv_sep)
 
-        eta_HP_waste_heat_II_1=readcsv(string(input_folder, "\\eta_HP_II_1.csv"))
-        eta_HP_waste_heat_II_2=readcsv(string(input_folder, "\\eta_HP_II_2.csv"))
-        eta_HP_waste_heat_II_3=readcsv(string(input_folder, "\\eta_HP_II_3.csv"))
+        eta_HP_waste_heat_II_1=readdlm(string(input_folder, "\\eta_HP_II_1.csv"), csv_sep)
+        eta_HP_waste_heat_II_2=readdlm(string(input_folder, "\\eta_HP_II_2.csv"), csv_sep)
+        eta_HP_waste_heat_II_3=readdlm(string(input_folder, "\\eta_HP_II_3.csv"), csv_sep)
 
-        eta_HP_waste_heat_III_1=readcsv(string(input_folder, "\\eta_HP_III_1.csv"))
-        eta_HP_waste_heat_III_2=readcsv(string(input_folder, "\\eta_HP_III_2.csv"))
-        eta_HP_waste_heat_III_3=readcsv(string(input_folder, "\\eta_HP_III_3.csv"))
+        eta_HP_waste_heat_III_1=readdlm(string(input_folder, "\\eta_HP_III_1.csv"), csv_sep)
+        eta_HP_waste_heat_III_2=readdlm(string(input_folder, "\\eta_HP_III_2.csv"), csv_sep)
+        eta_HP_waste_heat_III_3=readdlm(string(input_folder, "\\eta_HP_III_3.csv"), csv_sep)
 
 
-        eta_HP_waste_heat_seasonal=readcsv(string(input_folder, "\\COP_heat_pump_temperature_group_seasonal.csv"))
+        eta_HP_waste_heat_seasonal=readdlm(string(input_folder, "\\COP_heat_pump_temperature_group_seasonal.csv"), csv_sep)
         #eta_HP_waste_heat_seasonal=eta_HP_waste_heat_seasonal[1:4380]
 
-        Available_waste_heat_heat_pump_I_1=readcsv(string(input_folder, "\\Waste_heat_heat_pump_available_temperature_group_1.csv"))
-        Available_waste_heat_heat_pump_I_2=readcsv(string(input_folder, "\\Waste_heat_heat_pump_available_temperature_group_2.csv"))
-        Available_waste_heat_heat_pump_I_3=readcsv(string(input_folder, "\\Waste_heat_heat_pump_available_temperature_group_3.csv"))
+        Available_waste_heat_heat_pump_I_1=readdlm(string(input_folder, "\\Waste_heat_heat_pump_available_temperature_group_1.csv"), csv_sep)
+        Available_waste_heat_heat_pump_I_2=readdlm(string(input_folder, "\\Waste_heat_heat_pump_available_temperature_group_2.csv"), csv_sep)
+        Available_waste_heat_heat_pump_I_3=readdlm(string(input_folder, "\\Waste_heat_heat_pump_available_temperature_group_3.csv"), csv_sep)
 
-        Available_waste_heat_heat_pump_II_1=readcsv(string(input_folder, "\\Waste_heat_heat_pump_available_temperature_group_II_1.csv"))
-        Available_waste_heat_heat_pump_II_2=readcsv(string(input_folder, "\\Waste_heat_heat_pump_available_temperature_group_II_2.csv"))
-        Available_waste_heat_heat_pump_II_3=readcsv(string(input_folder, "\\Waste_heat_heat_pump_available_temperature_group_II_3.csv"))
+        Available_waste_heat_heat_pump_II_1=readdlm(string(input_folder, "\\Waste_heat_heat_pump_available_temperature_group_II_1.csv"), csv_sep)
+        Available_waste_heat_heat_pump_II_2=readdlm(string(input_folder, "\\Waste_heat_heat_pump_available_temperature_group_II_2.csv"), csv_sep)
+        Available_waste_heat_heat_pump_II_3=readdlm(string(input_folder, "\\Waste_heat_heat_pump_available_temperature_group_II_3.csv"), csv_sep)
 
-        Available_waste_heat_heat_pump_III_1=readcsv(string(input_folder, "\\Waste_heat_heat_pump_available_temperature_group_III_1.csv"))
-        Available_waste_heat_heat_pump_III_2=readcsv(string(input_folder, "\\Waste_heat_heat_pump_available_temperature_group_III_2.csv"))
-        Available_waste_heat_heat_pump_III_3=readcsv(string(input_folder, "\\Waste_heat_heat_pump_available_temperature_group_III_3.csv"))
+        Available_waste_heat_heat_pump_III_1=readdlm(string(input_folder, "\\Waste_heat_heat_pump_available_temperature_group_III_1.csv"), csv_sep)
+        Available_waste_heat_heat_pump_III_2=readdlm(string(input_folder, "\\Waste_heat_heat_pump_available_temperature_group_III_2.csv"), csv_sep)
+        Available_waste_heat_heat_pump_III_3=readdlm(string(input_folder, "\\Waste_heat_heat_pump_available_temperature_group_III_3.csv"), csv_sep)
 
-        Available_waste_heat_heat_pump_seasonal=readcsv(string(input_folder, "\\Waste_heat_heat_pump_available_temperature_group_seasonal.csv"))
+        Available_waste_heat_heat_pump_seasonal=readdlm(string(input_folder, "\\Waste_heat_heat_pump_available_temperature_group_seasonal.csv"), csv_sep)
         #Available_waste_heat_heat_pump_seasonal=Available_waste_heat_heat_pump_seasonal[1:4380]
 
-        Available_waste_heat_heat_pump_absorption=readcsv(string(input_folder, "\\Waste_heat_heat_pump_available_absorption.csv"))
+        Available_waste_heat_heat_pump_absorption=readdlm(string(input_folder, "\\Waste_heat_heat_pump_available_absorption.csv"), csv_sep)
         #Available_waste_heat_heat_pump_absorption=Available_waste_heat_heat_pump_absorption[1:4380]
 
 
-        ORC_waste_heat_availability=readcsv(string(input_folder, "\\ORC_waste_heat_availability.csv"))
+        ORC_waste_heat_availability=readdlm(string(input_folder, "\\ORC_waste_heat_availability.csv"), csv_sep)
 
         ####### Technology input data ########
 
@@ -672,22 +673,22 @@ module Absorption_heat_pump_district_heating
 
         # Thermal storage constraints
         t=2:(length(DEM)-1)
-        @constraint(m, SOC[t]-SOC[t-1]-TES[t]+SOC[t]*TES_loss .== 0)
+        @constraint(m, SOC[t]-SOC[t .- 1]-TES[t]+SOC[t]*TES_loss .== 0)
         @constraint(m, SOC[length(DEM)-1]+TES[length(DEM)] == TES_size*TES_start_end)
         @constraint(m, SOC[1]-TES[1] == TES_size*TES_start_end)
         @constraint(m, SOC[length(DEM)] == TES_size*TES_start_end)
 
         # Seasonal thermal storage constraints
-        @constraint(m, SOC_seasonal[t]-SOC_seasonal[t-1]-TES_seasonal[t]+SOC_seasonal[t]*TES_loss_seasonal - HP_waste_heat_seasonal[t]-ST_seasonal[t].== 0)
+        @constraint(m, SOC_seasonal[t]-SOC_seasonal[t .- 1]-TES_seasonal[t]+SOC_seasonal[t]*TES_loss_seasonal - HP_waste_heat_seasonal[t]-ST_seasonal[t].== 0)
         @constraint(m, SOC_seasonal[length(DEM)-1]+TES_seasonal[length(DEM)]+HP_waste_heat_seasonal[length(DEM)]+ST_seasonal[length(DEM)] == TES_size_seasonal*TES_start_end_seasonal)
         @constraint(m, SOC_seasonal[1]-TES_seasonal[1]+HP_waste_heat_seasonal[1]+ST_seasonal[1] == TES_size_seasonal*TES_start_end_seasonal)
         @constraint(m, SOC_seasonal[length(DEM)] == TES_size_seasonal*TES_start_end_seasonal)
 
-        # Solar thermal collector constraints - has to utilize all available
-        @constraint(m, ST .== P_max_ST)
-        #@constraint(m, ST .<= P_max_ST)
-        @constraint(m, ST_2 .== P_max_ST_2)
-        #@constraint(m, ST_2 .<= P_max_ST_2)
+        # Solar thermal collector constraints
+        #@constraint(m, ST .== P_max_ST)
+        @constraint(m, ST .<= P_max_ST)
+        #@constraint(m, ST_2 .== P_max_ST_2)
+        @constraint(m, ST_2 .<= P_max_ST_2)
 
         #@constraint(m, ST_seasonal .== P_max_ST_seasonal)
         @constraint(m, ST_seasonal .<= P_max_ST_seasonal)
@@ -775,128 +776,164 @@ module Absorption_heat_pump_district_heating
         @constraint(m, -OnOffHP_waste_heat_absorption*P_max_HP_waste_heat_absorption+HP_waste_heat_absorption.<=0)
 
         # Ramp-up-down constraint for each technology
-        i=2:length(DEM-1)
+        i=2:(length(DEM)-1)
 
-        @constraint(m, HOB[i-1]-HOB[i].<=ramp_up_down_HOB*OnOffHOB[i]+(1-OnOffHOB[i])*P_min_HOB)
-        @constraint(m, HOB[i]-HOB[i-1].<=ramp_up_down_HOB*OnOffHOB[i-1]+(1-OnOffHOB[i-1])*P_min_HOB)
-        @constraint(m, HOB_2[i-1]-HOB_2[i].<=ramp_up_down_HOB_2*OnOffHOB_2[i]+(1-OnOffHOB_2[i])*P_min_HOB_2)
-        @constraint(m, HOB_2[i]-HOB_2[i-1].<=ramp_up_down_HOB_2*OnOffHOB_2[i-1]+(1-OnOffHOB_2[i-1])*P_min_HOB_2)
-        @constraint(m, HOB_3[i-1]-HOB_3[i].<=ramp_up_down_HOB_3*OnOffHOB_3[i]+(1-OnOffHOB_3[i])*P_min_HOB_3)
-        @constraint(m, HOB_3[i]-HOB_3[i-1].<=ramp_up_down_HOB_3*OnOffHOB_3[i-1]+(1-OnOffHOB_3[i-1])*P_min_HOB_3)
+        @constraint(m, HOB[i .- 1]-HOB[i].<=ramp_up_down_HOB*OnOffHOB[i]+(1 .- OnOffHOB[i])*P_min_HOB)
+        @constraint(m, HOB[i]-HOB[i .- 1].<=ramp_up_down_HOB*OnOffHOB[i .- 1]+(1 .- OnOffHOB[i .- 1])*P_min_HOB)
+        @constraint(m, HOB_2[i .- 1]-HOB_2[i].<=ramp_up_down_HOB_2*OnOffHOB_2[i]+(1 .- OnOffHOB_2[i])*P_min_HOB_2)
+        @constraint(m, HOB_2[i]-HOB_2[i .- 1].<=ramp_up_down_HOB_2*OnOffHOB_2[i .- 1]+(1 .- OnOffHOB_2[i .- 1])*P_min_HOB_2)
+        @constraint(m, HOB_3[i .- 1]-HOB_3[i].<=ramp_up_down_HOB_3*OnOffHOB_3[i]+(1 .- OnOffHOB_3[i])*P_min_HOB_3)
+        @constraint(m, HOB_3[i]-HOB_3[i .- 1].<=ramp_up_down_HOB_3*OnOffHOB_3[i .- 1]+(1 .- OnOffHOB_3[i .- 1])*P_min_HOB_3)
 
-        @constraint(m, EH[i-1]-EH[i].<=ramp_up_down_EH*OnOffEH[i]+(1-OnOffEH[i])*P_min_EH)
-        @constraint(m, EH[i]-EH[i-1].<=ramp_up_down_EH*OnOffEH[i-1]+(1-OnOffEH[i-1])*P_min_EH)
-        @constraint(m, EH_2[i-1]-EH_2[i].<=ramp_up_down_EH_2*OnOffEH_2[i]+(1-OnOffEH_2[i])*P_min_EH_2)
-        @constraint(m, EH_2[i]-EH_2[i-1].<=ramp_up_down_EH_2*OnOffEH_2[i-1]+(1-OnOffEH_2[i-1])*P_min_EH_2)
-        @constraint(m, EH_3[i-1]-EH_3[i].<=ramp_up_down_EH_3*OnOffEH_3[i]+(1-OnOffEH_3[i])*P_min_EH_3)
-        @constraint(m, EH_3[i]-EH_3[i-1].<=ramp_up_down_EH_3*OnOffEH_3[i-1]+(1-OnOffEH_3[i-1])*P_min_EH_3)
-        @constraint(m, HP[i-1]-HP[i].<=ramp_up_down_HP*OnOffHP[i]+(1-OnOffHP[i])*P_min_HP)
-        @constraint(m, HP[i]-HP[i-1].<=ramp_up_down_HP*OnOffHP[i-1]+(1-OnOffHP[i-1])*P_min_HP)
-        @constraint(m, HP_2[i-1]-HP_2[i].<=ramp_up_down_HP_2*OnOffHP_2[i]+(1-OnOffHP_2[i])*P_min_HP_2)
-        @constraint(m, HP_2[i]-HP_2[i-1].<=ramp_up_down_HP_2*OnOffHP_2[i-1]+(1-OnOffHP_2[i-1])*P_min_HP_2)
-        @constraint(m, HP_3[i-1]-HP_3[i].<=ramp_up_down_HP_3*OnOffHP_3[i]+(1-OnOffHP_3[i])*P_min_HP_3)
-        @constraint(m, HP_3[i]-HP_3[i-1].<=ramp_up_down_HP_3*OnOffHP_3[i-1]+(1-OnOffHP_3[i-1])*P_min_HP_3)
+        @constraint(m, EH[i .- 1]-EH[i].<=ramp_up_down_EH*OnOffEH[i]+(1 .- OnOffEH[i])*P_min_EH)
+        @constraint(m, EH[i]-EH[i .- 1].<=ramp_up_down_EH*OnOffEH[i .- 1]+(1 .- OnOffEH[i .- 1])*P_min_EH)
+        @constraint(m, EH_2[i .- 1]-EH_2[i].<=ramp_up_down_EH_2*OnOffEH_2[i]+(1 .- OnOffEH_2[i])*P_min_EH_2)
+        @constraint(m, EH_2[i]-EH_2[i .- 1].<=ramp_up_down_EH_2*OnOffEH_2[i .- 1]+(1 .- OnOffEH_2[i .- 1])*P_min_EH_2)
+        @constraint(m, EH_3[i .- 1]-EH_3[i].<=ramp_up_down_EH_3*OnOffEH_3[i]+(1 .- OnOffEH_3[i])*P_min_EH_3)
+        @constraint(m, EH_3[i]-EH_3[i .- 1].<=ramp_up_down_EH_3*OnOffEH_3[i .- 1]+(1 .- OnOffEH_3[i .- 1])*P_min_EH_3)
+        @constraint(m, HP[i .- 1]-HP[i].<=ramp_up_down_HP*OnOffHP[i]+(1 .- OnOffHP[i])*P_min_HP)
+        @constraint(m, HP[i]-HP[i .- 1].<=ramp_up_down_HP*OnOffHP[i .- 1]+(1 .- OnOffHP[i .- 1])*P_min_HP)
+        @constraint(m, HP_2[i .- 1]-HP_2[i].<=ramp_up_down_HP_2*OnOffHP_2[i]+(1 .- OnOffHP_2[i])*P_min_HP_2)
+        @constraint(m, HP_2[i]-HP_2[i .- 1].<=ramp_up_down_HP_2*OnOffHP_2[i .- 1]+(1 .- OnOffHP_2[i .- 1])*P_min_HP_2)
+        @constraint(m, HP_3[i .- 1]-HP_3[i].<=ramp_up_down_HP_3*OnOffHP_3[i]+(1 .- OnOffHP_3[i])*P_min_HP_3)
+        @constraint(m, HP_3[i]-HP_3[i .- 1].<=ramp_up_down_HP_3*OnOffHP_3[i .- 1]+(1 .- OnOffHP_3[i .- 1])*P_min_HP_3)
 
-        @constraint(m, HP_absorption[i-1]-HP_absorption[i].<=ramp_up_down_HP_absorption*OnOffHP_absorption[i]+(1-OnOffHP_absorption[i])*P_min_HP_absorption)
-        @constraint(m, HP_absorption[i]-HP_absorption[i-1].<=ramp_up_down_HP_absorption*OnOffHP_absorption[i-1]+(1-OnOffHP_absorption[i-1])*P_min_HP_absorption)
+        @constraint(m, HP_absorption[i .- 1]-HP_absorption[i].<=ramp_up_down_HP_absorption*OnOffHP_absorption[i]+(1 .- OnOffHP_absorption[i])*P_min_HP_absorption)
+        @constraint(m, HP_absorption[i]-HP_absorption[i .- 1].<=ramp_up_down_HP_absorption*OnOffHP_absorption[i .- 1]+(1 .- OnOffHP_absorption[i .- 1])*P_min_HP_absorption)
 
-        @constraint(m, CHP_ORC[i-1]-CHP_ORC[i].<=ramp_up_down_CHP_ORC*OnOffCHP_ORC[i]+(1-OnOffCHP_ORC[i])*P_min_CHP_ORC)
-        @constraint(m, CHP_ORC[i]-CHP_ORC[i-1].<=ramp_up_down_CHP_ORC*OnOffCHP_ORC[i-1]+(1-OnOffCHP_ORC[i-1])*P_min_CHP_ORC)
+        @constraint(m, CHP_ORC[i .- 1]-CHP_ORC[i].<=ramp_up_down_CHP_ORC*OnOffCHP_ORC[i]+(1 .- OnOffCHP_ORC[i])*P_min_CHP_ORC)
+        @constraint(m, CHP_ORC[i]-CHP_ORC[i .- 1].<=ramp_up_down_CHP_ORC*OnOffCHP_ORC[i .- 1]+(1 .- OnOffCHP_ORC[i .- 1])*P_min_CHP_ORC)
 
-        @constraint(m, CHP[i-1]-CHP[i].<=ramp_up_down_CHP*OnOffCHP[i]+(1-OnOffCHP[i])*P_min_CHP)
-        @constraint(m, CHP[i]-CHP[i-1].<=ramp_up_down_CHP*OnOffCHP[i-1]+(1-OnOffCHP[i-1])*P_min_CHP)
-        @constraint(m, CHP_2[i-1]-CHP_2[i].<=ramp_up_down_CHP_2*OnOffCHP_2[i]+(1-OnOffCHP_2[i])*P_min_CHP_2)
-        @constraint(m, CHP_2[i]-CHP_2[i-1].<=ramp_up_down_CHP_2*OnOffCHP_2[i-1]+(1-OnOffCHP_2[i-1])*P_min_CHP_2)
-
-
-        @constraint(m, HP_waste_heat_I_1[i-1]-HP_waste_heat_I_1[i].<=ramp_up_down_HP_waste_heat_I_1*OnOffHP_waste_heat_I_1[i]+(1-OnOffHP_waste_heat_I_1[i])*P_min_HP_waste_heat_I_1)
-        @constraint(m, HP_waste_heat_I_1[i]-HP_waste_heat_I_1[i-1].<=ramp_up_down_HP_waste_heat_I_1*OnOffHP_waste_heat_I_1[i-1]+(1-OnOffHP_waste_heat_I_1[i-1])*P_min_HP_waste_heat_I_1)
-        @constraint(m, HP_waste_heat_I_2[i-1]-HP_waste_heat_I_2[i].<=ramp_up_down_HP_waste_heat_I_2*OnOffHP_waste_heat_I_2[i]+(1-OnOffHP_waste_heat_I_2[i])*P_min_HP_waste_heat_I_2)
-        @constraint(m, HP_waste_heat_I_2[i]-HP_waste_heat_I_2[i-1].<=ramp_up_down_HP_waste_heat_I_2*OnOffHP_waste_heat_I_2[i-1]+(1-OnOffHP_waste_heat_I_2[i-1])*P_min_HP_waste_heat_I_2)
-        @constraint(m, HP_waste_heat_I_3[i-1]-HP_waste_heat_I_3[i].<=ramp_up_down_HP_waste_heat_I_3*OnOffHP_waste_heat_I_3[i]+(1-OnOffHP_waste_heat_I_3[i])*P_min_HP_waste_heat_I_3)
-        @constraint(m, HP_waste_heat_I_3[i]-HP_waste_heat_I_3[i-1].<=ramp_up_down_HP_waste_heat_I_3*OnOffHP_waste_heat_I_3[i-1]+(1-OnOffHP_waste_heat_I_3[i-1])*P_min_HP_waste_heat_I_3)
-
-        @constraint(m, HP_waste_heat_II_1[i-1]-HP_waste_heat_II_1[i].<=ramp_up_down_HP_waste_heat_II_1*OnOffHP_waste_heat_II_1[i]+(1-OnOffHP_waste_heat_II_1[i])*P_min_HP_waste_heat_II_1)
-        @constraint(m, HP_waste_heat_II_1[i]-HP_waste_heat_II_1[i-1].<=ramp_up_down_HP_waste_heat_II_1*OnOffHP_waste_heat_II_1[i-1]+(1-OnOffHP_waste_heat_II_1[i-1])*P_min_HP_waste_heat_II_1)
-        @constraint(m, HP_waste_heat_II_2[i-1]-HP_waste_heat_II_2[i].<=ramp_up_down_HP_waste_heat_II_2*OnOffHP_waste_heat_II_2[i]+(1-OnOffHP_waste_heat_II_2[i])*P_min_HP_waste_heat_II_2)
-        @constraint(m, HP_waste_heat_II_2[i]-HP_waste_heat_II_2[i-1].<=ramp_up_down_HP_waste_heat_II_2*OnOffHP_waste_heat_II_2[i-1]+(1-OnOffHP_waste_heat_II_2[i-1])*P_min_HP_waste_heat_II_2)
-        @constraint(m, HP_waste_heat_II_3[i-1]-HP_waste_heat_II_3[i].<=ramp_up_down_HP_waste_heat_II_3*OnOffHP_waste_heat_II_3[i]+(1-OnOffHP_waste_heat_II_3[i])*P_min_HP_waste_heat_II_3)
-        @constraint(m, HP_waste_heat_II_3[i]-HP_waste_heat_II_3[i-1].<=ramp_up_down_HP_waste_heat_II_3*OnOffHP_waste_heat_II_3[i-1]+(1-OnOffHP_waste_heat_II_3[i-1])*P_min_HP_waste_heat_II_3)
-
-        @constraint(m, HP_waste_heat_III_1[i-1]-HP_waste_heat_III_1[i].<=ramp_up_down_HP_waste_heat_III_1*OnOffHP_waste_heat_III_1[i]+(1-OnOffHP_waste_heat_III_1[i])*P_min_HP_waste_heat_III_1)
-        @constraint(m, HP_waste_heat_III_1[i]-HP_waste_heat_III_1[i-1].<=ramp_up_down_HP_waste_heat_III_1*OnOffHP_waste_heat_III_1[i-1]+(1-OnOffHP_waste_heat_III_1[i-1])*P_min_HP_waste_heat_III_1)
-        @constraint(m, HP_waste_heat_III_2[i-1]-HP_waste_heat_III_2[i].<=ramp_up_down_HP_waste_heat_III_2*OnOffHP_waste_heat_III_2[i]+(1-OnOffHP_waste_heat_III_2[i])*P_min_HP_waste_heat_III_2)
-        @constraint(m, HP_waste_heat_III_2[i]-HP_waste_heat_III_2[i-1].<=ramp_up_down_HP_waste_heat_III_2*OnOffHP_waste_heat_III_2[i-1]+(1-OnOffHP_waste_heat_III_2[i-1])*P_min_HP_waste_heat_III_2)
-        @constraint(m, HP_waste_heat_III_3[i-1]-HP_waste_heat_III_3[i].<=ramp_up_down_HP_waste_heat_III_3*OnOffHP_waste_heat_III_3[i]+(1-OnOffHP_waste_heat_III_3[i])*P_min_HP_waste_heat_III_3)
-        @constraint(m, HP_waste_heat_III_3[i]-HP_waste_heat_III_3[i-1].<=ramp_up_down_HP_waste_heat_III_3*OnOffHP_waste_heat_III_3[i-1]+(1-OnOffHP_waste_heat_III_3[i-1])*P_min_HP_waste_heat_III_3)
+        @constraint(m, CHP[i .- 1]-CHP[i].<=ramp_up_down_CHP*OnOffCHP[i]+(1 .- OnOffCHP[i])*P_min_CHP)
+        @constraint(m, CHP[i]-CHP[i .- 1].<=ramp_up_down_CHP*OnOffCHP[i .- 1]+(1 .- OnOffCHP[i .- 1])*P_min_CHP)
+        @constraint(m, CHP_2[i .- 1]-CHP_2[i].<=ramp_up_down_CHP_2*OnOffCHP_2[i]+(1 .- OnOffCHP_2[i])*P_min_CHP_2)
+        @constraint(m, CHP_2[i]-CHP_2[i .- 1].<=ramp_up_down_CHP_2*OnOffCHP_2[i .- 1]+(1 .- OnOffCHP_2[i .- 1])*P_min_CHP_2)
 
 
-        @constraint(m, HP_waste_heat_seasonal[i-1]-HP_waste_heat_seasonal[i].<=ramp_up_down_HP_waste_heat_seasonal*OnOffHP_waste_heat_seasonal[i]+(1-OnOffHP_waste_heat_seasonal[i])*P_min_HP_waste_heat_seasonal)
-        @constraint(m, HP_waste_heat_seasonal[i]-HP_waste_heat_seasonal[i-1].<=ramp_up_down_HP_waste_heat_seasonal*OnOffHP_waste_heat_seasonal[i-1]+(1-OnOffHP_waste_heat_seasonal[i-1])*P_min_HP_waste_heat_seasonal)
+        @constraint(m, HP_waste_heat_I_1[i .- 1]-HP_waste_heat_I_1[i].<=ramp_up_down_HP_waste_heat_I_1*OnOffHP_waste_heat_I_1[i]+(1 .- OnOffHP_waste_heat_I_1[i])*P_min_HP_waste_heat_I_1)
+        @constraint(m, HP_waste_heat_I_1[i]-HP_waste_heat_I_1[i .- 1].<=ramp_up_down_HP_waste_heat_I_1*OnOffHP_waste_heat_I_1[i .- 1]+(1 .- OnOffHP_waste_heat_I_1[i .- 1])*P_min_HP_waste_heat_I_1)
+        @constraint(m, HP_waste_heat_I_2[i .- 1]-HP_waste_heat_I_2[i].<=ramp_up_down_HP_waste_heat_I_2*OnOffHP_waste_heat_I_2[i]+(1 .- OnOffHP_waste_heat_I_2[i])*P_min_HP_waste_heat_I_2)
+        @constraint(m, HP_waste_heat_I_2[i]-HP_waste_heat_I_2[i .- 1].<=ramp_up_down_HP_waste_heat_I_2*OnOffHP_waste_heat_I_2[i .- 1]+(1 .- OnOffHP_waste_heat_I_2[i .- 1])*P_min_HP_waste_heat_I_2)
+        @constraint(m, HP_waste_heat_I_3[i .- 1]-HP_waste_heat_I_3[i].<=ramp_up_down_HP_waste_heat_I_3*OnOffHP_waste_heat_I_3[i]+(1 .- OnOffHP_waste_heat_I_3[i])*P_min_HP_waste_heat_I_3)
+        @constraint(m, HP_waste_heat_I_3[i]-HP_waste_heat_I_3[i .- 1].<=ramp_up_down_HP_waste_heat_I_3*OnOffHP_waste_heat_I_3[i .- 1]+(1 .- OnOffHP_waste_heat_I_3[i .- 1])*P_min_HP_waste_heat_I_3)
 
-        @constraint(m, HP_waste_heat_absorption[i-1]-HP_waste_heat_absorption[i].<=ramp_up_down_HP_waste_heat_absorption*OnOffHP_waste_heat_absorption[i]+(1-OnOffHP_waste_heat_absorption[i])*P_min_HP_waste_heat_absorption)
-        @constraint(m, HP_waste_heat_absorption[i]-HP_waste_heat_absorption[i-1].<=ramp_up_down_HP_waste_heat_absorption*OnOffHP_waste_heat_absorption[i-1]+(1-OnOffHP_waste_heat_absorption[i-1])*P_min_HP_waste_heat_absorption)
+        @constraint(m, HP_waste_heat_II_1[i .- 1]-HP_waste_heat_II_1[i].<=ramp_up_down_HP_waste_heat_II_1*OnOffHP_waste_heat_II_1[i]+(1 .- OnOffHP_waste_heat_II_1[i])*P_min_HP_waste_heat_II_1)
+        @constraint(m, HP_waste_heat_II_1[i]-HP_waste_heat_II_1[i .- 1].<=ramp_up_down_HP_waste_heat_II_1*OnOffHP_waste_heat_II_1[i .- 1]+(1 .- OnOffHP_waste_heat_II_1[i .- 1])*P_min_HP_waste_heat_II_1)
+        @constraint(m, HP_waste_heat_II_2[i .- 1]-HP_waste_heat_II_2[i].<=ramp_up_down_HP_waste_heat_II_2*OnOffHP_waste_heat_II_2[i]+(1 .- OnOffHP_waste_heat_II_2[i])*P_min_HP_waste_heat_II_2)
+        @constraint(m, HP_waste_heat_II_2[i]-HP_waste_heat_II_2[i .- 1].<=ramp_up_down_HP_waste_heat_II_2*OnOffHP_waste_heat_II_2[i .- 1]+(1 .- OnOffHP_waste_heat_II_2[i .- 1])*P_min_HP_waste_heat_II_2)
+        @constraint(m, HP_waste_heat_II_3[i .- 1]-HP_waste_heat_II_3[i].<=ramp_up_down_HP_waste_heat_II_3*OnOffHP_waste_heat_II_3[i]+(1 .- OnOffHP_waste_heat_II_3[i])*P_min_HP_waste_heat_II_3)
+        @constraint(m, HP_waste_heat_II_3[i]-HP_waste_heat_II_3[i .- 1].<=ramp_up_down_HP_waste_heat_II_3*OnOffHP_waste_heat_II_3[i .- 1]+(1 .- OnOffHP_waste_heat_II_3[i .- 1])*P_min_HP_waste_heat_II_3)
+
+        @constraint(m, HP_waste_heat_III_1[i .- 1]-HP_waste_heat_III_1[i].<=ramp_up_down_HP_waste_heat_III_1*OnOffHP_waste_heat_III_1[i]+(1 .- OnOffHP_waste_heat_III_1[i])*P_min_HP_waste_heat_III_1)
+        @constraint(m, HP_waste_heat_III_1[i]-HP_waste_heat_III_1[i .- 1].<=ramp_up_down_HP_waste_heat_III_1*OnOffHP_waste_heat_III_1[i .- 1]+(1 .- OnOffHP_waste_heat_III_1[i .- 1])*P_min_HP_waste_heat_III_1)
+        @constraint(m, HP_waste_heat_III_2[i .- 1]-HP_waste_heat_III_2[i].<=ramp_up_down_HP_waste_heat_III_2*OnOffHP_waste_heat_III_2[i]+(1 .- OnOffHP_waste_heat_III_2[i])*P_min_HP_waste_heat_III_2)
+        @constraint(m, HP_waste_heat_III_2[i]-HP_waste_heat_III_2[i .- 1].<=ramp_up_down_HP_waste_heat_III_2*OnOffHP_waste_heat_III_2[i .- 1]+(1 .- OnOffHP_waste_heat_III_2[i .- 1])*P_min_HP_waste_heat_III_2)
+        @constraint(m, HP_waste_heat_III_3[i .- 1]-HP_waste_heat_III_3[i].<=ramp_up_down_HP_waste_heat_III_3*OnOffHP_waste_heat_III_3[i]+(1 .- OnOffHP_waste_heat_III_3[i])*P_min_HP_waste_heat_III_3)
+        @constraint(m, HP_waste_heat_III_3[i]-HP_waste_heat_III_3[i .- 1].<=ramp_up_down_HP_waste_heat_III_3*OnOffHP_waste_heat_III_3[i .- 1]+(1 .- OnOffHP_waste_heat_III_3[i .- 1])*P_min_HP_waste_heat_III_3)
+
+
+        @constraint(m, HP_waste_heat_seasonal[i .- 1]-HP_waste_heat_seasonal[i].<=ramp_up_down_HP_waste_heat_seasonal*OnOffHP_waste_heat_seasonal[i]+(1 .- OnOffHP_waste_heat_seasonal[i])*P_min_HP_waste_heat_seasonal)
+        @constraint(m, HP_waste_heat_seasonal[i]-HP_waste_heat_seasonal[i .- 1].<=ramp_up_down_HP_waste_heat_seasonal*OnOffHP_waste_heat_seasonal[i .- 1]+(1 .- OnOffHP_waste_heat_seasonal[i .- 1])*P_min_HP_waste_heat_seasonal)
+
+        @constraint(m, HP_waste_heat_absorption[i .- 1]-HP_waste_heat_absorption[i].<=ramp_up_down_HP_waste_heat_absorption*OnOffHP_waste_heat_absorption[i]+(1 .- OnOffHP_waste_heat_absorption[i])*P_min_HP_waste_heat_absorption)
+        @constraint(m, HP_waste_heat_absorption[i]-HP_waste_heat_absorption[i .- 1].<=ramp_up_down_HP_waste_heat_absorption*OnOffHP_waste_heat_absorption[i .- 1]+(1 .- OnOffHP_waste_heat_absorption[i .- 1])*P_min_HP_waste_heat_absorption)
 
         ###### Objective function ######
 
         # Minimize total running costs
 
 
-        @objective(m,Min, sum(Error)*1e2+sum(HOB)*(cost_var_HOB+cost_fuel_HOB/eta_HOB)+sum(HOB_2)*(cost_var_HOB_2+cost_fuel_HOB_2/eta_HOB_2)+sum(HOB_3)*(cost_var_HOB_3+cost_fuel_HOB_3/eta_HOB_3)+sum(EH.*(cost_var_EH+cost_fuel_EH/eta_EH))+sum(EH_2.*(cost_var_EH_2+cost_fuel_EH_2/eta_EH_2))+sum(EH_3.*(cost_var_EH_3+cost_fuel_EH_3/eta_EH_3))+sum(HP.*(cost_var_HP+cost_fuel_HP./eta_HP))+sum(HP_2.*(cost_var_HP_2+cost_fuel_HP_2./eta_HP_2))+sum(HP_3.*(cost_var_HP_3+cost_fuel_HP_3./eta_HP_3))+sum(HP_absorption.*(cost_var_HP_absorption+cost_fuel_HP_absorption./eta_HP_absorption))+sum(CHP)*(cost_var_CHP+cost_fuel_CHP/eta_CHP_th)+sum(CHP_2)*(cost_var_CHP_2+cost_fuel_CHP_2/eta_CHP_th_2)+sum(CHP_ORC)*(cost_var_CHP_ORC)+sum(ST)*cost_var_ST+sum(ST_2)*cost_var_ST_2+sum(ST_seasonal)*cost_var_ST_seasonal+sum(HEX)*cost_var_HEX+sum(HP_waste_heat_I_1.*(cost_var_HP_waste_heat_I_1+cost_fuel_HP_waste_heat_I_1./eta_HP_waste_heat_I_1))+sum(HP_waste_heat_I_2.*(cost_var_HP_waste_heat_I_2+cost_fuel_HP_waste_heat_I_2./eta_HP_waste_heat_I_2))+sum(HP_waste_heat_I_3.*(cost_var_HP_waste_heat_I_3+cost_fuel_HP_waste_heat_I_3./eta_HP_waste_heat_I_3))+sum(HP_waste_heat_II_1.*(cost_var_HP_waste_heat_II_1+cost_fuel_HP_waste_heat_II_1./eta_HP_waste_heat_II_1))+sum(HP_waste_heat_II_2.*(cost_var_HP_waste_heat_II_2+cost_fuel_HP_waste_heat_II_2./eta_HP_waste_heat_II_2))+sum(HP_waste_heat_II_3.*(cost_var_HP_waste_heat_II_3+cost_fuel_HP_waste_heat_II_3./eta_HP_waste_heat_II_3))+sum(HP_waste_heat_III_1.*(cost_var_HP_waste_heat_III_1+cost_fuel_HP_waste_heat_III_1./eta_HP_waste_heat_III_1))+sum(HP_waste_heat_III_2.*(cost_var_HP_waste_heat_III_2+cost_fuel_HP_waste_heat_III_2./eta_HP_waste_heat_III_2))+sum(HP_waste_heat_III_3.*(cost_var_HP_waste_heat_III_3+cost_fuel_HP_waste_heat_III_3./eta_HP_waste_heat_III_3))+sum(HP_waste_heat_seasonal.*(cost_var_HP_waste_heat_seasonal+cost_fuel_HP_waste_heat_seasonal./eta_HP_waste_heat_seasonal))+sum(HP_waste_heat_absorption.*(cost_var_HP_waste_heat_absorption+cost_fuel_HP_waste_heat_absorption./eta_HP_waste_heat_absorption))-sum(CHP*cb_CHP.*CHP_electricity_price)-sum(CHP_2*cb_CHP_2.*CHP_electricity_price_2)-sum(CHP_ORC*cb_CHP_ORC.*CHP_ORC_electricity_price))
+        @objective(m,Min, sum(Error)*1e2
+                          + sum(HOB)*(cost_var_HOB .+ cost_fuel_HOB/eta_HOB)
+                          + sum(HOB_2)*(cost_var_HOB_2 .+ cost_fuel_HOB_2/eta_HOB_2)
+                          + sum(HOB_3)*(cost_var_HOB_3 .+ cost_fuel_HOB_3/eta_HOB_3)
+                          + sum(EH.*(cost_var_EH .+ cost_fuel_EH/eta_EH))
+                          + sum(EH_2.*(cost_var_EH_2 .+ cost_fuel_EH_2/eta_EH_2))
+                          + sum(EH_3.*(cost_var_EH_3 .+ cost_fuel_EH_3/eta_EH_3))
+                          + sum(HP.*(cost_var_HP .+ cost_fuel_HP./eta_HP))
+                          + sum(HP_2.*(cost_var_HP_2 .+ cost_fuel_HP_2./eta_HP_2))
+                          + sum(HP_3.*(cost_var_HP_3 .+ cost_fuel_HP_3./eta_HP_3))
+                          + sum(HP_absorption.*(cost_var_HP_absorption .+ cost_fuel_HP_absorption./eta_HP_absorption))
+                          + sum(CHP)*(cost_var_CHP .+ cost_fuel_CHP/eta_CHP_th)
+                          + sum(CHP_2)*(cost_var_CHP_2 .+ cost_fuel_CHP_2/eta_CHP_th_2)
+                          + sum(CHP_ORC)*(cost_var_CHP_ORC)
+                          + sum(ST)*cost_var_ST
+                          + sum(ST_2)*cost_var_ST_2
+                          + sum(ST_seasonal)*cost_var_ST_seasonal
+                          + sum(HEX)*cost_var_HEX
+                          + sum(HP_waste_heat_I_1.*(cost_var_HP_waste_heat_I_1 .+ cost_fuel_HP_waste_heat_I_1./eta_HP_waste_heat_I_1))
+                          + sum(HP_waste_heat_I_2.*(cost_var_HP_waste_heat_I_2 .+ cost_fuel_HP_waste_heat_I_2./eta_HP_waste_heat_I_2))
+                          + sum(HP_waste_heat_I_3.*(cost_var_HP_waste_heat_I_3 .+ cost_fuel_HP_waste_heat_I_3./eta_HP_waste_heat_I_3))
+                          + sum(HP_waste_heat_II_1.*(cost_var_HP_waste_heat_II_1 .+ cost_fuel_HP_waste_heat_II_1./eta_HP_waste_heat_II_1))
+                          + sum(HP_waste_heat_II_2.*(cost_var_HP_waste_heat_II_2 .+ cost_fuel_HP_waste_heat_II_2./eta_HP_waste_heat_II_2))
+                          + sum(HP_waste_heat_II_3.*(cost_var_HP_waste_heat_II_3 .+ cost_fuel_HP_waste_heat_II_3./eta_HP_waste_heat_II_3))
+                          + sum(HP_waste_heat_III_1.*(cost_var_HP_waste_heat_III_1 .+ cost_fuel_HP_waste_heat_III_1./eta_HP_waste_heat_III_1))
+                          + sum(HP_waste_heat_III_2.*(cost_var_HP_waste_heat_III_2 .+ cost_fuel_HP_waste_heat_III_2./eta_HP_waste_heat_III_2))
+                          + sum(HP_waste_heat_III_3.*(cost_var_HP_waste_heat_III_3 .+ cost_fuel_HP_waste_heat_III_3./eta_HP_waste_heat_III_3))
+                          + sum(HP_waste_heat_seasonal.*(cost_var_HP_waste_heat_seasonal .+ cost_fuel_HP_waste_heat_seasonal./eta_HP_waste_heat_seasonal))
+                          + sum(HP_waste_heat_absorption.*(cost_var_HP_waste_heat_absorption .+ cost_fuel_HP_waste_heat_absorption./eta_HP_waste_heat_absorption))
+                          - sum(CHP*cb_CHP.*CHP_electricity_price)
+                          - sum(CHP_2*cb_CHP_2.*CHP_electricity_price_2)
+                          - sum(CHP_ORC*cb_CHP_ORC.*CHP_ORC_electricity_price))
 
         print_function("Julia code for district heating: solve(m)...")
 
-        status = solve(m)
+        optimize!(m)
+        status = termination_status(m)
 
         print_function(string("Exit with status:", status))
         print_function("Julia code for district heating: END OF SCRIPT!")
+        if primal_status(m) == MOI.NO_SOLUTION
+            print_function("No solution found.")
+            return
+        end
 
         ##### Result visualization ####
 
-        Result_HOB=getvalue(HOB)
-        Result_HOB_2=getvalue(HOB_2)
-        Result_HOB_3=getvalue(HOB_3)
+        Result_HOB=value.(HOB)
+        Result_HOB_2=value.(HOB_2)
+        Result_HOB_3=value.(HOB_3)
 
-        Result_EH=getvalue(EH)
-        Result_EH_2=getvalue(EH_2)
-        Result_EH_3=getvalue(EH_3)
+        Result_EH=value.(EH)
+        Result_EH_2=value.(EH_2)
+        Result_EH_3=value.(EH_3)
 
-        Result_HP=getvalue(HP)
-        Result_HP_2=getvalue(HP_2)
-        Result_HP_3=getvalue(HP_3)
-        Result_HP_absorption=getvalue(HP_absorption)
+        Result_HP=value.(HP)
+        Result_HP_2=value.(HP_2)
+        Result_HP_3=value.(HP_3)
+        Result_HP_absorption=value.(HP_absorption)
 
-        Result_CHP=getvalue(CHP)
-        Result_CHP_2=getvalue(CHP_2)
-
-
-        Result_CHP_ORC=getvalue(CHP_ORC)
-
-        Result_ST=getvalue(ST)
-        Result_ST_2=getvalue(ST_2)
-        Result_ST_seasonal=getvalue(ST_seasonal)
-
-        Result_HEX=getvalue(HEX)
-
-        Result_HP_waste_heat_I_1=getvalue(HP_waste_heat_I_1)
-        Result_HP_waste_heat_I_2=getvalue(HP_waste_heat_I_2)
-        Result_HP_waste_heat_I_3=getvalue(HP_waste_heat_I_3)
-
-        Result_HP_waste_heat_II_1=getvalue(HP_waste_heat_II_1)
-        Result_HP_waste_heat_II_2=getvalue(HP_waste_heat_II_2)
-        Result_HP_waste_heat_II_3=getvalue(HP_waste_heat_II_3)
-
-        Result_HP_waste_heat_III_1=getvalue(HP_waste_heat_III_1)
-        Result_HP_waste_heat_III_2=getvalue(HP_waste_heat_III_2)
-        Result_HP_waste_heat_III_3=getvalue(HP_waste_heat_III_3)
-
-        Result_HP_waste_heat_seasonal=getvalue(HP_waste_heat_seasonal)
-        Result_HP_waste_heat_absorption=getvalue(HP_waste_heat_absorption)
+        Result_CHP=value.(CHP)
+        Result_CHP_2=value.(CHP_2)
 
 
-        Result_SOC=getvalue(SOC)
-        Result_SOC_seasonal=getvalue(SOC_seasonal)
-        Result_Error=getvalue(Error)
+        Result_CHP_ORC=value.(CHP_ORC)
+
+        Result_ST=value.(ST)
+        Result_ST_2=value.(ST_2)
+        Result_ST_seasonal=value.(ST_seasonal)
+
+        Result_HEX=value.(HEX)
+
+        Result_HP_waste_heat_I_1=value.(HP_waste_heat_I_1)
+        Result_HP_waste_heat_I_2=value.(HP_waste_heat_I_2)
+        Result_HP_waste_heat_I_3=value.(HP_waste_heat_I_3)
+
+        Result_HP_waste_heat_II_1=value.(HP_waste_heat_II_1)
+        Result_HP_waste_heat_II_2=value.(HP_waste_heat_II_2)
+        Result_HP_waste_heat_II_3=value.(HP_waste_heat_II_3)
+
+        Result_HP_waste_heat_III_1=value.(HP_waste_heat_III_1)
+        Result_HP_waste_heat_III_2=value.(HP_waste_heat_III_2)
+        Result_HP_waste_heat_III_3=value.(HP_waste_heat_III_3)
+
+        Result_HP_waste_heat_seasonal=value.(HP_waste_heat_seasonal)
+        Result_HP_waste_heat_absorption=value.(HP_waste_heat_absorption)
+
+
+        Result_SOC=value.(SOC)
+        Result_SOC_seasonal=value.(SOC_seasonal)
+        Result_Error=value.(Error)
 
         #load duration for each technology #
 
@@ -934,96 +971,95 @@ module Absorption_heat_pump_district_heating
 
 
         ## Export results ##
-        writecsv(string(output_folder, "\\Result_HOB_",network_id ,".csv"), Result_HOB)
-        writecsv(string(output_folder, "\\Result_HOB_2_",network_id ,".csv"), Result_HOB_2)
-        writecsv(string(output_folder, "\\Result_HOB_3_",network_id ,".csv"), Result_HOB_3)
+        writedlm(string(output_folder, "\\Result_HOB_",network_id ,".csv"), Result_HOB, csv_sep)
+        writedlm(string(output_folder, "\\Result_HOB_2_",network_id ,".csv"), Result_HOB_2, csv_sep)
+        writedlm(string(output_folder, "\\Result_HOB_3_",network_id ,".csv"), Result_HOB_3, csv_sep)
 
-        writecsv(string(output_folder, "\\Result_EH_",network_id ,".csv"), Result_EH)
-        writecsv(string(output_folder, "\\Result_EH_2_",network_id ,".csv"), Result_EH_2)
-        writecsv(string(output_folder, "\\Result_EH_3_",network_id ,".csv"), Result_EH_3)
+        writedlm(string(output_folder, "\\Result_EH_",network_id ,".csv"), Result_EH, csv_sep)
+        writedlm(string(output_folder, "\\Result_EH_2_",network_id ,".csv"), Result_EH_2, csv_sep)
+        writedlm(string(output_folder, "\\Result_EH_3_",network_id ,".csv"), Result_EH_3, csv_sep)
 
-        writecsv(string(output_folder, "\\Result_HP_",network_id ,".csv"), Result_HP)
-        writecsv(string(output_folder, "\\Result_HP_2_",network_id ,".csv"), Result_HP_2)
-        writecsv(string(output_folder, "\\Result_HP_3_",network_id ,".csv"), Result_HP_3)
-        writecsv(string(output_folder, "\\Result_HP_absorption_",network_id ,".csv"), Result_HP_absorption)
+        writedlm(string(output_folder, "\\Result_HP_1_",network_id ,".csv"), Result_HP, csv_sep)
+        writedlm(string(output_folder, "\\Result_HP_2_",network_id ,".csv"), Result_HP_2, csv_sep)
+        writedlm(string(output_folder, "\\Result_HP_3_",network_id ,".csv"), Result_HP_3, csv_sep)
+        writedlm(string(output_folder, "\\Result_HP_absorption_",network_id ,".csv"), Result_HP_absorption, csv_sep)
 
-        writecsv(string(output_folder, "\\Result_CHP_",network_id ,".csv"), Result_CHP)
-        writecsv(string(output_folder, "\\Result_CHP_2_",network_id ,".csv"), Result_CHP_2)
+        writedlm(string(output_folder, "\\Result_CHP_",network_id ,".csv"), Result_CHP, csv_sep)
+        writedlm(string(output_folder, "\\Result_CHP_2_",network_id ,".csv"), Result_CHP_2, csv_sep)
+
+        writedlm(string(output_folder, "\\Result_CHP_ORC_",network_id ,".csv"), Result_CHP_ORC, csv_sep)
+
+        writedlm(string(output_folder, "\\Result_ST_",network_id ,".csv"), Result_ST, csv_sep)
+        writedlm(string(output_folder, "\\Result_ST_2_",network_id ,".csv"), Result_ST_2, csv_sep)
+        writedlm(string(output_folder, "\\Result_ST_seasonal_",network_id ,".csv"), Result_ST_seasonal, csv_sep)
+
+        writedlm(string(output_folder, "\\Result_HEX_",network_id ,".csv"), Result_HEX, csv_sep)
+        writedlm(string(output_folder, "\\Result_HP_I_1_",network_id ,".csv"), Result_HP_waste_heat_I_1, csv_sep)
+        writedlm(string(output_folder, "\\Result_HP_I_2_",network_id ,".csv"), Result_HP_waste_heat_I_2, csv_sep)
+        writedlm(string(output_folder, "\\Result_HP_I_3_",network_id ,".csv"), Result_HP_waste_heat_I_3, csv_sep)
 
 
-        writecsv(string(output_folder, "\\Result_CHP_ORC_",network_id ,".csv"), Result_CHP_ORC)
+        writedlm(string(output_folder, "\\Result_HP_II_1_",network_id ,".csv"), Result_HP_waste_heat_II_1, csv_sep)
+        writedlm(string(output_folder, "\\Result_HP_II_2_",network_id ,".csv"), Result_HP_waste_heat_II_2, csv_sep)
+        writedlm(string(output_folder, "\\Result_HP_II_3_",network_id ,".csv"), Result_HP_waste_heat_II_3, csv_sep)
 
-        writecsv(string(output_folder, "\\Result_ST_",network_id ,".csv"), Result_ST)
-        writecsv(string(output_folder, "\\Result_ST_2_",network_id ,".csv"), Result_ST_2)
-        writecsv(string(output_folder, "\\Result_ST_seasonal_",network_id ,".csv"), Result_ST_seasonal)
+        writedlm(string(output_folder, "\\Result_HP_III_1_",network_id ,".csv"), Result_HP_waste_heat_III_1, csv_sep)
+        writedlm(string(output_folder, "\\Result_HP_III_2_",network_id ,".csv"), Result_HP_waste_heat_III_2, csv_sep)
+        writedlm(string(output_folder, "\\Result_HP_III_3_",network_id ,".csv"), Result_HP_waste_heat_III_3, csv_sep)
 
-        writecsv(string(output_folder, "\\Result_HEX_",network_id ,".csv"), Result_HEX)
-        writecsv(string(output_folder, "\\Result_HP_waste_heat_I_1_",network_id ,".csv"), Result_HP_waste_heat_I_1)
-        writecsv(string(output_folder, "\\Result_HP_waste_heat_I_2_",network_id ,".csv"), Result_HP_waste_heat_I_2)
-        writecsv(string(output_folder, "\\Result_HP_waste_heat_I_3_",network_id ,".csv"), Result_HP_waste_heat_I_3)
-
-
-        writecsv(string(output_folder, "\\Result_HP_waste_heat_II_1_",network_id ,".csv"), Result_HP_waste_heat_II_1)
-        writecsv(string(output_folder, "\\Result_HP_waste_heat_II_2_",network_id ,".csv"), Result_HP_waste_heat_II_2)
-        writecsv(string(output_folder, "\\Result_HP_waste_heat_II_3_",network_id ,".csv"), Result_HP_waste_heat_II_3)
-
-        writecsv(string(output_folder, "\\Result_HP_waste_heat_III_1_",network_id ,".csv"), Result_HP_waste_heat_III_1)
-        writecsv(string(output_folder, "\\Result_HP_waste_heat_III_2_",network_id ,".csv"), Result_HP_waste_heat_III_2)
-        writecsv(string(output_folder, "\\Result_HP_waste_heat_III_3_",network_id ,".csv"), Result_HP_waste_heat_III_3)
-
-        writecsv(string(output_folder, "\\Result_HP_waste_heat_seasonal_",network_id ,".csv"), Result_HP_waste_heat_seasonal)
-        writecsv(string(output_folder, "\\Result_HP_waste_heat_absorption_",network_id ,".csv"), Result_HP_waste_heat_absorption)
-        writecsv(string(output_folder, "\\Result_DEM_",network_id ,".csv"), DEM)
-        writecsv(string(output_folder, "\\Result_SOC_",network_id ,".csv"), Result_SOC)
-        writecsv(string(output_folder, "\\Result_SOC_seasonal_",network_id ,".csv"), Result_SOC_seasonal)
-        writecsv(string(output_folder, "\\Result_Error_",network_id ,".csv"), Result_Error)
+        writedlm(string(output_folder, "\\Result_HP_waste_heat_seasonal_",network_id ,".csv"), Result_HP_waste_heat_seasonal, csv_sep)
+        writedlm(string(output_folder, "\\Result_HP_waste_heat_absorption_",network_id ,".csv"), Result_HP_waste_heat_absorption, csv_sep)
+        writedlm(string(output_folder, "\\Result_DEM_",network_id ,".csv"), DEM, csv_sep)
+        writedlm(string(output_folder, "\\Result_SOC_",network_id ,".csv"), Result_SOC, csv_sep)
+        writedlm(string(output_folder, "\\Result_SOC_seasonal_",network_id ,".csv"), Result_SOC_seasonal, csv_sep)
+        writedlm(string(output_folder, "\\Result_Error_",network_id ,".csv"), Result_Error, csv_sep)
     end
 
     export district_solver
 
     function write_results_example(output_folder, network_id, example_file)
-        writecsv(string(output_folder, "\\Result_HOB_",network_id ,".csv"), example_file)
-        writecsv(string(output_folder, "\\Result_HOB_2_",network_id ,".csv"), example_file)
-        writecsv(string(output_folder, "\\Result_HOB_3_",network_id ,".csv"), example_file)
+        writedlm(string(output_folder, "\\Result_HOB_",network_id ,".csv"), example_file, csv_sep)
+        writedlm(string(output_folder, "\\Result_HOB_2_",network_id ,".csv"), example_file, csv_sep)
+        writedlm(string(output_folder, "\\Result_HOB_3_",network_id ,".csv"), example_file, csv_sep)
 
-        writecsv(string(output_folder, "\\Result_EH_",network_id ,".csv"), example_file)
-        writecsv(string(output_folder, "\\Result_EH_2_",network_id ,".csv"), example_file)
-        writecsv(string(output_folder, "\\Result_EH_3_",network_id ,".csv"), example_file)
+        writedlm(string(output_folder, "\\Result_EH_",network_id ,".csv"), example_file, csv_sep)
+        writedlm(string(output_folder, "\\Result_EH_2_",network_id ,".csv"), example_file, csv_sep)
+        writedlm(string(output_folder, "\\Result_EH_3_",network_id ,".csv"), example_file, csv_sep)
 
-        writecsv(string(output_folder, "\\Result_HP_",network_id ,".csv"), example_file)
-        writecsv(string(output_folder, "\\Result_HP_2_",network_id ,".csv"), example_file)
-        writecsv(string(output_folder, "\\Result_HP_3_",network_id ,".csv"), example_file)
-        writecsv(string(output_folder, "\\Result_HP_absorption_",network_id ,".csv"), example_file)
+        writedlm(string(output_folder, "\\Result_HP_",network_id ,".csv"), example_file, csv_sep)
+        writedlm(string(output_folder, "\\Result_HP_2_",network_id ,".csv"), example_file, csv_sep)
+        writedlm(string(output_folder, "\\Result_HP_3_",network_id ,".csv"), example_file, csv_sep)
+        writedlm(string(output_folder, "\\Result_HP_absorption_",network_id ,".csv"), example_file, csv_sep)
 
-        writecsv(string(output_folder, "\\Result_CHP_",network_id ,".csv"), example_file)
-        writecsv(string(output_folder, "\\Result_CHP_2_",network_id ,".csv"), example_file)
-
-
-        writecsv(string(output_folder, "\\Result_CHP_ORC_",network_id ,".csv"), example_file)
-
-        writecsv(string(output_folder, "\\Result_ST_",network_id ,".csv"), example_file)
-        writecsv(string(output_folder, "\\Result_ST_2_",network_id ,".csv"), example_file)
-        writecsv(string(output_folder, "\\Result_ST_seasonal_",network_id ,".csv"), example_file)
-
-        writecsv(string(output_folder, "\\Result_HEX_",network_id ,".csv"), example_file)
-        writecsv(string(output_folder, "\\Result_HP_waste_heat_I_1_",network_id ,".csv"), example_file)
-        writecsv(string(output_folder, "\\Result_HP_waste_heat_I_2_",network_id ,".csv"), example_file)
-        writecsv(string(output_folder, "\\Result_HP_waste_heat_I_3_",network_id ,".csv"), example_file)
+        writedlm(string(output_folder, "\\Result_CHP_",network_id ,".csv"), example_file, csv_sep)
+        writedlm(string(output_folder, "\\Result_CHP_2_",network_id ,".csv"), example_file, csv_sep)
 
 
-        writecsv(string(output_folder, "\\Result_HP_waste_heat_II_1_",network_id ,".csv"), example_file)
-        writecsv(string(output_folder, "\\Result_HP_waste_heat_II_2_",network_id ,".csv"), example_file)
-        writecsv(string(output_folder, "\\Result_HP_waste_heat_II_3_",network_id ,".csv"), example_file)
+        writedlm(string(output_folder, "\\Result_CHP_ORC_",network_id ,".csv"), example_file, csv_sep)
 
-        writecsv(string(output_folder, "\\Result_HP_waste_heat_III_1_",network_id ,".csv"), example_file)
-        writecsv(string(output_folder, "\\Result_HP_waste_heat_III_2_",network_id ,".csv"), example_file)
-        writecsv(string(output_folder, "\\Result_HP_waste_heat_III_3_",network_id ,".csv"), example_file)
+        writedlm(string(output_folder, "\\Result_ST_",network_id ,".csv"), example_file, csv_sep)
+        writedlm(string(output_folder, "\\Result_ST_2_",network_id ,".csv"), example_file, csv_sep)
+        writedlm(string(output_folder, "\\Result_ST_seasonal_",network_id ,".csv"), example_file, csv_sep)
 
-        writecsv(string(output_folder, "\\Result_HP_waste_heat_seasonal_",network_id ,".csv"), example_file)
-        writecsv(string(output_folder, "\\Result_HP_waste_heat_absorption_",network_id ,".csv"), example_file)
-        writecsv(string(output_folder, "\\Result_DEM_",network_id ,".csv"), example_file)
-        writecsv(string(output_folder, "\\Result_SOC_",network_id ,".csv"), example_file)
-        writecsv(string(output_folder, "\\Result_SOC_seasonal_",network_id ,".csv"), example_file)
-        writecsv(string(output_folder, "\\Result_Error_",network_id ,".csv"), example_file)
+        writedlm(string(output_folder, "\\Result_HEX_",network_id ,".csv"), example_file, csv_sep)
+        writedlm(string(output_folder, "\\Result_HP_I_1_",network_id ,".csv"), example_file, csv_sep)
+        writedlm(string(output_folder, "\\Result_HP_I_2_",network_id ,".csv"), example_file, csv_sep)
+        writedlm(string(output_folder, "\\Result_HP_I_3_",network_id ,".csv"), example_file, csv_sep)
+
+
+        writedlm(string(output_folder, "\\Result_HP_II_1_",network_id ,".csv"), example_file, csv_sep)
+        writedlm(string(output_folder, "\\Result_HP_II_2_",network_id ,".csv"), example_file, csv_sep)
+        writedlm(string(output_folder, "\\Result_HP_II_3_",network_id ,".csv"), example_file, csv_sep)
+
+        writedlm(string(output_folder, "\\Result_HP_III_1_",network_id ,".csv"), example_file, csv_sep)
+        writedlm(string(output_folder, "\\Result_HP_III_2_",network_id ,".csv"), example_file, csv_sep)
+        writedlm(string(output_folder, "\\Result_HP_III_3_",network_id ,".csv"), example_file, csv_sep)
+
+        writedlm(string(output_folder, "\\Result_HP_waste_heat_seasonal_",network_id ,".csv"), example_file, csv_sep)
+        writedlm(string(output_folder, "\\Result_HP_waste_heat_absorption_",network_id ,".csv"), example_file, csv_sep)
+        writedlm(string(output_folder, "\\Result_DEM_",network_id ,".csv"), example_file, csv_sep)
+        writedlm(string(output_folder, "\\Result_SOC_",network_id ,".csv"), example_file, csv_sep)
+        writedlm(string(output_folder, "\\Result_SOC_seasonal_",network_id ,".csv"), example_file, csv_sep)
+        writedlm(string(output_folder, "\\Result_Error_",network_id ,".csv"), example_file, csv_sep)
     end
 end

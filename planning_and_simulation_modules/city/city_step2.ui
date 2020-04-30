@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1191</width>
-    <height>1105</height>
+    <height>912</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,7 +18,7 @@
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -34,7 +34,7 @@
          </rect>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tab_3">
          <attribute name="title">
@@ -281,7 +281,7 @@ demand [MWh/y]</string>
             <x>10</x>
             <y>190</y>
             <width>1151</width>
-            <height>641</height>
+            <height>601</height>
            </rect>
           </property>
           <attribute name="horizontalHeaderDefaultSectionSize">
@@ -772,6 +772,9 @@ Future Scenario[MWh/y]</string>
               <height>22</height>
              </rect>
             </property>
+            <property name="maximum">
+             <number>100</number>
+            </property>
            </widget>
            <widget class="QSpinBox" name="envelope_dhw">
             <property name="geometry">
@@ -782,13 +785,29 @@ Future Scenario[MWh/y]</string>
               <height>22</height>
              </rect>
             </property>
+            <property name="maximum">
+             <number>100</number>
+            </property>
            </widget>
           </widget>
+         </widget>
+         <widget class="QPushButton" name="aaa">
+          <property name="geometry">
+           <rect>
+            <x>830</x>
+            <y>170</y>
+            <width>93</width>
+            <height>28</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>PushButton</string>
+          </property>
          </widget>
         </widget>
         <widget class="QWidget" name="tab_5">
          <attribute name="title">
-          <string>Useful Energy Demand(Cooling)</string>
+          <string>Useful Energy Demand (Cooling)</string>
          </attribute>
          <widget class="QTableWidget" name="table_sd_cool_targ">
           <property name="geometry">
@@ -796,7 +815,7 @@ Future Scenario[MWh/y]</string>
             <x>10</x>
             <y>10</y>
             <width>841</width>
-            <height>191</height>
+            <height>181</height>
            </rect>
           </property>
           <attribute name="horizontalHeaderDefaultSectionSize">
@@ -848,9 +867,7 @@ Future Scenario[MWh/y]</string>
           </row>
           <column>
            <property name="text">
-            <string>Baseline scenario
-Useful energy 
-demand [MWh/y]</string>
+            <string>Baseline scenario</string>
            </property>
            <property name="font">
             <font>
@@ -862,8 +879,7 @@ demand [MWh/y]</string>
           </column>
           <column>
            <property name="text">
-            <string>Baseline scenario
-Penetration factor</string>
+            <string>Baseline scenario</string>
            </property>
            <property name="font">
             <font>
@@ -875,8 +891,7 @@ Penetration factor</string>
           </column>
           <column>
            <property name="text">
-            <string>Future scenario
-Penetration factor</string>
+            <string>Future scenario</string>
            </property>
            <property name="font">
             <font>
@@ -888,9 +903,7 @@ Penetration factor</string>
           </column>
           <column>
            <property name="text">
-            <string>Future scenario
-Useful energy
-demand[MWh/y]</string>
+            <string>Future scenario</string>
            </property>
            <property name="font">
             <font>
@@ -902,7 +915,8 @@ demand[MWh/y]</string>
           </column>
           <item row="0" column="0">
            <property name="text">
-            <string/>
+            <string>Useful energy 
+demand [MWh/y]</string>
            </property>
            <property name="font">
             <font>
@@ -912,7 +926,7 @@ demand[MWh/y]</string>
           </item>
           <item row="0" column="1">
            <property name="text">
-            <string/>
+            <string>Penetration factor</string>
            </property>
            <property name="font">
             <font>
@@ -922,7 +936,7 @@ demand[MWh/y]</string>
           </item>
           <item row="0" column="2">
            <property name="text">
-            <string/>
+            <string>Penetration factor</string>
            </property>
            <property name="font">
             <font>
@@ -932,7 +946,8 @@ demand[MWh/y]</string>
           </item>
           <item row="0" column="3">
            <property name="text">
-            <string/>
+            <string>Useful energy
+demand[MWh/y]</string>
            </property>
           </item>
          </widget>
@@ -940,9 +955,9 @@ demand[MWh/y]</string>
           <property name="geometry">
            <rect>
             <x>10</x>
-            <y>220</y>
+            <y>200</y>
             <width>1141</width>
-            <height>681</height>
+            <height>581</height>
            </rect>
           </property>
           <attribute name="horizontalHeaderDefaultSectionSize">
@@ -1251,7 +1266,7 @@ Future Scenario[MWh/y]</string>
              </rect>
             </property>
             <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Increase of cooling[%]&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Increase of cooling [%]&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
            </widget>
            <widget class="QSpinBox" name="demoFact_cool">
@@ -1299,7 +1314,7 @@ Future Scenario[MWh/y]</string>
           <x>10</x>
           <y>10</y>
           <width>1161</width>
-          <height>881</height>
+          <height>831</height>
          </rect>
         </property>
         <property name="currentIndex">
@@ -1315,7 +1330,7 @@ Future Scenario[MWh/y]</string>
             <x>0</x>
             <y>60</y>
             <width>1151</width>
-            <height>631</height>
+            <height>581</height>
            </rect>
           </property>
           <attribute name="horizontalHeaderDefaultSectionSize">
@@ -1511,14 +1526,13 @@ Future Scenario[MWh/y]</string>
           </row>
           <row>
            <property name="text">
-            <string>Flat plate solar thermal 
+            <string>Flat plate ST
 collectors</string>
            </property>
           </row>
           <row>
            <property name="text">
-            <string>Evacuated tube solar 
-thermal collectors(ETC)</string>
+            <string>Evacuated tube ST collectors (ETC)</string>
            </property>
           </row>
           <row>
@@ -1536,6 +1550,17 @@ thermal collectors(ETC)</string>
           <row>
            <property name="text">
             <string>Other</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Total</string>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
            </property>
           </row>
           <column>
@@ -1643,7 +1668,7 @@ Future scenario[MWh7y]</string>
          <widget class="QPushButton" name="btn_ued">
           <property name="geometry">
            <rect>
-            <x>640</x>
+            <x>0</x>
             <y>10</y>
             <width>221</width>
             <height>28</height>
@@ -1656,7 +1681,7 @@ Future scenario[MWh7y]</string>
          <widget class="QPushButton" name="pushButton">
           <property name="geometry">
            <rect>
-            <x>872</x>
+            <x>232</x>
             <y>10</y>
             <width>191</width>
             <height>28</height>
@@ -1670,7 +1695,7 @@ Future scenario[MWh7y]</string>
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>710</y>
+            <y>650</y>
             <width>1151</width>
             <height>141</height>
            </rect>
@@ -2006,8 +2031,8 @@ Future scenario</string>
          <widget class="QPushButton" name="btn_ued_cool">
           <property name="geometry">
            <rect>
-            <x>900</x>
-            <y>0</y>
+            <x>10</x>
+            <y>10</y>
             <width>191</width>
             <height>28</height>
            </rect>
@@ -2122,8 +2147,8 @@ Future scenario</string>
        <widget class="QPushButton" name="ok">
         <property name="geometry">
          <rect>
-          <x>910</x>
-          <y>900</y>
+          <x>990</x>
+          <y>0</y>
           <width>151</width>
           <height>28</height>
          </rect>

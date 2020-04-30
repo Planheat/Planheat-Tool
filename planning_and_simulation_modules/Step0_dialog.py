@@ -669,10 +669,13 @@ class Step0Dialog(QtWidgets.QDockWidget, FORM_CLASS):
         self.worker = worker
 
         sources_availability = worker.source_availability()
+        # log = MyLog(None, "log_SMM_source_availability.txt")
+        # log.log("sources_availability", sources_availability)
         self.sources_availability = sources_availability
         if sources_availability is None:
             return
         sources_temperature = self.get_temperature_from_mapping_module(self.folder.text())
+        # log.log("sources_temperature", sources_temperature)
         self.sources_temperature = sources_temperature
 
         self.sources_available.clear()
@@ -683,7 +686,7 @@ class Step0Dialog(QtWidgets.QDockWidget, FORM_CLASS):
         i = 0
         for key in sources_availability.keys():
             self.sources_available.setItem(i, 0, QTableWidgetItem(str(key)))
-            self.sources_available.setItem(i, 1, QTableWidgetItem(str(round(sum(sources_availability[key])/1000.0, 2))))
+            self.sources_available.setItem(i, 1, QTableWidgetItem(str(round(sum(sources_availability[key]), 2))))
             self.sources_available.setItem(i, 2, QTableWidgetItem(str(round(sum(sources_temperature[key])/self.h8760, 2))))
             i = i + 1
         self.sources_available.setColumnWidth(0, 320)

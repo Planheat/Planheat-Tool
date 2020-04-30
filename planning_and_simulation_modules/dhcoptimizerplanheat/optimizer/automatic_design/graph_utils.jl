@@ -109,7 +109,7 @@ end
 #=
 Yields an outgoing edge to the given node with the given adjency dictionary.
 =#
-@resumable function out_edges(mdg::MultiDiGraph, u::VertexType) :: Union{MultiEdgeType, Void}
+@resumable function out_edges(mdg::MultiDiGraph, u::VertexType) :: Union{MultiEdgeType, Nothing}
     if u in keys(mdg.succ)
         for (v, ks) in mdg.succ[u]
             for k in ks
@@ -123,7 +123,7 @@ end
 #=
 Yields an incoming edge to the given node with the given adjency dictionary.
 =#
-@resumable function in_edges(mdg::MultiDiGraph, v::VertexType) :: Union{MultiEdgeType, Void}
+@resumable function in_edges(mdg::MultiDiGraph, v::VertexType) :: Union{MultiEdgeType, Nothing}
     if v in keys(mdg.pred)
         for (u, ks) in mdg.pred[v]
             for k in ks
@@ -137,7 +137,7 @@ end
 #=
 Yields reachable edges in a DFS way from a start node.
 =#
-@resumable function edges_dfs(mdg::MultiDiGraph, start_node::VertexType) :: Union{MultiEdgeType, Void}
+@resumable function edges_dfs(mdg::MultiDiGraph, start_node::VertexType) :: Union{MultiEdgeType, Nothing}
     visited_nodes = Set{VertexType}()
     visited_edges = Set{MultiEdgeType}()
     edges = Dict{VertexType, Any}()
@@ -166,7 +166,7 @@ end
 Find a cycle with the given adjency dictionary. Return `nothing` if no cycle is
 found.
 """
-function find_cycle(mdg::MultiDiGraph, start_nodes=nothing::Union{Void, Set{VertexType}}) :: Union{Array{MultiEdgeType, 1}, Void}
+function find_cycle(mdg::MultiDiGraph, start_nodes=nothing::Union{Nothing, Set{VertexType}}) :: Union{Array{MultiEdgeType, 1}, Nothing}
     explored = Set{VertexType}()
     cycle = Array{MultiEdgeType, 1}()
     final_node = nothing
@@ -333,7 +333,7 @@ end
 Return the lowest common ancestor of the two given nodes in the given DAG.
 Return `nothing` if none is found.
 """
-function lowest_common_ancestor(mdg::MultiDiGraph, node1::VertexType, node2::VertexType) :: Union{VertexType, Void}
+function lowest_common_ancestor(mdg::MultiDiGraph, node1::VertexType, node2::VertexType) :: Union{VertexType, Nothing}
     # First node backtracking
     nodes_stack = [node1]
     ancestors1 = Set{VertexType}([node1])

@@ -58,3 +58,24 @@ def RaiseConnectionError():
                         "please check your proxy or your firewall.")
     except requests.exceptions.ConnectionError:
         raise Exception("PlanHeatClient connection error: please check your Internet connection.")
+
+
+def test():
+    URL = PlanHeatClient("https://planheat.artelys.com")
+    d = URL.geo_query("resources-emission-factor")
+    r = d.send()
+    for f in r["features"]:
+        for k in f:
+            print(f[k])
+
+    for country in r["Country"]:
+        URL = PlanHeatClient("https://planheat.artelys.com")
+        d = URL.data_query("primary-energy-factor").filter("Country", country)
+        r = d.send()
+        print(r)
+
+
+
+    d.filter("Country", "Italy")
+    r = d.send()
+

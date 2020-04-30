@@ -76,31 +76,46 @@ IF "%QGIS_PYTHON_VERSION%" == "Python36" (
 "%PYTHON_DIR%\python.exe" -m pip install --ignore-installed --no-deps  "%PLUGIN_DEPS_DIR%\python_libs\geonetworkx-0.2-py3-none-any.whl"
 "%PYTHON_DIR%\python.exe" -m pip install --ignore-installed --no-deps  "%PLUGIN_DEPS_DIR%\python_libs\descartes-1.1.0-py3-none-any.whl"
 "%PYTHON_DIR%\python.exe" -m pip install --ignore-installed --no-deps  "%PLUGIN_DEPS_DIR%\python_libs\osmnx_Planheat-0.10.1-py3-none-any.whl"
-"%PYTHON_DIR%\python.exe" -m pip install --ignore-installed --no-deps  "%PLUGIN_DEPS_DIR%\python_libs\julia-0.1.5-py2.py3-none-any.whl"
+"%PYTHON_DIR%\python.exe" -m pip uninstall -y julia
+"%PYTHON_DIR%\python.exe" -m pip install --ignore-installed --no-deps  "%PLUGIN_DEPS_DIR%\python_libs\julia-0.5.3-py2.py3-none-any.whl"
+
 "%PYTHON_DIR%\python.exe" -m pip install --ignore-installed --no-deps  "%PLUGIN_DEPS_DIR%\python_libs\SRTM.py-0.3.4-py3-none-any.whl"
 "%PYTHON_DIR%\python.exe" -m pip install --ignore-installed --no-deps  "%PLUGIN_DEPS_DIR%\python_libs\planheatclient-2.1-py3-none-any.whl"
 
 
 REM =================================== Julia set up ===========================================
-SET "JULIA_HOME=%PLUGIN_DIR%\planning_and_simulation_modules\dhcoptimizerplanheat\deps\Julia-0.6.2\bin"
+SET "JULIA_HOME=%PLUGIN_DIR%\planning_and_simulation_modules\dhcoptimizerplanheat\deps\Julia-1.4.1\bin"
+SET "JULIA_BINDIR=%JULIA_HOME%"
 SET "JULIA_PKGDIR=%PLUGIN_DIR%\planning_and_simulation_modules\dhcoptimizerplanheat\deps\.julia"
+SET "JULIA_DEPOT_PATH=%JULIA_PKGDIR%"
 
-SET "PATH=%JULIA_HOME%;%PATH%"
+SET "PATH=%JULIA_HOME%;;%PATH%"
 
 
 REM ============================== Setting julia packages ======================================
-"%JULIA_HOME%\julia.exe" -e "ENV[\"PYTHON\"]=raw\"%PYTHON_DIR%\python.exe\";Pkg.build(\"PyCall\")"
+REM Renaming unused python dll to set up PyCall
+cd %PYTHON_DIR%
+IF EXIST "%PYTHON_DIR%\python37.dll" (
+	ren "python37.dll" "tmp_python37.dll"
+)
+"%JULIA_HOME%\julia.exe" -e "ENV[\"PYTHON\"]=raw\"%PYTHON_DIR%\python.exe\";using Pkg;Pkg.build(\"PyCall\")"
+REM Reset unused python dll name
+IF EXIST "%PYTHON_DIR%\tmp_python37.dll" (
+	ren "tmp_python37.dll" "python37.dll"
+)
+
+
 "%JULIA_HOME%\julia.exe" -e "using JuMP"
-"%JULIA_HOME%\julia.exe" -e "Pkg.build(\"Clp\");using Clp"
+"%JULIA_HOME%\julia.exe" -e "using Pkg;Pkg.build(\"Clp\");using Clp"
 "%JULIA_HOME%\julia.exe" -e "using Cbc"
 "%JULIA_HOME%\julia.exe" -e "using PyCall"
 "%JULIA_HOME%\julia.exe" -e "using CSV"
-"%JULIA_HOME%\julia.exe" -e "using Ipopt"
-"%JULIA_HOME%\julia.exe" -e "include(raw\"%PLUGIN_DIR%\planning_and_simulation_modules\dhcoptimizerplanheat\optimizer\automatic_design\DSSP.jl\"); using DSSP"
-"%JULIA_HOME%\julia.exe" -e "include(raw\"%PLUGIN_DIR%\planning_and_simulation_modules\dhcoptimizerplanheat\optimizer\automatic_design\NLP\NLP_variable_flows.jl\"); using NLP"
-"%JULIA_HOME%\julia.exe" -e "include(raw\"%PLUGIN_DIR%\planning_and_simulation_modules\Tjulia\Absorption_heat_pump_district_heating.jl\"); using Absorption_heat_pump_district_heating"
-"%JULIA_HOME%\julia.exe" -e "include(raw\"%PLUGIN_DIR%\planning_and_simulation_modules\Tjulia\district_cooling.jl\"); using district_cooling"
-"%JULIA_HOME%\julia.exe" -e "include(raw\"%PLUGIN_DIR%\planning_and_simulation_modules\Tjulia\individual_heating_and_cooling.jl\"); using individual_heating_and_cooling"
+"%JULIA_HOME%\julia.exe" -e "using Ipopt"	
+"%JULIA_HOME%\julia.exe" -e "include(raw\"%PLUGIN_DIR%\planning_and_simulation_modules\dhcoptimizerplanheat\optimizer\automatic_design\DSSP.jl\"); using Main.DSSP"
+"%JULIA_HOME%\julia.exe" -e "include(raw\"%PLUGIN_DIR%\planning_and_simulation_modules\dhcoptimizerplanheat\optimizer\automatic_design\NLP\NLP_variable_flows.jl\"); using Main.NLP"
+"%JULIA_HOME%\julia.exe" -e "include(raw\"%PLUGIN_DIR%\planning_and_simulation_modules\Tjulia\Absorption_heat_pump_district_heating.jl\"); using Main.Absorption_heat_pump_district_heating"
+"%JULIA_HOME%\julia.exe" -e "include(raw\"%PLUGIN_DIR%\planning_and_simulation_modules\Tjulia\district_cooling.jl\"); using Main.district_cooling"
+"%JULIA_HOME%\julia.exe" -e "include(raw\"%PLUGIN_DIR%\planning_and_simulation_modules\Tjulia\individual_heating_and_cooling.jl\"); using Main.individual_heating_and_cooling"
 
 
 
@@ -124,6 +139,9 @@ IF EXIST "%APPDATA%\Python" (
 			IF EXIST "%APPDATA%\Python\Python36\site-packages\osmnx" (
 				RMDIR /s /q "%APPDATA%\Python\Python36\site-packages\osmnx"
 			)
+			IF EXIST "%APPDATA%\Python\Python36\site-packages\pandas" (
+				RMDIR /s /q "%APPDATA%\Python\Python36\site-packages\pandas"
+			)
 		)
 		
 		IF EXIST "%APPDATA%\Python\Python36\lib\site-packages" (
@@ -133,6 +151,9 @@ IF EXIST "%APPDATA%\Python" (
 			IF EXIST "%APPDATA%\Python\Python36\lib\site-packages\osmnx" (
 				RMDIR /s /q "%APPDATA%\Python\Python36\lib\site-packages\osmnx"
 			)
+			IF EXIST "%APPDATA%\Python\Python36\lib\site-packages\pandas" (
+				RMDIR /s /q "%APPDATA%\Python\Python36\lib\site-packages\pandas"
+			)
 		)
 		
 		IF EXIST "%APPDATA%\Python\Python36\Lib\site-packages" (
@@ -141,6 +162,9 @@ IF EXIST "%APPDATA%\Python" (
 			)
 			IF EXIST "%APPDATA%\Python\Python36\Lib\site-packages\osmnx" (
 				RMDIR /s /q "%APPDATA%\Python\Python36\Lib\site-packages\osmnx"
+			)
+			IF EXIST "%APPDATA%\Python\Python36\Lib\site-packages\pandas" (
+				RMDIR /s /q "%APPDATA%\Python\Python36\Lib\site-packages\pandas"
 			)
 		)
 	)
@@ -154,6 +178,9 @@ IF EXIST "%APPDATA%\Python" (
 			IF EXIST "%APPDATA%\Python\Python37\site-packages\osmnx" (
 				RMDIR /s /q "%APPDATA%\Python\Python37\site-packages\osmnx"
 			)
+			IF EXIST "%APPDATA%\Python\Python37\site-packages\pandas" (
+				RMDIR /s /q "%APPDATA%\Python\Python37\site-packages\pandas"
+			)
 		)
 		
 		IF EXIST "%APPDATA%\Python\Python37\lib\site-packages" (
@@ -163,6 +190,9 @@ IF EXIST "%APPDATA%\Python" (
 			IF EXIST "%APPDATA%\Python\Python37\lib\site-packages\osmnx" (
 				RMDIR /s /q "%APPDATA%\Python\Python37\lib\site-packages\osmnx"
 			)
+			IF EXIST "%APPDATA%\Python\Python37\lib\site-packages\pandas" (
+				RMDIR /s /q "%APPDATA%\Python\Python37\lib\site-packages\pandas"
+			)
 		)
 		
 		IF EXIST "%APPDATA%\Python\Python37\Lib\site-packages" (
@@ -171,6 +201,9 @@ IF EXIST "%APPDATA%\Python" (
 			)
 			IF EXIST "%APPDATA%\Python\Python37\Lib\site-packages\osmnx" (
 				RMDIR /s /q "%APPDATA%\Python\Python37\Lib\site-packages\osmnx"
+			)
+			IF EXIST "%APPDATA%\Python\Python37\Lib\site-packages\pandas" (
+				RMDIR /s /q "%APPDATA%\Python\Python37\Lib\site-packages\pandas"
 			)
 		)
 	)

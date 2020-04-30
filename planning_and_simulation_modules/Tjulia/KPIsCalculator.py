@@ -3,8 +3,8 @@ import numpy as np
 
 from PyQt5 import QtGui, QtWidgets, uic
 from PyQt5.QtCore import Qt
-from PyQt5 import QtCore
-from PyQt5.QtWidgets import QTreeWidget, QTableWidgetItem
+import time
+from PyQt5.QtWidgets import QTreeWidget, QTableWidgetItem, QTreeWidgetItem
 
 import os.path
 import copy
@@ -12,6 +12,8 @@ import traceback
 import logging
 
 from .test.MyLog import MyLog
+from .services.NetworkTechCapex import NetworkTechCapex
+from .services.BuildingTechCapex import BuildingTechCapex
 
 # Import qgis main libraries
 from qgis.core import *
@@ -24,7 +26,9 @@ from .. import Network
 
 
 class KPIsCalculator:
-    sourceName = ["Heating Oil", "Natural gas", "Electricity", "Deep Geothermal",
+    h8760 = 8760
+
+    sourceName = ["Heating Oil", "Natural gas", "Electricity", "Deep geothermal",
                   "Geothermal - Shallow - Ground heat extraction",
                   "Geothermal - Shallow - Ground cold extraction", "Solar thermal", "Excess heat Industry",
                   "Excess heat - Data centers",
@@ -33,10 +37,16 @@ class KPIsCalculator:
                   "Excess heat - Subway networks", "Urban waste water treatment plant",
                   "Water - Waste water - Sewer system",
                   "Water - Surface water - Rivers cold extraction heat pump",
-                  "Water - Surface water - Rivers cold extraction from free cooling HEX", "Water - Surface water - Lakes heat extraction with heat pump",
+                  "Water - Surface water - Rivers cold extraction from free cooling", "Water - Surface water - Lakes heat extraction with heat pump",
                   "Water - Surface water - Lakes cold extraction with heat pump", "Water - Surface water - Rivers heat extraction heat pump",
-                  "LNG terminals excess cooling", "Biomass Forestry",
-                  "generic source"]  # insert all the 23 sources
+                  "Excess cooling - LNG terminals", "Biomass Forestry",
+                  "Generic heating/cooling source"]  # insert all the 23 sources
+
+    opex_conventional_fuels = [sourceName[0], # Heating Oil
+                               sourceName[1], # Natural gas
+                               sourceName[2], # Electricity
+                               sourceName[21]  # Biomass Forestry
+                               ]
 
     const_eff = ["Gas Boiler", "Biomass Boiler", "Oil Boiler", "Electrical Heater", "Gas CHP", "Oil CHP",
                  "Biomass CHP",
@@ -46,14 +56,15 @@ class KPIsCalculator:
                  "Waste heat absorption heat pump",
                  "Air source gas absorption heat pump", "Shallow geothermal gas absorption heat pump",
                  "Air source gas absorption chiller", "Shallow geothermal Gas absorption chiller"]
-    variable_eff_ng = ["Waste heat absorption heat pump"]
 
+    variable_eff_ng = ["Waste heat absorption heat pump"]
 
     variable_eff_el = ["Air Source Compression Heat Pump", "Shallow geothermal compression heat pump",
                        "Air source compression chiller", "Shallow geothermal compression chiller",
-                       "Waste heat compression heat pump medium T", "Seasonal waste heat heat pumps",
+                       "Waste Heat Compression Heat Pump Medium T", "Seasonal waste heat heat pumps",
                        "Cooling heat pump",
-                       "Waste heat compression heat pump low T", "Waste heat compression heat pump high T"]
+                       "Waste Heat Compression Heat Pump Low T", "Waste Heat Compression Heat Pump High T"]
+    solar_technologies = ["Evacuated tube solar collectors", "Flat plate solar collectors", "Seasonal Solar Thermal"]
 
     pollutant_colum_index = {"CO2": 1, "NOx": 2, "SOx": 3, "PM10": 4}
 
@@ -68,9 +79,10 @@ class KPIsCalculator:
         self.building_id = building_id
         self.logger = logging.getLogger(__name__)
         self.my_log = MyLog(os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                                         "test", "log_KPIs_calculator.txt"))
+                                         "test", "log", "log_KPIs_calculator.txt"))
 
-        self.baseline_tech_tab = None  # only used in future (??? really ???)
+        self.baseline_tech_tab = None  # only used in future (??? really not true ???)
+        self.baseline_tech_tab2 = None
         self.baseline_network_tech_tab = None  # only used in future
         self.future_tech_tab = None  # only used in future
         self.future_network_tech_tab = None  # only used in future
@@ -106,6 +118,8 @@ class KPIsCalculator:
             self.eco_param["demo_factor"] = self.KPIs_additional_data["demo_factor"]
         except:
             self.eco_param["demo_factor"] = 0.0
+        self.my_log.log("parametri aggiuntivi (eco_params):", self.eco_param)
+        self.my_log.log("KPIs_additional_data", self.KPIs_additional_data)
         self.eco_param["eta_DHN"] = []
         self.eco_param["eta_DCN"] = []
         try:
@@ -297,93 +311,96 @@ class KPIsCalculator:
                 traceback.print_exc()
 
         residential_factor = self.network.get_residential_factor()
+        self.residential_factor = residential_factor
         self.my_log.log("residential_factor for network " + str(self.network.name) + " : " + str(residential_factor))
         self.temp_pec = self.district_pec()
         self.pec = self.pec + self.temp_pec
         self.pecR = self.pecR + self.temp_pec * residential_factor
         self.pecT = self.pecT + self.temp_pec * (1 - residential_factor)
-        tmp = self.district_fec(self.work_folder, self.network.get_ID(), self.tech_tab)
-        self.my_log.log("fec contribution tmp for network:", self.network.name, tmp)
+        tmp_fec = self.district_fec(self.work_folder, self.network.get_ID(), self.tech_tab)
+        self.my_log.log("fec contribution tmp for network:", self.network.name, tmp_fec)
 
-        self.fec_s0 = self.fec_s0 + tmp[0]
-        self.fec_s1 = self.fec_s1 + tmp[1]
-        self.fec_s2 = self.fec_s2 + tmp[2]
-        self.fec_s3 = self.fec_s3 + tmp[3]
-        self.fec_s4 = self.fec_s4 + tmp[4]
-        self.fec_s5 = self.fec_s5 + tmp[5]
-        self.fec_s6 = self.fec_s6 + tmp[6]
-        self.fec_s7 = self.fec_s7 + tmp[7]
-        self.fec_s8 = self.fec_s8 + tmp[8]
-        self.fec_s9 = self.fec_s9 + tmp[9]
-        self.fec_s10 = self.fec_s10 + tmp[10]
-        self.fec_s11 = self.fec_s11 + tmp[11]
-        self.fec_s12 = self.fec_s12 + tmp[12]
-        self.fec_s13 = self.fec_s13 + tmp[13]
-        self.fec_s14 = self.fec_s14 + tmp[14]
-        self.fec_s15 = self.fec_s15 + tmp[15]
-        self.fec_s16 = self.fec_s16 + tmp[16]
-        self.fec_s17 = self.fec_s17 + tmp[17]
-        self.fec_s18 = self.fec_s18 + tmp[18]
-        self.fec_s19 = self.fec_s19 + tmp[19]
-        self.fec_s20 = self.fec_s20 + tmp[20]
-        self.fec_s21 = self.fec_s21 + tmp[21]
-        self.fec_s22 = self.fec_s22 + tmp[22]
+        self.fec_s0 = self.fec_s0 + tmp_fec[0]
+        self.fec_s1 = self.fec_s1 + tmp_fec[1]
+        self.fec_s2 = self.fec_s2 + tmp_fec[2]
+        self.fec_s3 = self.fec_s3 + tmp_fec[3]
+        self.fec_s4 = self.fec_s4 + tmp_fec[4]
+        self.fec_s5 = self.fec_s5 + tmp_fec[5]
+        self.fec_s6 = self.fec_s6 + tmp_fec[6]
+        self.fec_s7 = self.fec_s7 + tmp_fec[7]
+        self.fec_s8 = self.fec_s8 + tmp_fec[8]
+        self.fec_s9 = self.fec_s9 + tmp_fec[9]
+        self.fec_s10 = self.fec_s10 + tmp_fec[10]
+        self.fec_s11 = self.fec_s11 + tmp_fec[11]
+        self.fec_s12 = self.fec_s12 + tmp_fec[12]
+        self.fec_s13 = self.fec_s13 + tmp_fec[13]
+        self.fec_s14 = self.fec_s14 + tmp_fec[14]
+        self.fec_s15 = self.fec_s15 + tmp_fec[15]
+        self.fec_s16 = self.fec_s16 + tmp_fec[16]
+        self.fec_s17 = self.fec_s17 + tmp_fec[17]
+        self.fec_s18 = self.fec_s18 + tmp_fec[18]
+        self.fec_s19 = self.fec_s19 + tmp_fec[19]
+        self.fec_s20 = self.fec_s20 + tmp_fec[20]
+        self.fec_s21 = self.fec_s21 + tmp_fec[21]
+        self.fec_s22 = self.fec_s22 + tmp_fec[22]
 
         if self.network.n_type == "DHN":
-            self.fecDistrict_DHN = self.fecDistrict_DHN + np.sum(tmp)
-            self.fecDistrictR_DHN = self.fecDistrictR_DHN + np.sum(tmp) * residential_factor
-            self.fecDistrictT_DHN = self.fecDistrictT_DHN + np.sum(tmp) * (1 - residential_factor)
+            self.fecDistrict_DHN = self.fecDistrict_DHN + np.sum(tmp_fec)
+            self.fecDistrictR_DHN = self.fecDistrictR_DHN + np.sum(tmp_fec) * residential_factor
+            self.fecDistrictT_DHN = self.fecDistrictT_DHN + np.sum(tmp_fec) * (1 - residential_factor)
         if self.network.n_type == "DCN":
-            self.fecDistrict_DCN = self.fecDistrict_DCN + np.sum(tmp)
-            self.fecDistrictR_DCN = self.fecDistrictR_DCN + np.sum(tmp) * residential_factor
-            self.fecDistrictT_DCN = self.fecDistrictT_DCN + np.sum(tmp) * (1 - residential_factor)
+            self.fecDistrict_DCN = self.fecDistrict_DCN + np.sum(tmp_fec)
+            self.fecDistrictR_DCN = self.fecDistrictR_DCN + np.sum(tmp_fec) * residential_factor
+            self.fecDistrictT_DCN = self.fecDistrictT_DCN + np.sum(tmp_fec) * (1 - residential_factor)
 
         #self.fecR = self.fecR + tmp * residential_factor
-        self.fecR_s0 += tmp[0] * residential_factor
-        self.fecR_s1 += tmp[1] * residential_factor
-        self.fecR_s2 += tmp[2] * residential_factor
-        self.fecR_s3 += tmp[3] * residential_factor
-        self.fecR_s4 += tmp[4] * residential_factor
-        self.fecR_s5 += tmp[5] * residential_factor
-        self.fecR_s6 += tmp[6] * residential_factor
-        self.fecR_s7 += tmp[7] * residential_factor
-        self.fecR_s8 += tmp[9] * residential_factor
-        self.fecR_s10 += tmp[10] * residential_factor
-        self.fecR_s11 += tmp[11] * residential_factor
-        self.fecR_s12 += tmp[12] * residential_factor
-        self.fecR_s13 += tmp[13] * residential_factor
-        self.fecR_s14 += tmp[14] * residential_factor
-        self.fecR_s15 += tmp[15] * residential_factor
-        self.fecR_s16 += tmp[16] * residential_factor
-        self.fecR_s17 += tmp[17] * residential_factor
-        self.fecR_s18 += tmp[18] * residential_factor
-        self.fecR_s19 += tmp[19] * residential_factor
-        self.fecR_s20 += tmp[20] * residential_factor
-        self.fecR_s21 += tmp[21] * residential_factor
-        self.fecR_s22 += tmp[22] * residential_factor
+        self.fecR_s0 += tmp_fec[0] * residential_factor
+        self.fecR_s1 += tmp_fec[1] * residential_factor
+        self.fecR_s2 += tmp_fec[2] * residential_factor
+        self.fecR_s3 += tmp_fec[3] * residential_factor
+        self.fecR_s4 += tmp_fec[4] * residential_factor
+        self.fecR_s5 += tmp_fec[5] * residential_factor
+        self.fecR_s6 += tmp_fec[6] * residential_factor
+        self.fecR_s7 += tmp_fec[7] * residential_factor
+        self.fecR_s8 += tmp_fec[8] * residential_factor
+        self.fecR_s9 += tmp_fec[9] * residential_factor
+        self.fecR_s10 += tmp_fec[10] * residential_factor
+        self.fecR_s11 += tmp_fec[11] * residential_factor
+        self.fecR_s12 += tmp_fec[12] * residential_factor
+        self.fecR_s13 += tmp_fec[13] * residential_factor
+        self.fecR_s14 += tmp_fec[14] * residential_factor
+        self.fecR_s15 += tmp_fec[15] * residential_factor
+        self.fecR_s16 += tmp_fec[16] * residential_factor
+        self.fecR_s17 += tmp_fec[17] * residential_factor
+        self.fecR_s18 += tmp_fec[18] * residential_factor
+        self.fecR_s19 += tmp_fec[19] * residential_factor
+        self.fecR_s20 += tmp_fec[20] * residential_factor
+        self.fecR_s21 += tmp_fec[21] * residential_factor
+        self.fecR_s22 += tmp_fec[22] * residential_factor
 
-        self.fecT_s0 += tmp[0] * (1 - residential_factor)
-        self.fecT_s1 += tmp[1] * (1 - residential_factor)
-        self.fecT_s2 += tmp[2] * (1 - residential_factor)
-        self.fecT_s3 += tmp[3] * (1 - residential_factor)
-        self.fecT_s4 += tmp[4] * (1 - residential_factor)
-        self.fecT_s5 += tmp[5] * (1 - residential_factor)
-        self.fecT_s6 += tmp[6] * (1 - residential_factor)
-        self.fecT_s7 += tmp[7] * (1 - residential_factor)
-        self.fecT_s8 += tmp[9] * (1 - residential_factor)
-        self.fecT_s10 += tmp[10] * (1 - residential_factor)
-        self.fecT_s11 += tmp[11] * (1 - residential_factor)
-        self.fecT_s12 += tmp[12] * (1 - residential_factor)
-        self.fecT_s13 += tmp[13] * (1 - residential_factor)
-        self.fecT_s14 += tmp[14] * (1 - residential_factor)
-        self.fecT_s15 += tmp[15] * (1 - residential_factor)
-        self.fecT_s16 += tmp[16] * (1 - residential_factor)
-        self.fecT_s17 += tmp[17] * (1 - residential_factor)
-        self.fecT_s18 += tmp[18] * (1 - residential_factor)
-        self.fecT_s19 += tmp[19] * (1 - residential_factor)
-        self.fecT_s20 += tmp[20] * (1 - residential_factor)
-        self.fecT_s21 += tmp[21] * (1 - residential_factor)
-        self.fecT_s22 += tmp[22] * (1 - residential_factor)
+        self.fecT_s0 += tmp_fec[0] * (1 - residential_factor)
+        self.fecT_s1 += tmp_fec[1] * (1 - residential_factor)
+        self.fecT_s2 += tmp_fec[2] * (1 - residential_factor)
+        self.fecT_s3 += tmp_fec[3] * (1 - residential_factor)
+        self.fecT_s4 += tmp_fec[4] * (1 - residential_factor)
+        self.fecT_s5 += tmp_fec[5] * (1 - residential_factor)
+        self.fecT_s6 += tmp_fec[6] * (1 - residential_factor)
+        self.fecT_s7 += tmp_fec[7] * (1 - residential_factor)
+        self.fecT_s8 += tmp_fec[8] * (1 - residential_factor)
+        self.fecT_s9 += tmp_fec[9] * (1 - residential_factor)
+        self.fecT_s10 += tmp_fec[10] * (1 - residential_factor)
+        self.fecT_s11 += tmp_fec[11] * (1 - residential_factor)
+        self.fecT_s12 += tmp_fec[12] * (1 - residential_factor)
+        self.fecT_s13 += tmp_fec[13] * (1 - residential_factor)
+        self.fecT_s14 += tmp_fec[14] * (1 - residential_factor)
+        self.fecT_s15 += tmp_fec[15] * (1 - residential_factor)
+        self.fecT_s16 += tmp_fec[16] * (1 - residential_factor)
+        self.fecT_s17 += tmp_fec[17] * (1 - residential_factor)
+        self.fecT_s18 += tmp_fec[18] * (1 - residential_factor)
+        self.fecT_s19 += tmp_fec[19] * (1 - residential_factor)
+        self.fecT_s20 += tmp_fec[20] * (1 - residential_factor)
+        self.fecT_s21 += tmp_fec[21] * (1 - residential_factor)
+        self.fecT_s22 += tmp_fec[22] * (1 - residential_factor)
 
         tmp = self.district_pecRENs(self.work_folder, self.network.get_ID(),
                                     self.tech_tab, self.pef_sources_tab)
@@ -460,9 +477,9 @@ class KPIsCalculator:
         self.grantR = self.grant + self.district_grant_contribution(use="R")
         self.grantT = self.grant + self.district_grant_contribution(use="T")
 
-        self.opex = self.opex + (self.district_FECfut_tech_per_energy_tariff() + self.district_UEDfut_tech_per_energy_tariff())
-        self.opexR = self.opexR + (self.district_FECfut_tech_per_energy_tariff() + self.district_UEDfut_tech_per_energy_tariff()) * residential_factor
-        self.opexT = self.opexT + (self.district_FECfut_tech_per_energy_tariff() + self.district_UEDfut_tech_per_energy_tariff()) * (1 - residential_factor)
+        self.opex = self.opex + self.district_UEDfut_tech_per_energy_tariff()  # + fec contribution in fec_district()
+        self.opexR = self.opexR + self.district_UEDfut_tech_per_energy_tariff() * residential_factor
+        self.opexT = self.opexT + self.district_UEDfut_tech_per_energy_tariff() * (1 - residential_factor)
 
         if self.future_scenario is not None:
             self.KPIs_input["fuel_cost_saving"] = self.KPIs_input[
@@ -475,12 +492,12 @@ class KPIsCalculator:
                 use="T")
         else:
             self.fuel_cost_saving = self.fuel_cost_saving + self.district_FECfut_tech_per_energy_tariff() * (1 + self.eco_param["demo_factor"])
-            self.fuel_cost_savingR = self.fuel_cost_savingT + self.district_FECfut_tech_per_energy_tariff(use="R") * (1 + self.eco_param["demo_factor"])
+            self.fuel_cost_savingR = self.fuel_cost_savingR + self.district_FECfut_tech_per_energy_tariff(use="R") * (1 + self.eco_param["demo_factor"])
             self.fuel_cost_savingT = self.fuel_cost_savingT + self.district_FECfut_tech_per_energy_tariff(use="T") * (1 + self.eco_param["demo_factor"])
         if self.future_scenario is not None:
-            self.capext = self.capext + self.district_capex()
-            self.capextR = self.capextR + self.district_capex(use="R")
-            self.capextT = self.capextT + self.district_capex(use="T")
+            # self.capext = self.capext + self.district_capex()
+            # self.capextR = self.capextR + self.district_capex(use="R")
+            # self.capextT = self.capextT + self.district_capex(use="T")
             self.KPIs_input["OeM_cost_saving"] = self.KPIs_input[
                                                      "OeM_cost_saving"] - self.district_UEDfut_tech_per_energy_tariff()
             self.KPIs_input["OeM_cost_savingR"] = self.KPIs_input[
@@ -552,7 +569,8 @@ class KPIsCalculator:
             self.fecR_s5 += tmp[5]
             self.fecR_s6 += tmp[6]
             self.fecR_s7 += tmp[7]
-            self.fecR_s8 += tmp[9]
+            self.fecR_s8 += tmp[8]
+            self.fecR_s9 += tmp[9]
             self.fecR_s10 += tmp[10]
             self.fecR_s11 += tmp[11]
             self.fecR_s12 += tmp[12]
@@ -575,7 +593,8 @@ class KPIsCalculator:
             self.fecT_s5 += tmp[5]
             self.fecT_s6 += tmp[6]
             self.fecT_s7 += tmp[7]
-            self.fecT_s8 += tmp[9]
+            self.fecT_s8 += tmp[8]
+            self.fecT_s9 += tmp[9]
             self.fecT_s10 += tmp[10]
             self.fecT_s11 += tmp[11]
             self.fecT_s12 += tmp[12]
@@ -714,12 +733,12 @@ class KPIsCalculator:
         self.opexT = self.opexT + self.building_UEDfut_tech_per_energy_tariff(
             use="T") + self.building_FECfut_tech_per_energy_tariff(use="T")
 
-        if self.future_scenario is not None:
-            self.capext = self.capext + self.building_capex()
-            if self.building_tag == "Residential":
-                self.capextR = self.capextR + self.building_capex()
-            else:
-                self.capextT = self.capextT + self.building_capex()
+        # if self.future_scenario is not None:
+            # self.capext = self.capext + self.building_capex()
+            # if self.building_tag == "Residential":
+            #    self.capextR = self.capextR + self.building_capex()
+            # else:
+            #    self.capextT = self.capextT + self.building_capex()
 
         incr_el_sale = self.get_el_sale_increment_building()
         self.el_sale += incr_el_sale
@@ -1104,9 +1123,9 @@ class KPIsCalculator:
                                           self.fecADJpesT_s20 - self.fecPEST_s20) + (self.fecADJpesT_s21 - self.fecPEST_s21) + (
                                           self.fecADJpesT_s22 - self.fecPEST_s22)
 
-            KPIs["EN_1.6"] = self.sumPECsav
-            KPIs["EN_1.6R"] = self.sumPECsavR
-            KPIs["EN_1.6T"] = self.sumPECsavT
+            KPIs["EN_1.6"] = -self.sumPECsav
+            KPIs["EN_1.6R"] = -self.sumPECsavR
+            KPIs["EN_1.6T"] = -self.sumPECsavT
 
             try:
                 KPIs["EN_2.4_s0"] = round(self.fec_s0 / self.area, 2)
@@ -1540,11 +1559,11 @@ class KPIsCalculator:
             except (ZeroDivisionError, TypeError) as e:
                 KPIs["EN_7.5"] = "Nan"
             try:
-                KPIs["EN_7.5R"] = (KPIs["EN_7.3R"] / self.FCadjBase - 1) * 100
+                KPIs["EN_7.5R"] = (KPIs["EN_7.3R"] / self.FCadjBaseR - 1) * 100
             except (ZeroDivisionError, TypeError) as e:
                 KPIs["EN_7.5R"] = "Nan"
             try:
-                KPIs["EN_7.5T"] = (KPIs["EN_7.3T"] / self.FCadjBase - 1) * 100
+                KPIs["EN_7.5T"] = (KPIs["EN_7.3T"] / self.FCadjBaseT - 1) * 100
             except (ZeroDivisionError, TypeError) as e:
                 KPIs["EN_7.5T"] = "Nan"
             try:
@@ -1570,24 +1589,34 @@ class KPIsCalculator:
             # KPIs["EN_11.3R"] = self.fecR_s6
             # KPIs["EN_11.3R"] = self.fecT_s6
 
-            KPIs["EN_12.2"] = round((self.PEC_RESWH  / KPIs["EN_1.3"])*100)
-            KPIs["EN_12.2R"] = round((self.PEC_RESWHR  / KPIs["EN_1.3R"])*100)
-            KPIs["EN_12.2T"] = round((self.PEC_RESWHT  / KPIs["EN_1.3T"])*100)
+            try:
+                KPIs["EN_12.2"] = round((self.PEC_RESWH  / KPIs["EN_1.3"])*100, 2)
+            except(ZeroDivisionError, TypeError) as e:
+                KPIs["EN_12.2"] = "Nan"
+            try:
+                KPIs["EN_12.2R"] = round((self.PEC_RESWHR  / KPIs["EN_1.3R"])*100, 2)
+            except(ZeroDivisionError, TypeError) as e:
+                KPIs["EN_12.2R"] = "Nan"
+            try:
+                KPIs["EN_12.2T"] = round((self.PEC_RESWHT  / KPIs["EN_1.3T"])*100, 2)
+            except(ZeroDivisionError, TypeError) as e:
+                KPIs["EN_12.2T"] = "Nan"
 
             try:
-                KPIs["EN_12.3"] = round((self.PEC_RESWH / KPIs["EN_12.1_baseline"] - 1) * 100)
+                KPIs["EN_12.3"] = "{:.2f}".format(round((self.PEC_RESWH / KPIs["EN_12.1_baseline"] - 1) * 100, 2))
             except (ZeroDivisionError, TypeError) as e:
                 KPIs["EN_12.3"] = "Nan"
             try:
-                KPIs["EN_12.3R"] = round((self.PEC_RESWHR / KPIs["EN_12.1_baselineR"] - 1) * 100)
-            except (ZeroDivisionError, TypeError) as e:
+                KPIs["EN_12.3R"] = "{:.2f}".format(round((self.PEC_RESWHR / KPIs["EN_12.1_baselineR"] - 1) * 100, 2))
+            except(ZeroDivisionError, TypeError) as e:
                 KPIs["EN_12.3R"] = "Nan"
             try:
-                KPIs["EN_12.3T"] = round((self.PEC_RESWHT / KPIs["EN_12.1_baselineT"] - 1) * 100)
-            except (ZeroDivisionError, TypeError) as e:
+                KPIs["EN_12.3T"] = "{:.2f}".format(round((self.PEC_RESWHT / KPIs["EN_12.1_baselineT"] - 1) * 100, 2))
+            except(ZeroDivisionError, TypeError) as e:
                 KPIs["EN_12.3T"] = "Nan"
 
             try:
+                self.my_log.log("self.eco_param[\"eta_DHN\"]:", self.eco_param["eta_DHN"])
                 eta_DHN_average = sum(self.eco_param["eta_DHN"])/len(self.eco_param["eta_DHN"])
             except ZeroDivisionError:
                 eta_DHN_average = 0.0
@@ -1596,17 +1625,17 @@ class KPIsCalculator:
             except ZeroDivisionError:
                 eta_DCN_average = 0.0
             try:
-                KPIs["EN_13.2"] = round(self.get_UED_networks(self.future_scenario, "DHN") * (1 / eta_DHN_average), 2)
+                KPIs["EN_13.2"] = round(self.get_UED_networks(self.future_scenario, "DHN") * ((1 / eta_DHN_average)-1), 2)
             except:
                 self.my_log.log("ERROR KPIs[\"EN_13.2\"]")
                 KPIs["EN_13.2"] = "Nan"
             try:
-                KPIs["EN_13.2R"] = round(self.get_UED_networks(self.future_scenario, "DHN") * (1 / eta_DHN_average), 2)
+                KPIs["EN_13.2R"] = round(self.get_UED_networks(self.future_scenario, "DHN", use="R") * ((1 / eta_DHN_average)-1), 2)
             except:
                 self.my_log.log("ERROR KPIs[\"EN_13.2R\"]")
                 KPIs["EN_13.2R"] = "Nan"
             try:
-                KPIs["EN_13.2T"] = round(self.get_UED_networks(self.future_scenario, "DHN") * (1 / eta_DHN_average), 2)
+                KPIs["EN_13.2T"] = round(self.get_UED_networks(self.future_scenario, "DHN", use="T") * ((1 / eta_DHN_average)-1), 2)
             except:
                 self.my_log.log("ERROR KPIs[\"EN_13.2T\"]")
                 KPIs["EN_13.2T"] = "Nan"
@@ -1655,26 +1684,28 @@ class KPIsCalculator:
             except(ZeroDivisionError, TypeError) as e:
                 KPIs["EN_14.2T"] = "Nan"
             try:
-                KPIs["EN_14.3"] = round((KPIs["EN_14.2"] / KPIs["EN_14.1"] - 1) * 100)
+                KPIs["EN_14.3"] = "{:.2f}".format(round((KPIs["EN_14.2"] / KPIs["EN_14.1"] - 1) * 100))
             except (ZeroDivisionError, TypeError) as e:
                 KPIs["EN_14.3"] = "Nan"
             try:
-                KPIs["EN_14.3R"] = round((KPIs["EN_14.2R"] / KPIs["EN_14.1R"] - 1) * 100)
+                KPIs["EN_14.3R"] = "{:.2f}".format(round((KPIs["EN_14.2R"] / KPIs["EN_14.1R"] - 1) * 100))
             except (ZeroDivisionError, TypeError) as e:
                 KPIs["EN_14.3R"] = "Nan"
             try:
-                KPIs["EN_14.3T"] = round((KPIs["EN_14.2T"] / KPIs["EN_14.1T"] - 1) * 100)
+                KPIs["EN_14.3T"] = "{:.2f}".format(round((KPIs["EN_14.2T"] / KPIs["EN_14.1T"] - 1) * 100))
             except (ZeroDivisionError, TypeError) as e:
                 KPIs["EN_14.3T"] = "Nan"
             try:
                 KPIs["EN_15.2"] = self.YEOHbase
             except:
                 KPIs["EN_15.2"] = -274
-
+            try:
                 KPIs["EN_15.3"] = (KPIs["EN_15.2"] / KPIs["EN_15.1"] - 1) * 100
-            fec = [KPIs["EN_2.1_s" + str(i)] for i in range(len(self.sourceName))]
-            fecR = [KPIs["EN_2.1R_s" + str(i)] for i in range(len(self.sourceName))]
-            fecT = [KPIs["EN_2.1T_s" + str(i)] for i in range(len(self.sourceName))]
+            except:
+                KPIs["EN_15.3"] = "Nan"
+            fec = [KPIs["EN_2.3_s" + str(i)] for i in range(len(self.sourceName))]
+            fecR = [KPIs["EN_2.3R_s" + str(i)] for i in range(len(self.sourceName))]
+            fecT = [KPIs["EN_2.3T_s" + str(i)] for i in range(len(self.sourceName))]
             KPIs["ENV_1.5"] = self.get_t_pollutant_future(fec, self.pollutant_colum_index["CO2"])
             KPIs["ENV_1.5R"] = self.get_t_pollutant_future(fecR, self.pollutant_colum_index["CO2"])
             KPIs["ENV_1.5T"] = self.get_t_pollutant_future(fecT, self.pollutant_colum_index["CO2"])
@@ -1691,7 +1722,7 @@ class KPIsCalculator:
             except (ZeroDivisionError, TypeError) as e:
                 KPIs["ENV_1.6T"] = "Nan"
             try:
-                KPIs["ENV_1.1"] = (KPIs["ENV_1.3"] / KPIs["ENV_1.5"]) * 100
+                KPIs["ENV_1.1"] = ((KPIs["ENV_1.5"] - KPIs["ENV_1.3"]) / KPIs["ENV_1.3"]) * 100
             except (ZeroDivisionError, TypeError) as e:
                 KPIs["ENV_1.1"] = "Nan"
             try:
@@ -1714,9 +1745,7 @@ class KPIsCalculator:
                 KPIs["ENV_1.2T"] = self.get_t_pollutant_sav(KPIs, self.pollutant_colum_index["CO2"], type="T")
             except TypeError:
                 KPIs["ENV_1.2T"] = "Nan"
-            fec = [KPIs["EN_2.1_s" + str(i)] for i in range(len(self.sourceName))]
-            fecR = [KPIs["EN_2.1R_s" + str(i)] for i in range(len(self.sourceName))]
-            fecT = [KPIs["EN_2.1T_s" + str(i)] for i in range(len(self.sourceName))]
+
             KPIs["ENV_2.3"] = self.get_t_pollutant_future(fec, self.pollutant_colum_index["NOx"])
             KPIs["ENV_2.3R"] = self.get_t_pollutant_future(fecR, self.pollutant_colum_index["NOx"])
             KPIs["ENV_2.3T"] = self.get_t_pollutant_future(fecT, self.pollutant_colum_index["NOx"])
@@ -1756,7 +1785,7 @@ class KPIsCalculator:
                 KPIs["ENV_2.6T"] = self.get_t_pollutant_sav(KPIs, self.pollutant_colum_index["NOx"], type="T")
             except TypeError:
                 KPIs["ENV_2.6T"] = "Nan"
-            fec, fecR, fecT = self.get_fec(KPIs)
+
             KPIs["ENV_2.9"] = self.get_t_pollutant_future(fec, self.pollutant_colum_index["SOx"])
             KPIs["ENV_2.9R"] = self.get_t_pollutant_future(fecR, self.pollutant_colum_index["SOx"])
             KPIs["ENV_2.9T"] = self.get_t_pollutant_future(fecT, self.pollutant_colum_index["SOx"])
@@ -1796,7 +1825,7 @@ class KPIsCalculator:
                 KPIs["ENV_2.12T"] = self.get_t_pollutant_sav(KPIs, self.pollutant_colum_index["SOx"], type="T")
             except TypeError:
                 KPIs["ENV_2.12T"] = "Nan"
-            fec, fecR, fecT = self.get_fec(KPIs)
+
             KPIs["ENV_2.15"] = self.get_t_pollutant_future(fec, self.pollutant_colum_index["PM10"])
             KPIs["ENV_2.15R"] = self.get_t_pollutant_future(fecR, self.pollutant_colum_index["PM10"])
             KPIs["ENV_2.15T"] = self.get_t_pollutant_future(fecT, self.pollutant_colum_index["PM10"])
@@ -1836,20 +1865,26 @@ class KPIsCalculator:
                 KPIs["ENV_2.18T"] = self.get_t_pollutant_sav(KPIs, self.pollutant_colum_index["PM10"], type="T")
             except TypeError:
                 KPIs["ENV_2.18T"] = "Nan"
-
+            try:
+                district_factor = self.eco_param["residential_factors"]/len(self.eco_param["residential_factors"])
+            except:
+                district_factor = 0.5
+            self.capext, self.capextR, self.capextT = self.get_capex(self.baseline_tech_tab2, self.future_tech_tab,
+                                                                     None, self.future_network_tech_tab, district_factor)
             KPIs["ECO_1.4"] = self.capext
             KPIs["ECO_1.4R"] = self.capextR
             KPIs["ECO_1.4T"] = self.capextT
-            KPIs["ECO_1.1"], KPIs["ECO_1.1R"], KPIs["ECO_1.1T"] = self.eco_1_punto_1()
-
-            self.my_log.log("Calcolo ECO_12.1")
+            KPIs["ECO_1.1"], _, _= self.eco_1_punto_1()
+            KPIs["ECO_1.1R"] = "-" # TODO check formula for RES and TER
+            KPIs["ECO_1.1T"] = "-" # TODO check formula for RES and TER
+            self.my_log.log("Calcolo ECO_1.2")
             KPIs["ECO_1.2"] = self.eco_uno_punto_due()
             self.my_log.log("ECO_1.2: " + str(KPIs["ECO_1.2"]))
             self.my_log.log("Calcolo ECO_12.1R")
-            KPIs["ECO_1.2R"] = self.eco_uno_punto_due(use="R")
+            KPIs["ECO_1.2R"] = "-" # TODO self.eco_uno_punto_due(use="R")
             self.my_log.log("ECO_1.2R: " + str(KPIs["ECO_1.2R"]))
             self.my_log.log("Calcolo ECO_12.1T")
-            KPIs["ECO_1.2T"] = self.eco_uno_punto_due(use="T")
+            KPIs["ECO_1.2T"] = "-"  # TODO self.eco_uno_punto_due(use="T")
             self.my_log.log("ECO_1.2T: " + str(KPIs["ECO_1.2T"]))
 
             KPIs["ECO_1.3"] = self.eco_uno_punto_tre()
@@ -1858,9 +1893,9 @@ class KPIsCalculator:
             KPIs["ECO_2.2"] = self.opex
             KPIs["ECO_2.2R"] = self.opexR
             KPIs["ECO_2.2T"] = self.opexT
-            KPIs["ECO_2.3"] = self.eco_2_punto_3()
-            KPIs["ECO_2.3R"] = self.eco_2_punto_3(use="R")
-            KPIs["ECO_2.3T"] = self.eco_2_punto_3(use="T")
+            KPIs["ECO_2.3"] = KPIs["ECO_2.2"] - KPIs["ECO_2.1"]
+            KPIs["ECO_2.3R"] = KPIs["ECO_2.2R"] - KPIs["ECO_2.1R"]
+            KPIs["ECO_2.3T"] = KPIs["ECO_2.2T"] - KPIs["ECO_2.1T"]
             KPIs["ECO_3.1"] = self.eco_3_punto_1()
             KPIs["ECO_3.1R"] = self.eco_3_punto_1(use="R")
             KPIs["ECO_3.1T"] = self.eco_3_punto_1(use="T")
@@ -2401,9 +2436,18 @@ class KPIsCalculator:
             KPIs["EN_11.1R"] = self.fecR_s6
             KPIs["EN_11.1T"] = self.fecT_s6
 
-            KPIs["EN_12.1"] = round(self.PEC_baseRESWH_sum / KPIs["EN_1.1"] * 100)
-            KPIs["EN_12.1R"] = round(self.PEC_baseRESWHR_sum / KPIs["EN_1.1R"] * 100)
-            KPIs["EN_12.1T"] = round(self.PEC_baseRESWHT_sum / KPIs["EN_1.1T"] * 100)
+            try:
+                KPIs["EN_12.1"] = round(self.PEC_baseRESWH_sum / KPIs["EN_1.1"] * 100, 2)
+            except(ZeroDivisionError, TypeError) as e:
+                KPIs["EN_12.1"] = "Nan"
+            try:
+                KPIs["EN_12.1R"] = round(self.PEC_baseRESWHR_sum / KPIs["EN_1.1R"] * 100, 2)
+            except(ZeroDivisionError, TypeError) as e:
+                KPIs["EN_12.1R"] = "Nan"
+            try:
+                KPIs["EN_12.1T"] = round(self.PEC_baseRESWHT_sum / KPIs["EN_1.1T"] * 100, 2)
+            except(ZeroDivisionError, TypeError) as e:
+                KPIs["EN_12.1T"] = "Nan"
 
             KPIs["EN_12.1_baseline"] = self.PEC_baseRESWH_sum
             KPIs["EN_12.1_baselineR"] = self.PEC_baseRESWHR_sum
@@ -2487,7 +2531,7 @@ class KPIsCalculator:
                     sum([self.YEOHbaseT[key][0] / self.YEOHbaseT[key][1] for key in self.YEOHbaseT.keys()]), 2)
             except:
                 KPIs["EN_15.1T"] = "Nan"
-            # KPIs["ENV_1.3"] = round(self.CO2, 2)
+
             fec = [KPIs["EN_2.1_s" + str(i)] for i in range(len(self.sourceName))]
             fecR = [KPIs["EN_2.1R_s" + str(i)] for i in range(len(self.sourceName))]
             fecT = [KPIs["EN_2.1T_s" + str(i)] for i in range(len(self.sourceName))]
@@ -2506,9 +2550,7 @@ class KPIsCalculator:
                 KPIs["ENV_1.4T"] = round(KPIs["ENV_1.3T"] / KPIs["EN_1.1T"], 2)
             except(ZeroDivisionError, TypeError) as e:
                 KPIs["ENV_1.4T"] = "Nan"
-            fec = [KPIs["EN_2.1_s" + str(i)] for i in range(len(self.sourceName))]
-            fecR = [KPIs["EN_2.1R_s" + str(i)] for i in range(len(self.sourceName))]
-            fecT = [KPIs["EN_2.1T_s" + str(i)] for i in range(len(self.sourceName))]
+
             KPIs["ENV_2.1"] = self.get_t_pollutant_baseline(fec, self.pollutant_colum_index["NOx"])
             KPIs["ENV_2.1R"] = self.get_t_pollutant_baseline(fecR, self.pollutant_colum_index["NOx"])
             KPIs["ENV_2.1T"] = self.get_t_pollutant_baseline(fecT, self.pollutant_colum_index["NOx"])
@@ -2524,9 +2566,7 @@ class KPIsCalculator:
                 KPIs["ENV_2.2T"] = round(KPIs["ENV_2.1T"] / KPIs["EN_1.1T"], 2)
             except(ZeroDivisionError, TypeError) as e:
                 KPIs["ENV_2.2T"] = "Nan"
-            fec = [KPIs["EN_2.1_s" + str(i)] for i in range(len(self.sourceName))]
-            fecR = [KPIs["EN_2.1R_s" + str(i)] for i in range(len(self.sourceName))]
-            fecT = [KPIs["EN_2.1T_s" + str(i)] for i in range(len(self.sourceName))]
+
             KPIs["ENV_2.7"] = self.get_t_pollutant_baseline(fec, self.pollutant_colum_index["SOx"])
             KPIs["ENV_2.7R"] = self.get_t_pollutant_baseline(fecR, self.pollutant_colum_index["SOx"])
             KPIs["ENV_2.7T"] = self.get_t_pollutant_baseline(fecT, self.pollutant_colum_index["SOx"])
@@ -2542,9 +2582,7 @@ class KPIsCalculator:
                 KPIs["ENV_2.8T"] = round(KPIs["ENV_2.7T"] / KPIs["EN_1.1T"], 2)
             except(ZeroDivisionError, TypeError) as e:
                 KPIs["ENV_2.8T"] = "Nan"
-            fec = [KPIs["EN_2.1_s" + str(i)] for i in range(len(self.sourceName))]
-            fecR = [KPIs["EN_2.1R_s" + str(i)] for i in range(len(self.sourceName))]
-            fecT = [KPIs["EN_2.1T_s" + str(i)] for i in range(len(self.sourceName))]
+
             KPIs["ENV_2.13"] = self.get_t_pollutant_baseline(fec, self.pollutant_colum_index["PM10"])
             KPIs["ENV_2.13R"] = self.get_t_pollutant_baseline(fecR, self.pollutant_colum_index["PM10"])
             KPIs["ENV_2.13T"] = self.get_t_pollutant_baseline(fecT, self.pollutant_colum_index["PM10"])
@@ -3236,9 +3274,12 @@ class KPIsCalculator:
                         self.my_log.log(self.sum_file(file))
                         self.my_log.log("fec_source[1] after")
                         self.my_log.log(fec_source[1])
+                        # natural gas contribution
+                        somma_file = self.sum_file(file)
+                        fec_source[1] += somma_file / efficiency
                         for k in range(len(self.sourceName)):
                             if source == self.sourceName[k]:
-                                fec_source[k] = fec_source[k] + self.sum_file(file) / efficiency
+                                fec_source[k] = fec_source[k] + somma_file*(efficiency-1)/efficiency
                                 break  # stops sources loop
                 elif technology in variable_eff_el:
                     # if technology not in ["Air source compression chiller",
@@ -3250,12 +3291,12 @@ class KPIsCalculator:
                     self.my_log.log("file_eta_HP_X: " + str(file_eta_HP_1))
 
                     with open(file_eta_HP_1, "r") as fp:
-                        COP_var = np.zeros(8760)
+                        COP_var = np.zeros(self.h8760)
                         for ii, line in enumerate(fp):
                             COP_var[ii] = float(line.split(separator)[column])
 
                     with open(file_julia, "r") as fp:
-                        Q1 = np.zeros(8760)
+                        Q1 = np.zeros(self.h8760)
                         for ii, line in enumerate(fp):
                             Q1[ii] = float(line.split(separator)[column])  # check syntax
 
@@ -3263,7 +3304,7 @@ class KPIsCalculator:
                     for ii in range(len(fec_i)):
                         if COP_var[ii] > 0:
                             fec_i[ii] = Q1[ii] / COP_var[ii]
-                    self.my_log.log("Average eta: " + str(sum(COP_var) / 8760))
+                    self.my_log.log("Average eta: " + str(sum(COP_var) / self.h8760))
                     self.my_log.log("Average sum(fec_i): " + str(sum(fec_i)))
                     self.my_log.log("Average sum(Q1): " + str(sum(Q1)))
                     self.my_log.log("Contributo fec prima: " + str(fec_source))
@@ -3285,10 +3326,13 @@ class KPIsCalculator:
         print("KpisCalculator.building_FEC_calculation fec_source:", fec_source)
         return fec_source
 
+
     def district_fec(self, dr, network_id, widget=None):
         self.my_log.log("---   district_fec()   ---")
         fec_source = np.zeros(len(self.sourceName))
-
+        opex = 0
+        opexR = 0
+        opexT = 0
         column = 0
         separator = ";"
         eta_d = self.network.get_efficiency()
@@ -3315,43 +3359,72 @@ class KPIsCalculator:
 
                     efficiency = round(float(efficiency), 2)
                     technology = tech.text(1)
+                    fuel_cost = float(tech.text(15))
                     self.my_log.log("technology: " + str(technology))
+                    self.my_log.log("Source:", source)
+                    item_julia_category = str(tech.data(1, Qt.UserRole))
+                    self.my_log.log("item_julia_category: " + str(item_julia_category))
                     if technology in self.const_eff:
                         if technology not in ["Air source gas absorption heat pump",
                                               "Shallow geothermal gas absorption heat pump",
                                               "Waste heat absorption heat pump",
                                               "Air source gas absorption chiller"]:
-                            item_julia_category = str(tech.data(1, Qt.UserRole))
-                            self.my_log.log("item_julia_category: " + str(item_julia_category))
+                            self.my_log.log("Tech in const_eff but not in micro list")
                             file = os.path.join(dr, "Result_" + item_julia_category + "_" + network_id + ".csv")
                             self.my_log.log("file: " + str(file))
                             for k in range(len(self.sourceName)):
+                                self.my_log.log("Testing", self.sourceName[k], "VS", source)
                                 if source == self.sourceName[k]:
-                                    fec_source[k] = fec_source[k] + self.sum_file(file) / efficiency / eta_d
+                                    self.my_log.log("Source FOUND!")
+                                    fec_contribution = self.sum_file(file) / efficiency / eta_d
+                                    fec_source[k] = fec_source[k] + fec_contribution
+                                    self.my_log.log("fec_source after: " + str(fec_source))
+                                    if source in self.opex_conventional_fuels:
+                                        opex += fec_contribution * fuel_cost
+                                        opexR += fec_contribution * fuel_cost * self.residential_factor
+                                        opexT += fec_contribution * fuel_cost * (1 - self.residential_factor)
+                                        self.my_log.log("FEC contribution to opex:", fec_contribution * fuel_cost)
+                                    break
                         else:
+                            self.my_log.log("Tech in const_eff and in micro list")
                             efficiency = float(tech.text(20))  # eta_absorption
-                            item_julia_category = str(tech.data(1, Qt.UserRole))
-                            self.my_log.log("item_julia_category: " + str(item_julia_category))
                             file = os.path.join(dr, "Result_" + item_julia_category + "_" + network_id + ".csv")
                             self.my_log.log("file: " + str(file))
                             self.my_log.log("fec_source before: " + str(fec_source))
+                            # natural gas contribution:
+                            somma_file = self.sum_file(file)
+                            fec_contribution = somma_file / (efficiency * eta_d)
+                            fec_source[1] += fec_contribution
                             for k in range(len(self.sourceName)):
                                 if source == self.sourceName[k]:
-                                    fec_source[k] += self.sum_file(file)/(efficiency * eta_d)
+                                    self.my_log.log("Source FOUND!")
+                                    fec_contribution = somma_file * (efficiency - 1) / efficiency / eta_d
+                                    fec_source[k] += fec_contribution
+                                    if source in self.opex_conventional_fuels:
+                                        opex += fec_contribution * fuel_cost
+                                        opexR += fec_contribution * fuel_cost * self.residential_factor
+                                        opexT += fec_contribution * fuel_cost * (1 - self.residential_factor)
+                                        self.my_log.log("FEC contribution to opex:", fec_contribution * fuel_cost)
+                                    break
                             self.my_log.log("fec_source after: " + str(fec_source))
 
                     if technology in self.variable_eff_el:
-                        julia_category = str(tech.data(0, Qt.UserRole))
+                        self.my_log.log("Tech in variable_eff_el")
                         file = os.path.join(dr, "Result_" + item_julia_category + "_" + network_id + ".csv")
-                        file_eta_HP_1 = os.path.join(dr, "../", "input",
-                                                     "eta_" + julia_category + ".csv")  ##### CHECK PATH
+                        self.my_log.log("julia output file:", file)
+                        file_eta_HP_1 = os.path.normpath(os.path.join(dr, "../", "input",
+                                                     "eta_" + item_julia_category.replace("waste_heat_", "") + ".csv"))
+                        self.my_log.log("file degli eta:", file_eta_HP_1)
+                        if not os.path.isfile(file_eta_HP_1) or not os.path.isfile(file):
+                            self.my_log.log("Problems with files!!!")
+                            continue
                         with open(file_eta_HP_1) as fp:
-                            COP_var = np.zeros(8760)
+                            COP_var = np.zeros(self.h8760)
                             for ii, line in enumerate(fp):
                                 COP_var[ii] = float(line.split(separator)[column])
 
                         with open(file) as fp:
-                            Q1 = np.zeros(8760)
+                            Q1 = np.zeros(self.h8760)
                             for ii, line in enumerate(fp):
                                 Q1[ii] = float(line.split(separator)[column])
                         fec_i = np.zeros_like(Q1)
@@ -3360,14 +3433,26 @@ class KPIsCalculator:
                                 fec_i[ii] = Q1[ii] / COP_var[ii] / eta_d
                         fec_2 = sum(fec_i)
                         fec_source[2] = fec_source[2] + fec_2
+                        opex += fec_2 * fuel_cost
+                        opexR += fec_2 * fuel_cost * self.residential_factor
+                        opexT += fec_2 * fuel_cost * (1 - self.residential_factor)
+                        self.my_log.log("fec_2 - fec_source (after electricity):", fec_2, fec_source)
 
+                        self.my_log.log("searching source:", source, "in", self.sourceName)
                         for k in range(len(self.sourceName)):
                             if source == self.sourceName[k]:
+                                self.my_log.log("Source found!")
                                 for ii in range(len(fec_i)):
                                     if COP_var[ii] > 0:
                                         fec_i[ii] = Q1[ii] * (COP_var[ii] - 1) / COP_var[ii] / eta_d
                                 fec_k = sum(fec_i)
                                 fec_source[k] = fec_source[k] + fec_k
+                                if source in self.opex_conventional_fuels:
+                                    opex += fec_k * fuel_cost
+                                    opexR += fec_k * fuel_cost * self.residential_factor
+                                    opexT += fec_k * fuel_cost * (1 - self.residential_factor)
+                                    self.my_log.log("FEC contribution to opex:", fec_k * fuel_cost)
+                                self.my_log.log("COntribution to", k, source, fec_k)
                                 break
 
                     if technology in self.variable_eff_ng:
@@ -3376,9 +3461,20 @@ class KPIsCalculator:
                         fec_source[1] = fec_source[1] + self.sum_file(file) / efficiency / eta_d
                         for k in range(len(self.sourceName)):
                             if source == self.sourceName[k]:
-                                fec_source[k] = fec_source[k] + self.sum_file(file) * (efficiency - 1) / efficiency / eta_d
+                                fec_contribution = self.sum_file(file) * (efficiency - 1) / efficiency / eta_d
+                                fec_source[k] = fec_source[k] + fec_contribution
+                                if source in self.opex_conventional_fuels:
+                                    opex += fec_contribution * fuel_cost
+                                    opexR += fec_contribution * fuel_cost * self.residential_factor
+                                    opexT += fec_contribution * fuel_cost * (1 - self.residential_factor)
+                                    self.my_log.log("FEC contribution to opex:", fec_contribution * fuel_cost)
+                                break
+                    if not technology in self.solar_technologies:
+                        self.opex += opex
+                        self.opexR += opexR
+                        self.opexT += opexT
+        self.my_log.log("function ends with output fec:", fec_source)
         return fec_source
-
 
     def building_YEOHbase_calculation(self, dr, item, building_id, YEOHbase):
         self.my_log.log("---   building_YEOHbase_calculation()   ---")
@@ -3439,6 +3535,17 @@ class KPIsCalculator:
             #raise Exception()
             return 0.0
         print("KPIsCalculator, sum_file, total", total)
+        return total
+
+    def sum_derivative_of_file(self, file, column=0, separator=";"):
+        total = 0.0
+        with open(file, "r") as fp:
+            lines = fp.readlines()
+        for i in range(len(lines)-1):
+            try:
+                total += abs(float(lines[i+1])-float(lines[i]))
+            except:
+                pass
         return total
 
 
@@ -3621,6 +3728,8 @@ class KPIsCalculator:
 
 
     def district_FECfut_tech_per_energy_tariff(self, use=None):
+        self.my_log.log("---   district_FECfut_tech_per_energy_tariff()   ---")
+        self.my_log.log("use:", use)
         opex = 0
         if self.tech_tab is None:
             return opex
@@ -3637,17 +3746,26 @@ class KPIsCalculator:
                 for j in range(self.tech_tab.topLevelItem(i).childCount()):
                     fec = 0.0
                     tech = self.tech_tab.topLevelItem(i).child(j)
+                    source = tech.text(2)
+                    if source not in self.opex_conventional_fuels:
+                        continue
                     julia_category = str(tech.data(1, Qt.UserRole))
                     file_eta = os.path.realpath(os.path.join(self.work_folder, "../",
                                                              "Input", "eta_" + julia_category + ".csv"))
                     file = os.path.join(self.work_folder, "Result_" + julia_category + "_" + self.network.get_ID() + ".csv")
+                    self.my_log.log("file julia:", file)
+                    self.my_log.log("file degli eta", file_eta)
                     if tech.text(1) in self.variable_eff_el:
+                        self.my_log.log("In variable_eff_el")
                         if os.path.isfile(file_eta) and os.path.isfile(file):
+                            self.my_log.log("files found!")
                             with open(file) as julia_ued, open(file_eta) as eta:
-                                try:
-                                    fec += float(julia_ued.readline()) / float(eta.readline())
-                                except:
-                                    pass
+                                for k in range(self.h8760):
+                                    try:
+                                        fec += float(julia_ued.readline()) / float(eta.readline())
+                                    except:
+                                        pass
+                            self.my_log.log("fec", fec)
                     else:
                         try:
                             efficiency = float(tech.text(5))
@@ -3655,11 +3773,12 @@ class KPIsCalculator:
                             efficiency = 1.0
                         fec = (self.sum_file(file)/efficiency)
                     try:
-                        coeff = float(tech.text(14))
+                        coeff = float(tech.text(15))  # fuel cost
                     except:
                         coeff = 1
                     try:
                         opex = opex + fec * coeff
+                        self.my_log.log("opex contribution", opex)
                     except:
                         print("KPIsCalculator, district_pec. Error summing file", file)
         if use is None:
@@ -3727,9 +3846,12 @@ class KPIsCalculator:
                     file = os.path.join(self.work_folder, "Result_" + item_julia_category + "_" + str(self.network.get_ID()) + ".csv")
                     ued = 0
                     if os.path.isfile(file):
-                        ued = self.sum_file(file)
+                        if item_julia_category.startswith("SOC"):
+                            self.sum_derivative_of_file(file)
+                        else:
+                            ued = self.sum_file(file)
                     try:
-                        coeff = float(tech.text(15))
+                        coeff = float(tech.text(14))  # variable cost
                     except:
                         coeff = 1
                     fec = fec + ued * coeff
@@ -3767,6 +3889,8 @@ class KPIsCalculator:
             for j in range(scope_item.childCount()):
                 opex_increment = 0.0
                 technology = scope_item.child(j)
+                if technology.text(0) in self.solar_technologies:
+                    continue
                 julia_category = str(technology.data(0, Qt.UserRole))
                 file_eta = os.path.realpath(os.path.join(self.work_folder, "../",
                                                          "Input", "eta_" + julia_category + ".csv"))
@@ -3933,23 +4057,6 @@ class KPIsCalculator:
         self.my_log.log("revtR: " + str(revtR))
         self.my_log.log("revtT: " + str(revtT))
 
-        caft = revt - self.opex
-        caftR = revtR - self.opexR
-        caftT = revtT - self.opexT
-        self.my_log.log("self.opex: " + str(self.opex))
-        self.my_log.log("caft: " + str(caft))
-        self.my_log.log("self.opexR: " + str(self.opexR))
-        self.my_log.log("caftR: " + str(caftR))
-        self.my_log.log("self.opexT: " + str(self.opexT))
-        self.my_log.log("caftT: " + str(caftT))
-
-        caft0 = -1 * self.capext
-        caft0R = -1 * self.capextR
-        caft0T = -1 * self.capextT
-        self.my_log.log("caft0: " + str(caft0))
-        self.my_log.log("caft0R: " + str(caft0R))
-        self.my_log.log("caft0T: " + str(caft0T))
-
         try:
             years = int(self.eco_param["years"])
         except:
@@ -3958,62 +4065,16 @@ class KPIsCalculator:
             r = self.eco_param["r_factor"]
         except:
             r = 0.11
-        self.my_log.log("self.dcaft prima:", self.dcaft)
-        output = self.evaluate_params(caft0, caft, r, years)
-        A, B, C = output["A"], output["B"], output["C"]
-        self.dcaft = output["local_dcaft"]
-        self.my_log.log("self.dcaft dopo:", self.dcaft)
-        output = self.evaluate_params(caft0R, caftR, r, years)
-        AR, BR, CR = output["A"], output["B"], output["C"]
-        self.dcaftR = output["local_dcaft"]
-        output = self.evaluate_params(caft0T, caftT, r, years)
-        AT, BT, CT = output["A"], output["B"], output["C"]
-        self.dcaftT = output["local_dcaft"]
-        try:
-            tot = round(A + B / C, 2)
-        except:
-            tot = "Nan"
-        try:
-            res = round(AR + BR / CR, 2)
-        except:
-            res = "Nan"
-        try:
-            ter = round(AT + BT / CT, 2)
-        except:
-            ter = "Nan"
-        return tot, res, ter
+        caft = revt - self.opex
+        self.dcaft = []
+        caft0 = -1 * self.capext
+        self.dcaft.append(caft0)
+        for i in range(1, years + 1):
+            self.dcaft.append(caft / ((1 + r) ** i))
 
-
-    def evaluate_params(self, caft0, caft, r, years):
-        local_dcaft = []
-        local_cdcaft = []
-        years_nr = int(years)
-        local_dcaft.append(caft0)
-        local_cdcaft.append(local_dcaft[0])
-        for i in range(1, years_nr+1):
-            local_dcaft.append(caft / ((1 + r) ** i))
-            local_cdcaft.append(local_cdcaft[i - 1] + local_dcaft[i])
-            self.my_log.log(str(i) + ") dcaft: " + str(local_dcaft))
-            self.my_log.log(str(i) + ") cdcaft: " + str(local_cdcaft))
-
-        for i in range(years_nr, -1, -1):
-            if local_cdcaft[i] < 0:
-                A = i
-                B = abs(local_cdcaft[i])
-                try:
-                    C = sum(local_dcaft[i + 1:])
-                except:
-                    C = 1
-                self.my_log.log(str(i) + ") -A: " + str(A) + " -B: " + str(B) + " -C: " + str(C))
-                break
-        else:
-            A, B, C = (0, 0, 0)
-        output = {}
-        output["A"] = A
-        output["B"] = B
-        output["C"] = C
-        output["local_dcaft"] = local_dcaft
-        return output
+        return [self.capext/(revt-self.opex) if not revt == 0 else "Nan",
+                self.capextR/(revtR-self.opexR) if not revtR == 0 else "Nan",
+                self.capextT/(revtT-self.opexT) if not revtT == 0 else "Nan"]
 
 
     def eco_uno_punto_due(self, use=None):
@@ -4157,23 +4218,11 @@ class KPIsCalculator:
                 return round(total / ued_network, 2)
             except:
                 return "Nan"
-        if use == "R":
-            try:
-                total = power_sum * (self.capextR + self.opexR)
-                return round(total / (power_sum * ued_network), 2)
-            except:
-                return "Nan"
-        if use == "T":
-            try:
-                total = power_sum * (self.capextT + self.opexT)
-                return round(total / (power_sum * ued_network), 2)
-            except:
-                return "Nan"
-
+        return "-"
 
     def eco_3_punto_2(self, val, use=None):
         try:
-            val = float(val)
+            val = float(val) # ENV_1.2
         except:
             val = 0
         try:
@@ -4215,39 +4264,66 @@ class KPIsCalculator:
         return 0.0
     
     def get_t_pollutant_sav(self, KPIs, pollutant_column, type="TOT"):
+        self.my_log.log("--- get_t_pollutant_sav ---")
+        self.my_log.log("pollutant column:", pollutant_column, "type:", type)
         tCO2sav = [0.0 for i in range(len(self.sourceName))]
         adg_base = [0.0 for i in range(len(self.sourceName))]
+        fecs = self.get_fec(KPIs)
+        index = 0
         if type == "TOT":
             adg_base = self.FECadjBase
+            index = 0
         if type == "R":
             adg_base = self.FECadjBaseR
+            index = 1
         if type == "T":
             adg_base = self.FECadjBaseT
-        fec, _, _ = self.get_fec(KPIs)
+            index = 2
         for k, source in enumerate(self.sourceName):
-            tCO2sav[k] = (adg_base[k] - fec[k]) * self.get_emission_factor(source, pollutant_column)
+            emission_factor = self.get_emission_factor(source, pollutant_column)
+            tCO2sav[k] = (adg_base[k] - fecs[index][k]) * emission_factor
+            self.my_log.log(source, emission_factor, "adg_base[k]:", adg_base[k], "fec[k]:", fecs[index][k])
         return round(sum(tCO2sav), 2)
 
-    def get_capex(self, baseline_tech_tree, future_tech_tree, baseline_network_tech_tab, future_network_tech_tab):
+    def get_capex(self, baseline_tech_tree, future_tech_tree, _, future_network_tech_tab, district_factor):
+        self.my_log.log("--- get_capex ---")
+        self.my_log.log(baseline_tech_tree.objectName(), future_tech_tree.objectName())
         capex = 0.0
+        capexR = 0.0
+        capexT = 0.0
         if future_tech_tree is None or baseline_tech_tree is None:
             return capex
         for i in range(future_tech_tree.topLevelItemCount()):
             for j in range(baseline_tech_tree.topLevelItemCount()):
-                if future_tech_tree.topLevelItem(i).text(0) == baseline_tech_tree.topLevelItem(j).text(0):
-                    capex += self.capex_building_comparison(baseline_tech_tree.topLevelItem(j),
+                self.my_log.log("Comparing", future_tech_tree.topLevelItem(i).building_id,
+                                baseline_tech_tree.topLevelItem(j).building_id)
+                if future_tech_tree.topLevelItem(i).building_id == baseline_tech_tree.topLevelItem(j).building_id:
+                    self.my_log.log("Building FOUND!")
+                    contribution = self.capex_building_comparison(baseline_tech_tree.topLevelItem(j),
                                                             future_tech_tree.topLevelItem(i))
+                    capex += contribution
+                    try:
+                        if future_tech_tree.topLevelItem(i).get_sector() == "RES":
+                            capexR += contribution
+                        if future_tech_tree.topLevelItem(i).get_sector() == "TER":
+                            capexT += contribution
+                    except Exception:
+                        self.my_log("get_sector() failed")
+                    self.my_log.log("new capex:", capex)
+                    self.my_log.log("new capexR:", capexR)
+                    self.my_log.log("new capexT:", capexT)
                     break
+            else:
+                capex += self.capex_add_full_building_contribution(future_tech_tree.topLevelItem(i))
         for i in range(future_network_tech_tab.topLevelItemCount()):
-            future_network_id = str(future_network_tech_tab.topLevelItem(i).data(0, Qt.UserRole))
-            for j in range(baseline_network_tech_tab.topLevelItemCount()):
-                baseline_network_id = str(baseline_network_tech_tab.topLevelItem(j).data(0, Qt.UserRole))
-                if baseline_network_id == future_network_id:
-                    capex += self.capex_service_comparison(baseline_network_tech_tab.topLevelItem(j),
-                                                           future_network_tech_tab.topLevelItem(i),
-                                                           1, 5, 8, 14)
-                    break
-        return capex
+            for j in range(future_network_tech_tab.topLevelItem(i).childCount()):
+                tech = future_network_tech_tab.topLevelItem(i).child(j)
+                if tech.data(2, Qt.UserRole) == "new_tech":
+                    contribution = NetworkTechCapex.capext(tech)
+                    capex += contribution
+                    capexR += contribution * district_factor
+                    capexT += contribution * (1 - district_factor)
+        return capex, capexR, capexT
 
     def capex_building_comparison(self, baseline_building, future_building):
         capex = 0.0
@@ -4262,32 +4338,45 @@ class KPIsCalculator:
     def capex_service_comparison(self, baseline_service, future_service, tech_name_index, efficiency_index,
                                  capacity_index, fixed_cost_index):
         capex = 0.0
-        if not baseline_service.text(0) == future_service.text(tech_name_index):
+        if not baseline_service.text(0) == future_service.text(0):
             print("KPIsCalculator.capex_service_comparison(). Services does not match:",
-                  baseline_service.text(tech_name_index), future_service.text(tech_name_index))
+                  baseline_service.text(0), future_service.text(0))
             return capex
         for i in range(future_service.childCount()):
             future_tech = future_service.child(i)
             for j in range(baseline_service.childCount()):
-                baseline_tech = baseline_service.child()
-                if baseline_tech.text(tech_name_index) == future_tech.text(tech_name_index):
-                    if baseline_tech.text(capacity_index) == future_tech.text(capacity_index) and baseline_tech.text(efficiency_index) == future_tech.text(efficiency_index):
-                        break
+                baseline_tech = baseline_service.child(j)
+                if BuildingTechCapex.compare(baseline_tech, future_tech):
+                    break
             else:
                 try:
-                    capex += float(future_tech.text(efficiency_index)) * float(future_tech.text(fixed_cost_index))
+                    capex += BuildingTechCapex.capext(future_tech)
                 except ValueError:
                     pass
         return capex
 
+    def capex_add_full_building_contribution(self, building: QTreeWidgetItem):
+        capex = 0.0
+        for i in range(building.childCount()):
+            for j in range(building.child(i).childCount()):
+                tech = building.child(i).child(j)
+                capex += tech.text(8)*float(tech.text(13))
+        return capex
+
     def get_fec(self, KPIs):
-        fec = [KPIs["EN_2.1_s" + str(i)] for i in range(len(self.sourceName))]
-        fecR = [KPIs["EN_2.1R_s" + str(i)] for i in range(len(self.sourceName))]
-        fecT = [KPIs["EN_2.1T_s" + str(i)] for i in range(len(self.sourceName))]
+        if self.future_scenario is not None:
+            fec = [KPIs["EN_2.3_s" + str(i)] for i in range(len(self.sourceName))]
+            fecR = [KPIs["EN_2.3R_s" + str(i)] for i in range(len(self.sourceName))]
+            fecT = [KPIs["EN_2.3T_s" + str(i)] for i in range(len(self.sourceName))]
+        else:
+            fec = [KPIs["EN_2.1_s" + str(i)] for i in range(len(self.sourceName))]
+            fecR = [KPIs["EN_2.1R_s" + str(i)] for i in range(len(self.sourceName))]
+            fecT = [KPIs["EN_2.1T_s" + str(i)] for i in range(len(self.sourceName))]
         return [fec, fecR, fecT]
 
     def get_el_sale_increment_district(self):
         self.my_log.log("---   get_el_sale_increment_district   ---")
+        time_0 = time.time()
         el_sale = 0
         if self.tech_tab is None:
             return el_sale
@@ -4315,6 +4404,7 @@ class KPIsCalculator:
                         self.my_log.log(tech.text(10))
                         self.my_log.log("tech.text(21)")
                         self.my_log.log(tech.text(21))
+        self.my_log.log("get_el_sale_increment_district FINITO:", time.time() - time_0)
         return el_sale
 
     def get_el_sale_increment_building(self):
@@ -4519,7 +4609,6 @@ class KPIsCalculator:
         self.my_log.log("attributes: " + str(attributes))
         self.my_log.log("total: " + str(total/1000))
         return total/1000
-
 
     def FECadj_future(self, KPIs):
         uno_plus_demo_factor = 1 + self.eco_param["demo_factor"]

@@ -10,6 +10,7 @@ from ..utility.data_manager.SourceTransfer import SourceTransfer
 from .AoutLoadNetwork import AutoLoadNetwork
 from .NetworkBuilder import NetworkBuilder
 from ..LoadInterface import LoadInterface
+from ..building.TreeItemManager import TreeItemManager
 from PyQt5.QtCore import pyqtSignal
 import time
 import traceback
@@ -47,7 +48,6 @@ class LoadDistrict(LoadScenario):
 
     def run(self, file_name):
         try:
-            print("LoadDistrict.run(). folder", self.folder)
             if file_name is None:
                 msgBox = QMessageBox()
                 msgBox.setIcon(QMessageBox.Information)
@@ -183,6 +183,11 @@ class LoadDistrict(LoadScenario):
                 self.dpmdialog.hide()
                 self.district.hide()
                 return True
+        tree_item_manager = TreeItemManager(self.step1.iface, self.step4.dmmTree_future, self.step4.futureDmmTreeNetwork,
+                                            [self.step4.futureDCN_network_list, self.step4.futureDHN_network_list])
+        tree_item_manager.update_buildings_status(self.get_object_from_zip("future_buildings_status"))
+        self.step4.network_efficiency.DHN_network_list = self.step4.futureDHN_network_list
+        self.step4.network_efficiency.DCN_network_list = self.step4.futureDCN_network_list
         return False
 
     def load_step3(self):
@@ -234,6 +239,7 @@ class LoadDistrict(LoadScenario):
 
     def load_step1(self, file):
         self.step1.networks_send = self.get_data("networks_send", dict_data=self.get_data("STEP_1"))
+        self.step1.autosave_done = self.get_data("autosave_done", dict_data=self.get_data("STEP_1"))
         self.set_check_state(self.step1.checkBox, self.get_data("checkBox", dict_data=self.get_data("STEP_1")))
         self.set_check_state(self.step1.checkBox_buildingSolution,
                              self.get_data("checkBox_buildingSolution", dict_data=self.get_data("STEP_1")))
@@ -285,6 +291,9 @@ class LoadDistrict(LoadScenario):
                 self.step1.muted = False
                 self.dpmdialog.hide()
                 return True
+        tree_item_manager = TreeItemManager(self.step1.iface, self.step1.dmmTree, self.step1.dmmTreeNetwork,
+                                            [self.step1.DCN_network_list, self.step1.DHN_network_list])
+        tree_item_manager.update_buildings_status(self.get_object_from_zip("baseline_buildings_status"))
         return False
 
     def load_step0(self):
@@ -420,7 +429,6 @@ class LoadDistrict(LoadScenario):
         file_path = self.file_manager.get_path_from_file_name(file_name, end_char=len(file_name),
                                                               search_folders=[self.file_manager.work_folder])
         if file_path is None:
-            print(file_name, self.file_manager.work_folder)
             return
         info = os.stat(file_path).st_mtime
         year, month, day, hour, minute, second = time.localtime(info)[:-3]
@@ -461,7 +469,6 @@ class LoadDistrict(LoadScenario):
             return self.extract_folder_from_zip(zip_file_path, network_rel_path, destination_path)
         except Exception as e:
             traceback.print_exc()
-            print("Network extraction failed", e)
 
     def update_buildings_tre_widget_item(self, widget: QTreeWidget, name=None):
         if name is None:
@@ -516,7 +523,7 @@ class LoadDistrict(LoadScenario):
                 new_technology_item: QTreeWidgetItem = QTreeWidgetItem(service_item, technology)
                 if tech_user_role_data is not None:
                     for k in range(len(tech_user_role_data)):
-                        new_technology_item.setData(k, QtCore.Qt.UserRole, QtCore.QVariant(tech_user_role_data[i]))
+                        new_technology_item.setData(k, QtCore.Qt.UserRole, QtCore.QVariant(tech_user_role_data[k]))
 
     def create_network_groups(self, networks_dict):
         root = QgsProject.instance().layerTreeRoot()

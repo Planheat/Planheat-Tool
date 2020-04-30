@@ -1,0 +1,6 @@
+data_rows = [2, 3, 4, 5, 7, 8, 9, 10, 11, 13, 14, 16, 18, 20, 22, 24, 25, 27]
+data_rows_cool = [2, 3, 4, 6, 7, 8, 10, 12, 14]
+hig_temp_techs = [2, 7, 8, 13, 14, 16, 18, 20, 22]
+med_temp_techs = [3, 4, 5, 9, 10, 11]
+low_temp_techs = [24, 25]
+no_imput_rows_color = [232, 232, 232]

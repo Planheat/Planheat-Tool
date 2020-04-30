@@ -1,14 +1,14 @@
-from PyQt5.QtWidgets import QTableWidgetItem
+from PyQt5.QtWidgets import QTableWidgetItem, QTableWidget
 from PyQt5.QtCore import Qt
 
 
 def make_table_not_editable(qt_table):
+    empty_table_widget_item = QTableWidgetItem()
+    empty_table_widget_item.setFlags(Qt.ItemIsEnabled)
     for i in range(qt_table.rowCount()):
         for j in range(qt_table.columnCount()):
             if qt_table.item(i, j) is None:
-                empty_table_widget_item = QTableWidgetItem("")
-                empty_table_widget_item.setFlags(Qt.ItemIsEnabled)
-                qt_table.setItem(i, j, empty_table_widget_item)
+                qt_table.setItem(i, j, empty_table_widget_item.clone())
             else:
                 qt_table.item(i, j).setFlags(Qt.ItemIsEnabled)
 
@@ -38,3 +38,18 @@ def copy_table(source, target, ranges=None, mode=""):
                     target.setItem(i, j, QTableWidgetItem(item))
                 except:
                     pass
+
+def auto_add_percent_symbol(table: QTableWidget, row: int, column: int, allowed_columns=[2]):
+    if row == 0:
+        return
+    if column in allowed_columns:
+        text = table.item(row, column).text()
+        if len(text) > 0 and text.count('%') == 0:
+            text = text.strip(" ").replace(",", ".")
+            try:
+                val = float(text)
+                if not val == val:
+                    raise ValueError
+            except Exception:
+                text = ""
+            table.item(row, column).setText(text + " %" if not text == "" else "")

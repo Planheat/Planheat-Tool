@@ -12,7 +12,7 @@ class Test:
         self.network_tree_widget_baseline = None
         self.network_tree_widget_future = None
         self.step5 = None
-        self.KPIs = {'sources': ['Heating Oil', 'Natural gas', 'Electricity', 'Deep Geothermal',
+        self.KPIs = {'sources': ['Heating Oil', 'Natural gas', 'Electricity', 'Deep geothermal',
                                  'Geothermal - Shallow - Ground heat extraction',
                                  'Geothermal - Shallow - Ground cold extraction', 'Solar thermal',
                                  'Excess heat Industry', 'Excess heat - Data centers', 'Excess heat - Supermarkets',

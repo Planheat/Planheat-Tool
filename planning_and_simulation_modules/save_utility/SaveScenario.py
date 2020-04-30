@@ -32,6 +32,10 @@ class SaveScenario(QtCore.QObject):
     def add_file(self, source_type, source, relative_path: str):
         self.zip_manager.add_file(source_type, source, relative_path)
 
+    def clear_data(self):
+        self.data = {}
+        self.zip_manager.file_dict = {}
+
     @staticmethod
     def make_directory(folder):
         try:

@@ -73,11 +73,6 @@ class KPIsCalculator:
         self.pec_base_sourc = []
         self.pec_fut_ngas=0
 
-
-
-
-
-
     def KPIs_baseline(self, lista_UED, lista_cool, primary_En_fact, tot_footArea, lista_fec_baseline):
         self.lista_UED = lista_UED
         self.lista_cool = lista_cool
@@ -112,10 +107,8 @@ class KPIsCalculator:
         self.Ued_solar_tot = self.Ued_solar
         self.Ued_other_tot=  self.Ued_other + self.ued_other_cool
 
-
-
         self.ued_base_tot_cool = self.ued_electricity_cool + self.ued_naturalGas_cool + self.ued_wasteHeat_cool + self.ued_geothermal_cool + self.ued_other_cool
-        self.ued_base_tot = self.Ued_electricity+self.Ued_Natural_gas+self.Ued_wasteHeat + self.Ued_geothermal + self.Ued_other
+        self.ued_base_tot = self.Ued_electricity + self.Ued_Natural_gas + self.Ued_boimass + self.Ued_wasteHeat + self.Ued_geothermal + self.Ued_heatingOil + self.Ued_coal + self.Ued_solar + self.Ued_other
 
         self.pec_base_sourc=[] #colonna J
         for i in lista_fec_baseline:
@@ -125,52 +118,52 @@ class KPIsCalculator:
 
         self.pec_base = sum(self.pec_base_sourc)
 
-        self.spec_base_tot =(self.pec_base/self.tot_footArea)*100
-        self.ued_base = self.ued_base_tot_cool+ self.ued_base_tot
+        self.spec_base_tot =(self.pec_base/self.tot_footArea)
+        self.ued_base = self.ued_base_tot_cool + self.ued_base_tot
         self.sued_base_tot = self.ued_base / self.tot_footArea
-        self.res_base =((self.Ued_boimass_tot*primary_En_fact[2])+(self.Ued_wasteHeat_tot*primary_En_fact[3])+
-                        (self.Ued_geothermal_tot*primary_En_fact[4]) + self.Ued_solar_tot*primary_En_fact[7])
+        self.res_base =((lista_fec_baseline[2]*primary_En_fact[2])+(lista_fec_baseline[3]*primary_En_fact[3])+
+                        (lista_fec_baseline[4]*primary_En_fact[4]) + lista_fec_baseline[7]*primary_En_fact[7])
         self.res_perc_base =(self.res_base/self.pec_base)*100
-        self.Wh_base = self.Ued_wasteHeat_tot*primary_En_fact[3]
+        self.Wh_base = lista_fec_baseline[4]*primary_En_fact[3]
         self.Wh_perc_base = (self.Wh_base /self.pec_base )*100
-        self.Cf_base =(self.Ued_Natural_gas_tot*primary_En_fact[1])+(self.Ued_heatingOil_tot*primary_En_fact[5])+(self.Ued_coal_tot*primary_En_fact[6])
+        self.Cf_base =(lista_fec_baseline[1]*primary_En_fact[1])+(lista_fec_baseline[5]*primary_En_fact[5])+(lista_fec_baseline[6]*primary_En_fact[6])
         self.CF_perc_base = (self.Cf_base/self.pec_base)*100
-        self.El_base =((self.Ued_electricity_tot*primary_En_fact[0])+(self.Ued_Natural_gas_tot*primary_En_fact[1])+
-                       (self.Ued_heatingOil_tot*primary_En_fact[5])+(self.Ued_coal_tot*primary_En_fact[6]))
+        self.El_base =((lista_fec_baseline[0]*primary_En_fact[0])+(lista_fec_baseline[1]*primary_En_fact[1])+
+                       (lista_fec_baseline[5]*primary_En_fact[5])+(lista_fec_baseline[6]*primary_En_fact[6]))
         self.El_perc_tot = ( self.El_base/self.pec_base)*100
 
         KPIs={}
 
-        KPIs["EN_1.1"] = round(self.pec_base, 2)
+        KPIs["EN_1.1"] = "{:.2f}".format(round(self.pec_base, 2))
         try:
-            KPIs["EN_1.2"] = round(self.spec_base_tot, 2)
+            KPIs["EN_1.2"] = "{:.2f}".format(round(self.spec_base_tot, 2))
         except(ZeroDivisionError, TypeError) as e:
             KPIs["EN_1.2"] = "Nan"
         KPIs["EN_3.1"] = round(self.ued_base)
         try:
-            KPIs["EN_3.2"] = round(self.sued_base_tot, 2)
+            KPIs["EN_3.2"] = "{:.2f}".format(round(self.sued_base_tot, 2))
         except(ZeroDivisionError, TypeError) as e:
             KPIs["EN_3.2"] = "Nan"
 
-        KPIs["EN_4.1"] = round(self.res_base,2)
+        KPIs["EN_4.1"] = "{:.2f}".format(round(self.res_base,2))
         try:
-            KPIs["EN_4.2"] =round(self.res_perc_base,2)
+            KPIs["EN_4.2"] = "{:.2f}".format(round(self.res_perc_base,2))
         except(ZeroDivisionError, TypeError) as e:
             KPIs["EN_4.2"] = "Nan"
-        KPIs["EN_5.1"] = round(self.Wh_base,2)
+        KPIs["EN_5.1"] = "{:.2f}".format(round(self.Wh_base,2))
         try:
-            KPIs["EN_5.2"] = round(self.Wh_perc_base, 2)
+            KPIs["EN_5.2"] = "{:.2f}".format(round(self.Wh_perc_base, 2))
         except(ZeroDivisionError, TypeError) as e:
             KPIs["EN_5.2"] = "Nan"
-        KPIs["EN_6.1"] = round(self.Cf_base, 2)
+        KPIs["EN_6.1"] = "{:.2f}".format(round(self.Cf_base, 2))
         try:
-            KPIs["EN_6.2"] = round(self.CF_perc_base,2)
+            KPIs["EN_6.2"] = "{:.2f}".format(round(self.CF_perc_base,2))
         except(ZeroDivisionError, TypeError) as e:
             KPIs["EN_6.2"] = "Nan"
 
-        KPIs["EN_7.1"] = round(self.El_base, 2)
+        KPIs["EN_7.1"] = "{:.2f}".format(round(self.El_base, 2))
         try:
-            KPIs["EN_7.2"] = round(self.El_perc_tot, 2)
+            KPIs["EN_7.2"] = "{:.2f}".format(round(self.El_perc_tot, 2))
         except(ZeroDivisionError, TypeError) as e:
             KPIs["EN_7.2"] = "Nan"
 

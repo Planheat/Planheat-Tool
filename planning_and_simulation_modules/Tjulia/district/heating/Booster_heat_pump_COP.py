@@ -6,13 +6,22 @@ Created on Wed May 23 13:17:20 2018
 """
 import numpy as np
 import os.path
+from ....utility.pvgis.PvgisApi import PvgisApi
+from ...services.PvgisParamsAdapter import PvgisParamsAdapter
 
 
 class Booster_COP:
 
     @staticmethod
-    def generate_fileEta_forHeating(list_val, input_folder="", output_folder=""):
+    def generate_fileEta_forHeating(list_val, input_folder="", output_folder="", item=None):
         #######  grop 1   heat pump 1  ########
+
+        pvgis_api = PvgisApi()
+        pvgis_adapter = PvgisParamsAdapter(pvgis_api)
+        pvgis_adapter.update_params(item)
+        pvgis_adapter.set_only_ot()
+        files = pvgis_api.write_to_files()
+        temperature_file = files["ot"]
 
         if input_folder == "":
             input_folder = "C:\\Users\\qgis1\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\planning_module\\Tjulia\\district\\heating"
@@ -31,13 +40,8 @@ class Booster_COP:
         try:
             T_source_I_1 = np.genfromtxt(input_folder + "\\T_source_I_1_HP.csv")
         except OSError:
-            T_source_I_1 = np.genfromtxt(os.path.realpath(os.path.join(input_folder, "../../",
-                                                                     "Outside_temperature.csv")))
-        print("Booster_heat_pump_COP.generate_fileEta_forHeating() file dato\n",
-              input_folder + "\\T_source_I_1_HP.csv",
-              os.path.realpath(os.path.join(input_folder, "../../",
-                                            "Outside_temperature.csv")),
-              T_source_I_1)
+            T_source_I_1 = np.genfromtxt(temperature_file)
+
         T_source_I_1=T_source_I_1+273.15
         T_sink = list_val[0]
         T_sink_I_1= T_sink + 273.15
@@ -55,7 +59,7 @@ class Booster_COP:
         try:
             T_source_I_2 = np.genfromtxt(input_folder + "\\T_source_I_2_HP.csv")
         except OSError:
-            T_source_I_2 = np.genfromtxt(os.path.realpath(os.path.join(input_folder, "../../", "Outside_temperature.csv")))
+            T_source_I_2 = np.genfromtxt(temperature_file)
         T_source_I_2=T_source_I_2+273.15
         T_sink2 = list_val[2]
         T_sink_I_2=T_sink2+273.15
@@ -71,7 +75,7 @@ class Booster_COP:
         try:
             T_source_I_3 = np.genfromtxt(input_folder + "\\T_source_I_3_HP.csv")
         except OSError:
-            T_source_I_3 = np.genfromtxt(os.path.realpath(os.path.join(input_folder, "../../", "Outside_temperature.csv")))
+            T_source_I_3 = np.genfromtxt(temperature_file)
         T_source_I_3=T_source_I_3+273.15
         T_sink3 = list_val[4]
         T_sink_I_3=T_sink3 +273.15
@@ -88,7 +92,7 @@ class Booster_COP:
         try:
             T_source_II_1 = np.genfromtxt(input_folder + "\\T_source_II_1_HP.csv")
         except OSError:
-            T_source_II_1 = np.genfromtxt(os.path.realpath(os.path.join(input_folder, "../../", "Outside_temperature.csv")))
+            T_source_II_1 = np.genfromtxt(temperature_file)
         T_source_II_1=T_source_II_1+273.15
         T_sink_II1 = list_val[6]
         T_sink_II_1= T_sink_II1 +273.15
@@ -104,7 +108,7 @@ class Booster_COP:
         try:
             T_source_II_2 = np.genfromtxt(input_folder + "\\T_source_II_2_HP.csv")
         except OSError:
-            T_source_II_2 = np.genfromtxt(os.path.realpath(os.path.join(input_folder, "../../", "Outside_temperature.csv")))
+            T_source_II_2 = np.genfromtxt(temperature_file)
         T_source_II_2=T_source_II_2+273.15
         T_sinkII2 = list_val[8]
         T_sink_II_2= T_sinkII2 +273.15
@@ -120,7 +124,7 @@ class Booster_COP:
         try:
             T_source_II_3 = np.genfromtxt(input_folder + "\\T_source_II_3_HP.csv")
         except OSError:
-            T_source_II_3 = np.genfromtxt(os.path.realpath(os.path.join(input_folder, "../../", "Outside_temperature.csv")))
+            T_source_II_3 = np.genfromtxt(temperature_file)
         T_source_II_3=T_source_II_3+273.15
         Tsink2 = list_val[10]
         T_sink_II_3= Tsink2 +273.015
@@ -137,7 +141,7 @@ class Booster_COP:
         try:
             T_source_III_1 = np.genfromtxt(input_folder + "\\T_source_III_1_HP.csv")
         except OSError:
-            T_source_III_1 = np.genfromtxt(os.path.realpath(os.path.join(input_folder, "../../", "Outside_temperature.csv")))
+            T_source_III_1 = np.genfromtxt(temperature_file)
         T_source_III_1=T_source_III_1+273.15
         T_sinkIII3 = list_val[12]
         T_sink_III_1= T_sinkIII3 +273.15
@@ -153,7 +157,7 @@ class Booster_COP:
         try:
             T_source_III_2 = np.genfromtxt(input_folder + "\\T_source_III_2_HP.csv")
         except OSError:
-            T_source_III_2 = np.genfromtxt(os.path.realpath(os.path.join(input_folder, "../../", "Outside_temperature.csv")))
+            T_source_III_2 = np.genfromtxt(temperature_file)
         T_source_III_2=T_source_III_2+273.15
         TsinkIII2 = list_val[14]
         T_sink_III_2= TsinkIII2 +273.15
@@ -169,7 +173,7 @@ class Booster_COP:
         try:
             T_source_III_3 = np.genfromtxt(input_folder + "\\T_source_III_3_HP.csv")
         except OSError:
-            T_source_III_3 = np.genfromtxt(os.path.realpath(os.path.join(input_folder, "../../", "Outside_temperature.csv")))
+            T_source_III_3 = np.genfromtxt(temperature_file)
         T_source_III_3=T_source_III_3+273.15
         TsinkIII3 = list_val[16]
         T_sink_III_3= TsinkIII3 +273.15
@@ -181,7 +185,7 @@ class Booster_COP:
             ####### Seasonal  ########
 
             #Load meteorological data
-        T_source_seasonal=np.genfromtxt(os.path.realpath(os.path.join(input_folder, "../../", "Outside_temperature.csv")))
+        T_source_seasonal=np.genfromtxt(temperature_file)
         T_source_seasonal=T_source_seasonal+273.15
 
         # Heat sink temperature [°C]

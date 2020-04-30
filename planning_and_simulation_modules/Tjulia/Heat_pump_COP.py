@@ -8,10 +8,21 @@ import numpy as np
 import os
 import os.path
 
+from ..utility.pvgis.PvgisApi import PvgisApi
+from .services.PvgisParamsAdapter import PvgisParamsAdapter
 
 
-def generate_fileEta_forJulia(val_list, input_folder="", output_folder=""):
+
+def generate_fileEta_forJulia(val_list, input_folder="", output_folder="", item=None):
     max_COP = 10.0
+
+    pvgis_api = PvgisApi()
+    pvgis_adapter = PvgisParamsAdapter(pvgis_api)
+    pvgis_adapter.update_params(item)
+    pvgis_adapter.set_only_ot()
+    files = pvgis_api.write_to_files()
+    temperature_file = files["ot"]
+
 
     if val_list is None:
         return
@@ -31,7 +42,7 @@ def generate_fileEta_forJulia(val_list, input_folder="", output_folder=""):
     try:
         T_source_1 = np.genfromtxt(input_folder + "\\T_source_HP.csv")
     except OSError:
-        T_source_1 = np.genfromtxt(os.path.realpath(os.path.join(input_folder, "Outside_temperature.csv")))
+        T_source_1 = np.genfromtxt(temperature_file)
     T_source_1 = T_source_1+273.15
     # Heat sink temperature [°C]
     T_sink = val_list[0]
@@ -50,7 +61,7 @@ def generate_fileEta_forJulia(val_list, input_folder="", output_folder=""):
     try:
         T_source_2 = np.genfromtxt(input_folder + "\\T_source_HP_2.csv")
     except OSError:
-        T_source_2 = np.genfromtxt(os.path.realpath(os.path.join(input_folder,  "Outside_temperature.csv")))
+        T_source_2 = np.genfromtxt(temperature_file)
     T_source_2 = T_source_2 + 273.15
     # Heat sink temperature [°C]
     T_sink2 = val_list[2]
@@ -70,7 +81,7 @@ def generate_fileEta_forJulia(val_list, input_folder="", output_folder=""):
     try:
         T_source_3 = np.genfromtxt(input_folder + "\\T_source_HP_3.csv")
     except OSError:
-        T_source_3 = np.genfromtxt(os.path.realpath(os.path.join(input_folder, "Outside_temperature.csv")))
+        T_source_3 = np.genfromtxt(temperature_file)
     T_source_3 = T_source_3+273.15
     # Heat sink temperature [°C]
     T_sink3 = val_list[4]

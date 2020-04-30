@@ -27,8 +27,9 @@ class CustomContextMenu:
 
     @staticmethod
     def erode_method(item, service=None):
+        removed = False
         if item is None:
-            return
+            return removed
         for i in range(item.childCount()):
             if service is None:
                 check = True
@@ -39,7 +40,9 @@ class CustomContextMenu:
                     check = False
             if check:
                 for j in range(item.child(i).childCount()-1, -1, -1):
+                    removed = True
                     item.child(i).removeChild(item.child(i).child(j))
+        return removed
 
     @staticmethod
     def get_top_level(item):

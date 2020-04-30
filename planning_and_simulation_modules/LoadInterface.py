@@ -103,18 +103,21 @@ class LoadInterface(QtWidgets.QDockWidget, FORM_CLASS):
     def save_clicked_event_handler(self):
         filename: QLabel = self.fileName
         if self.file_manager.check_file_name(filename.text()):
-            if not os.path.isfile(os.path.join(self.file_manager.work_folder, filename.text() + ".json")):
-                self.effectiveSave.emit(filename.text())
-                self.close()
-            else:
-                index = 2
-                while True:
-                    new_file_name = filename.text() + "_" + str(index)
-                    if not os.path.isfile(os.path.join(self.file_manager.work_folder, new_file_name + ".json")):
-                        break
-                    index += 1
-                self.effectiveSave.emit(new_file_name)
-                self.close()
+            self.autosave(file_name=filename.text())
+
+    def autosave(self, file_name="Autosave"):
+        if not os.path.isfile(os.path.join(self.file_manager.work_folder, file_name + ".json")):
+            self.effectiveSave.emit(file_name)
+            self.close()
+        else:
+            index = 2
+            while True:
+                new_file_name = file_name + "_" + str(index)
+                if not os.path.isfile(os.path.join(self.file_manager.work_folder, new_file_name + ".json")):
+                    break
+                index += 1
+            self.effectiveSave.emit(new_file_name)
+
 
     def load_clicked_event_handler(self):
         load_file: QComboBox = self.loadFile

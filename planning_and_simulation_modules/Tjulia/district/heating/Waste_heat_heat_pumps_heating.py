@@ -28,7 +28,7 @@ def generate_file_Waste_heat_pump_heating(list_val, input_folder, output_folder)
               input_folder + "\\eta_HP_I_1.csv",
               Waste_heat_source_1,
               COP_1)
-        eta_1=list_val["HP_waste_heat_I_1"]
+        eta_1=list_val["HP_I_1"]
         Waste_heat_heat_pump_available_temperature_group_1=Waste_heat_source_1*(COP_1/(COP_1-1))*eta_1
         np.savetxt(input_folder + "\\Waste_heat_heat_pump_available_temperature_group_1.csv", Waste_heat_heat_pump_available_temperature_group_1, delimiter=".")
 
@@ -37,7 +37,7 @@ def generate_file_Waste_heat_pump_heating(list_val, input_folder, output_folder)
         Waste_heat_source_2=np.genfromtxt(os.path.realpath(os.path.join(input_folder, "../../", "Available_waste_heat_heat_pump_source_group_I_2.csv")))
         COP_2=np.genfromtxt(input_folder + "\\eta_HP_I_2.csv")
         fix_out_of_bound_numbers(COP_2, None, 10.0)
-        eta_2=list_val["HP_waste_heat_I_2"]
+        eta_2=list_val["HP_I_2"]
         Waste_heat_heat_pump_available_temperature_group_2=Waste_heat_source_2*(COP_2/(COP_2-1))*eta_2
         np.savetxt(input_folder + "\\Waste_heat_heat_pump_available_temperature_group_2.csv", Waste_heat_heat_pump_available_temperature_group_2, delimiter=".")
 
@@ -47,7 +47,7 @@ def generate_file_Waste_heat_pump_heating(list_val, input_folder, output_folder)
         Waste_heat_source_3=np.genfromtxt(os.path.realpath(os.path.join(input_folder, "../../", "Available_waste_heat_heat_pump_source_group_I_3.csv")))
         COP_3=np.genfromtxt(input_folder + "\\eta_HP_I_3.csv")
         fix_out_of_bound_numbers(COP_3, None, 10.0)
-        eta_3=list_val["HP_waste_heat_I_3"]
+        eta_3=list_val["HP_I_3"]
         Waste_heat_heat_pump_available_temperature_group_3=Waste_heat_source_3*(COP_3/(COP_3-1))*eta_3
         np.savetxt(input_folder + "\\Waste_heat_heat_pump_available_temperature_group_3.csv", Waste_heat_heat_pump_available_temperature_group_3, delimiter=".")
 
@@ -56,7 +56,7 @@ def generate_file_Waste_heat_pump_heating(list_val, input_folder, output_folder)
         Waste_heat_source_II_1 = np.genfromtxt(os.path.realpath(os.path.join(input_folder, "../../","Available_waste_heat_heat_pump_source_group_II_1.csv")))
         COP_II_1 = np.genfromtxt(input_folder + "\\eta_HP_II_1.csv")
         fix_out_of_bound_numbers(COP_II_1, None, 10.0)
-        eta_II_1 = list_val["HP_waste_heat_II_1"]
+        eta_II_1 = list_val["HP_II_1"]
         Waste_heat_heat_pump_available_temperature_group_II_1 = Waste_heat_source_II_1 * (
                         COP_II_1 / (COP_II_1 - 1)) * eta_II_1
 
@@ -67,7 +67,7 @@ def generate_file_Waste_heat_pump_heating(list_val, input_folder, output_folder)
         Waste_heat_source_II_2 = np.genfromtxt(os.path.realpath(os.path.join(input_folder, "../../", "Available_waste_heat_heat_pump_source_group_II_2.csv")))
         COP_II_2 = np.genfromtxt(input_folder + "\\eta_HP_II_2.csv")
         fix_out_of_bound_numbers(COP_II_2, None, 10.0)
-        eta_II_2 = list_val["HP_waste_heat_II_2"]
+        eta_II_2 = list_val["HP_II_2"]
         Waste_heat_heat_pump_available_temperature_group_II_2 = Waste_heat_source_II_2 * (
                         COP_II_2 / (COP_II_2 - 1)) * eta_II_2
 
@@ -80,7 +80,7 @@ def generate_file_Waste_heat_pump_heating(list_val, input_folder, output_folder)
 
         COP_II_3 = np.genfromtxt(input_folder + "\\eta_HP_II_3.csv")
         fix_out_of_bound_numbers(COP_II_3, None, 10.0)
-        eta_II_3 = list_val["HP_waste_heat_II_3"]
+        eta_II_3 = list_val["HP_II_3"]
 
         Waste_heat_heat_pump_available_temperature_group_II_3 = Waste_heat_source_II_3 * (
                         COP_II_3 / (COP_II_3 - 1)) * eta_II_3
@@ -98,7 +98,7 @@ def generate_file_Waste_heat_pump_heating(list_val, input_folder, output_folder)
 
         COP_III_1 = np.genfromtxt(input_folder + "\\eta_HP_III_1.csv")
         fix_out_of_bound_numbers(COP_III_1, None, 10.0)
-        eta_III_1 = list_val["HP_waste_heat_III_1"]
+        eta_III_1 = list_val["HP_III_1"]
 
         Waste_heat_heat_pump_available_temperature_group_III_1 = Waste_heat_source_III_1 * (
                         COP_III_1 / (COP_III_1 - 1)) * eta_III_1
@@ -112,7 +112,7 @@ def generate_file_Waste_heat_pump_heating(list_val, input_folder, output_folder)
 
         COP_III_2 = np.genfromtxt(input_folder + "\\eta_HP_III_2.csv")
         fix_out_of_bound_numbers(COP_III_2, None, 10.0)
-        eta_III_2 = list_val["HP_waste_heat_III_2"]
+        eta_III_2 = list_val["HP_III_2"]
 
         Waste_heat_heat_pump_available_temperature_group_III_2 = Waste_heat_source_III_2 * (
                         COP_III_2 / (COP_III_2 - 1)) * eta_III_2
@@ -125,7 +125,7 @@ def generate_file_Waste_heat_pump_heating(list_val, input_folder, output_folder)
         Waste_heat_source_III_3 = np.genfromtxt(os.path.realpath(os.path.join(input_folder, "../../", "Available_waste_heat_heat_pump_source_group_III_3.csv")))
         COP_III_3 = np.genfromtxt(input_folder + "\\eta_HP_III_3.csv")
         fix_out_of_bound_numbers(COP_III_3, None, 10.0)
-        eta_III_3 = list_val["HP_waste_heat_III_3"]
+        eta_III_3 = list_val["HP_III_3"]
         Waste_heat_heat_pump_available_temperature_group_III_3 = Waste_heat_source_III_3 * (
                         COP_III_3 / (COP_III_3 - 1)) * eta_III_3
 

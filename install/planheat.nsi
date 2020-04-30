@@ -60,16 +60,21 @@ Function .onInit
 	StrCpy $QGIS_PLUGIN_DIR_2 "$QGISDIR\$QGIS_PLUGIN_DIR_REL_PATH_2"
 	${IfNot} ${FileExists} "$QGIS_PLUGIN_DIR\*"
 	${AndIfNot} ${FileExists} "$QGIS_PLUGIN_DIR_2\*"
-		; Try QGIS 3.6
-		StrCpy $QGISDIR "C:\Program Files\QGIS 3.6"
+		; Try QGIS 3.8
+		StrCpy $QGISDIR "C:\Program Files\QGIS 3.8"
 		StrCpy $QGIS_PLUGIN_DIR "$QGISDIR\$QGIS_PLUGIN_DIR_REL_PATH"
 		${IfNot} ${FileExists} "$QGIS_PLUGIN_DIR\*"
 			; Try QGIS 3.2
 			StrCpy $QGISDIR "C:\Program Files\QGIS 3.2"
 			StrCpy $QGIS_PLUGIN_DIR "$QGISDIR\$QGIS_PLUGIN_DIR_REL_PATH"
 			${IfNot} ${FileExists} "$QGIS_PLUGIN_DIR\*"
-				StrCpy $QGISDIR ""
-				StrCpy $QGIS_PLUGIN_DIR "$QGISDIR\$QGIS_PLUGIN_DIR_REL_PATH"
+			    ; Try QGIS 3.10
+                StrCpy $QGISDIR "C:\Program Files\QGIS 3.10"
+			    StrCpy $QGIS_PLUGIN_DIR "$QGISDIR\$QGIS_PLUGIN_DIR_REL_PATH"
+			    ${IfNot} ${FileExists} "$QGIS_PLUGIN_DIR\*"
+                    StrCpy $QGISDIR ""
+                    StrCpy $QGIS_PLUGIN_DIR "$QGISDIR\$QGIS_PLUGIN_DIR_REL_PATH"
+				${EndIf}
 			${EndIf}
 		${EndIf}
 	${EndIf}
@@ -99,7 +104,7 @@ FunctionEnd
 
   
 	; Get QGIS directory path
-	!define MUI_PAGE_HEADER_SUBTEXT "Choose the folder in which QGIS is installed (e.g. 'C:\Program Files\QGIS 3.4'). Supported versions are 3.2, 3.4, 3.6 and 3.8."
+	!define MUI_PAGE_HEADER_SUBTEXT "Choose the folder in which QGIS is installed (e.g. 'C:\Program Files\QGIS 3.4'). Supported versions are 3.4, 3.8 and 3.10."
 	!define MUI_DIRECTORYPAGE_TEXT_DESTINATION "QGIS installation directory."
 	!define MUI_DIRECTORYPAGE_TEXT_TOP "The installer will install the Planheat plugin for the specified QGIS version. To install in a different folder, click Browse and select another folder."
 	!define MUI_DIRECTORYPAGE_VARIABLE $QGISDIR ; <= the other directory will be stored into that variable
@@ -137,6 +142,11 @@ SectionEnd
 
 
 Section "Files extraction" SEC_FILE_EXTRACT
+	; Removing old julia packages if any
+	${If} ${FileExists} "$INSTDIR\planning_and_simulation_modules\dhcoptimizerplanheat\deps\*"
+        RMDir "$INSTDIR\planning_and_simulation_modules\dhcoptimizerplanheat\deps"
+    ${EndIf}
+
 
     SetOutPath "$INSTDIR"
     SetOverwrite ifnewer

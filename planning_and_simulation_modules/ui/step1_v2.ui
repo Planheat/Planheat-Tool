@@ -37,7 +37,7 @@
          </font>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="dhcnTab">
          <attribute name="title">
@@ -744,7 +744,7 @@
             </column>
             <column>
              <property name="text">
-              <string>Area [m^2]</string>
+              <string>Collectors Area [m^2]</string>
              </property>
             </column>
             <column>
@@ -835,6 +835,11 @@
             <column>
              <property name="text">
               <string>El. sale [€/MWh]</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Tes loss [%/w]</string>
              </property>
             </column>
            </widget>
@@ -936,7 +941,7 @@
               <item>
                <widget class="QLabel" name="label_97">
                 <property name="text">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;Area [m&lt;/span&gt;&lt;span style=&quot; font-size:7pt; vertical-align:super;&quot;&gt;2&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;]&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;Collectors Area [m&lt;/span&gt;&lt;span style=&quot; font-size:7pt; vertical-align:super;&quot;&gt;2&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;]&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                </widget>
               </item>
@@ -1036,6 +1041,11 @@
               </item>
               <item>
                <widget class="QLabel" name="label_53">
+                <property name="font">
+                 <font>
+                  <pointsize>8</pointsize>
+                 </font>
+                </property>
                 <property name="text">
                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;El. sale [€/MWh]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
@@ -1432,7 +1442,7 @@
                  <double>0.010000000000000</double>
                 </property>
                 <property name="value">
-                 <double>1.000000000000000</double>
+                 <double>0.000000000000000</double>
                 </property>
                </widget>
               </item>
@@ -1496,11 +1506,6 @@
              <item>
               <property name="text">
                <string>---Cooling---</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Heat pump</string>
               </property>
              </item>
              <item>
@@ -1600,7 +1605,7 @@
              </item>
              <item>
               <property name="text">
-               <string>Waste heat ORC</string>
+               <string>Industrial waste heat ORC</string>
               </property>
              </item>
              <item>
@@ -1675,16 +1680,6 @@
              </item>
              <item>
               <property name="text">
-               <string>Seasonal waste heat heat pumps</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Waste heat absorption heat pump</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
                <string/>
               </property>
              </item>
@@ -1718,7 +1713,7 @@
              <property name="geometry">
               <rect>
                <x>660</x>
-               <y>190</y>
+               <y>280</y>
                <width>41</width>
                <height>28</height>
               </rect>
@@ -1731,6 +1726,46 @@
              </property>
              <property name="text">
               <string/>
+             </property>
+            </widget>
+            <widget class="QLabel" name="label_86">
+             <property name="geometry">
+              <rect>
+               <x>360</x>
+               <y>180</y>
+               <width>101</width>
+               <height>19</height>
+              </rect>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>TES loss [%/w]</string>
+             </property>
+            </widget>
+            <widget class="QDoubleSpinBox" name="networkTES_loss">
+             <property name="geometry">
+              <rect>
+               <x>360</x>
+               <y>200</y>
+               <width>110</width>
+               <height>24</height>
+              </rect>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>110</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="decimals">
+              <number>3</number>
+             </property>
+             <property name="maximum">
+              <double>99.998999999999995</double>
              </property>
             </widget>
            </widget>
@@ -2356,6 +2391,22 @@
              </widget>
             </item>
             <item>
+             <widget class="QDoubleSpinBox" name="heatingTES_loss">
+              <property name="minimumSize">
+               <size>
+                <width>110</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="decimals">
+               <number>3</number>
+              </property>
+              <property name="maximum">
+               <double>99.998999999999995</double>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QDoubleSpinBox" name="COP_heating">
               <property name="minimum">
                <double>0.000000000000000</double>
@@ -2417,7 +2468,19 @@
             <item>
              <widget class="QLabel" name="label_116">
               <property name="text">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;TES charge/discharge time [h]&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;TES charge time [h]&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_58">
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>TES loss [%/w]</string>
               </property>
              </widget>
             </item>
@@ -3209,6 +3272,22 @@
              </widget>
             </item>
             <item>
+             <widget class="QDoubleSpinBox" name="DHWTES_loss">
+              <property name="minimumSize">
+               <size>
+                <width>110</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="decimals">
+               <number>3</number>
+              </property>
+              <property name="maximum">
+               <double>99.998999999999995</double>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QDoubleSpinBox" name="dhwCop">
               <property name="minimum">
                <double>0.000000000000000</double>
@@ -3252,7 +3331,19 @@
             <item>
              <widget class="QLabel" name="label_90">
               <property name="text">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;TES charge/discharge time [h]&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;TES charge time [h]&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_85">
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>TES loss [%/w]</string>
               </property>
              </widget>
             </item>
@@ -4293,6 +4384,11 @@
             <string>El. sale [€/kWh]</string>
            </property>
           </column>
+          <column>
+           <property name="text">
+            <string>TES loss [%/w]</string>
+           </property>
+          </column>
          </widget>
         </widget>
         <widget class="QWidget" name="smmTab">
@@ -4630,14 +4726,14 @@ factor</string>
          <widget class="QPushButton" name="defaultData">
           <property name="geometry">
            <rect>
-            <x>740</x>
+            <x>720</x>
             <y>20</y>
-            <width>151</width>
+            <width>171</width>
             <height>28</height>
            </rect>
           </property>
           <property name="text">
-           <string>Load Dafault Data</string>
+           <string>Load Database Data</string>
           </property>
          </widget>
         </widget>

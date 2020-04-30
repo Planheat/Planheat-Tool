@@ -16,6 +16,8 @@ from .db import recive_primary_energy_factor
 from .updataTableKpi import update_KPIs_visualization_tab
 from .updataTableKpi import tab_not_editable
 from ..config.PlanningCriteriaHelper import PlanningCriteriaHelper
+from .. import master_planning_config
+from .config import scenarioAttributes
 import pandas as pd
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), 'city_step01.ui'))
@@ -92,8 +94,9 @@ class CityStep01Dialog(QtWidgets.QDockWidget, FORM_CLASS):
         #self.ok.clicked.connect(self.send_tab_source)
 
         self.source_base()
-    def comboBox_changed(self, file):
 
+
+    def comboBox_changed(self, file):
         import_manager = ImportManager(self.file_manager)
         import_manager.load_DMM_output_to_table(file, self.tb_HeDHW_source,
                                                 self.table_cool_source, self.table_fec_baseline,
@@ -104,7 +107,7 @@ class CityStep01Dialog(QtWidgets.QDockWidget, FORM_CLASS):
 
     def save_country(self):
         country = self.country_comboBox.currentText()
-        print("country selezionato", country)
+        # print("country selezionato", country)
         primary_energy = recive_primary_energy_factor(country)
 
     def closeEvent(self, event):
@@ -143,10 +146,12 @@ class CityStep01Dialog(QtWidgets.QDockWidget, FORM_CLASS):
         if self.radioButton.isChecked():
             self.file_manager.import_and_fill_combo_box_from_DMM_planheat_mapping_wizard(self.comboBox_CMM_import,
                                                                                          sector="R")
+            scenarioAttributes.sector = "residential"
             return
         if self.radioButton_2.isChecked():
             self.file_manager.import_and_fill_combo_box_from_DMM_planheat_mapping_wizard(self.comboBox_CMM_import,
                                                                                          sector="T")
+            scenarioAttributes.sector = "tertiary"
             return
 
 
@@ -162,8 +167,6 @@ class CityStep01Dialog(QtWidgets.QDockWidget, FORM_CLASS):
     def show_help(self):
         if self.helpText is not None:
             self.helpText.show()
-
-
 
     def insert_criteria(self):
         if self.tree_planning.currentItem() is None:
@@ -290,7 +293,6 @@ class CityStep01Dialog(QtWidgets.QDockWidget, FORM_CLASS):
 
 
     def update_KPIs_visualization_tab(self):
-
         update_KPIs_visualization_tab(self.table_KPIsEn, self.energy_criteria, self.table_KPIsEnv, self.environmental_criteria,
                                       self.table_KPIsEco, self.economic_criteria, self.table_KPIsSo, self.social_criteria)
 
@@ -365,7 +367,7 @@ class CityStep01Dialog(QtWidgets.QDockWidget, FORM_CLASS):
                 #valTxt = currItem.text()
                 self.lista_UED.append(currItem)
             except (AttributeError, ValueError):
-                self.lista_UED.append(1)
+                self.lista_UED.append(0.0)
 
         # table cool baseline
         table_cool = self.table_cool_source
@@ -375,7 +377,7 @@ class CityStep01Dialog(QtWidgets.QDockWidget, FORM_CLASS):
                 value=float((table_cool.item(j,0)).text())
                 self.lista_cool.append(value)
             except (AttributeError, ValueError):
-                self.lista_cool.append(1)
+                self.lista_cool.append(0.0)
 
 
         table2 = self.table_fec_baseline
@@ -385,10 +387,10 @@ class CityStep01Dialog(QtWidgets.QDockWidget, FORM_CLASS):
                 valItem =float((table2.item(j, 0)).text())
                 self.lista_fec_baseline.append(valItem)
             except (AttributeError, ValueError):
-                self.lista_fec_baseline.append(1)
+                self.lista_fec_baseline.append(0.0)
 
         # valore che deve essere preso dal db
-        primary_En_fact = [1, 1, 1, 1, 1, 1, 1, 1]
+        primary_En_fact = self.get_baseline_pef() # [1, 1, 1, 1, 1, 1, 1, 1]
         self.tot_footArea = self.footArea.value()
 
 
@@ -538,7 +540,7 @@ class CityStep01Dialog(QtWidgets.QDockWidget, FORM_CLASS):
             if i in rows:
                 item = table.item(i, ncol)
                 item.setFlags(Qt.ItemIsEnabled)
-                self.table.setItem(i, ncol, item)
+                self.table.setItem(i, ncol, item.clone())
             else:
                 pass
 
@@ -619,29 +621,26 @@ class CityStep01Dialog(QtWidgets.QDockWidget, FORM_CLASS):
         self.citySim.load_source_base(self.sources_base)
 
 
-
     def source_base(self):
         self.sources_base.clear()
-        dr = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../" "save_utility", "DefaultSaveFolder")
+        dr = os.path.join(master_planning_config.CURRENT_MAPPING_DIRECTORY, master_planning_config.SMM_FOLDER)
         dr = os.path.realpath(dr)
-
-
-        file = os.path.join(dr,"supply.csv")
+        file = os.path.join(dr, "planheat_result_2.csv")
         data = pd.read_csv(file, delimiter='\t')
-        df = pd.DataFrame(data, columns=['Description', 'All districts'])
-
-        nCol=len(df.columns)
-        nRow = len(df.index)
-        header =['Source', 'Availability [MW/y]']
-        self.sources_base.setHorizontalHeaderLabels(header)
-        self.sources_base.setRowCount(nRow)
-        self.sources_base.setColumnCount(nCol)
-        self.sources_base.setRowCount(nRow)
-        self.sources_base.setColumnCount(nCol)
+        columns = list(data)
+        self.sources_base.setHorizontalHeaderLabels(['Source', 'Availability [MW/y]'])
+        self.sources_base.setRowCount(len(data.index))
+        self.sources_base.setColumnCount(2)
         for i in range(self.sources_base.rowCount()):
-                x = df.iloc[i, 0]
-                x2 = df.iloc[i, 1]
-                self.sources_base.setItem(i, 0, QTableWidgetItem(x))
-                self.sources_base.setItem(i, 1, QTableWidgetItem(str(x2)))
+                self.sources_base.setItem(i, 0, QTableWidgetItem(data[columns[1]][i]))
+                self.sources_base.setItem(i, 1, QTableWidgetItem("{:.2f}".format(data[columns[4]][i]/1000)))
 
-
+    def get_baseline_pef(self):
+        table: QTableWidget = self.pef_table
+        pef = []
+        for i in range(table.rowCount()):
+            try:
+                pef.append(float(table.item(i, 0).text()))
+            except ValueError:
+                pef.append(1.0)
+        return pef

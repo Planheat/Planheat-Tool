@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QTableWidgetItem, QComboBox
 from PyQt5.QtGui import QColor, QPixmap, QIcon, QBrush
 from PyQt5.QtCore import Qt
 from .qt_utils import make_table_not_editable
+from ..config import tableConfig
 
 
 class ImportManager:
@@ -69,9 +70,9 @@ class ImportManager:
         table_heating = self.get_table_form(input_dict["treeWidgetHEATING_DHW"])
         table_cooling = self.get_table_form(input_dict["treeWidgetCOOLING"])
 
-        self.fill_table(heating_dhw, table_heating, [4], 5)
+        self.fill_table(heating_dhw, table_heating, [4], 5, tableConfig.data_rows)
 
-        self.fill_table(cooling, table_cooling, [2], 3)
+        self.fill_table(cooling, table_cooling, [2], 3, tableConfig.data_rows_cool)
 
         self.validate_import_tables([heating_dhw, cooling], 1, precision)
 
@@ -103,21 +104,27 @@ class ImportManager:
                             icon.addPixmap(QPixmap(icon_path), QIcon.Normal, QIcon.Off)
                             qt_table.item(i, ncol).setIcon(icon)
 
-    def fill_table(self, qt_table, input_list, columns, share):
+    def fill_table(self, qt_table, input_list, columns, share, data_rows):
         last_bold = ""
         last = ""
+        empty_table_widget_item = QTableWidgetItem()
+        empty_table_widget_item.setFlags(Qt.ItemIsEnabled)
+        colored_empty_table_item = QTableWidgetItem()
+        colored_empty_table_item.setBackground(QBrush(QColor(232, 232, 232)))
+        colored_empty_table_item.setFlags(Qt.ItemIsEnabled)
         for i in range(qt_table.rowCount()):
             vertical_header_item = qt_table.verticalHeaderItem(i)
             if vertical_header_item is not None:
                 if vertical_header_item.font().bold():
                     last_bold = vertical_header_item.text()
-                    empty_table_widget_item = QTableWidgetItem("")
-                    empty_table_widget_item.setBackground(QBrush(QColor(232, 232, 232)))
-                    empty_table_widget_item.setFlags(Qt.ItemIsEnabled)
-                    qt_table.setItem(i, 0, empty_table_widget_item)
-                    qt_table.setItem(i, 1, QTableWidgetItem(empty_table_widget_item))
-                    qt_table.setItem(i, 2, QTableWidgetItem(empty_table_widget_item))
-                    qt_table.setItem(i, 3, QTableWidgetItem(empty_table_widget_item))
+                    if i not in data_rows and i > 0 and not i > data_rows[-1]:
+                        item = colored_empty_table_item.clone()
+                    else:
+                        item = empty_table_widget_item.clone()
+                    qt_table.setItem(i, 0, item)
+                    qt_table.setItem(i, 1, item.clone())
+                    qt_table.setItem(i, 2, item.clone())
+                    qt_table.setItem(i, 3, item.clone())
                     continue
                 else:
                     last = vertical_header_item.text()
@@ -134,6 +141,10 @@ class ImportManager:
                     if not tot_dem == 0:
                         qt_table.setItem(i, 0, QTableWidgetItem(str(round(tot_dem, 2))))
                         qt_table.setItem(i, 1, QTableWidgetItem(str(round(tot_share, 2)) + " %"))
+                    else:
+                        qt_table.setItem(i, 0, empty_table_widget_item.clone())
+                        qt_table.setItem(i, 1, empty_table_widget_item.clone())
+
         total = 0
         total_share = 0
         for i in range(qt_table.rowCount()):

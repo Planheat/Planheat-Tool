@@ -196,7 +196,7 @@ class FECfilterService:
     def example_KPIs(self):
         KPIs = {}
 
-        KPIs["sources"] = ["Heating Oil", "Natural gas", "Electricity", "Deep Geothermal",
+        KPIs["sources"] = ["Heating Oil", "Natural gas", "Electricity", "Deep geothermal",
                            "Geothermal - Shallow - Ground heat extraction",
                            "Geothermal - Shallow - Ground cold extraction", "Solar thermal", "Excess heat Industry",
                            "Excess heat - Data centers",

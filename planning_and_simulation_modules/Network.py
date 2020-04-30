@@ -7,6 +7,7 @@ from qgis.core import QgsPointXY, QgsGeometry, QgsProject, QgsFeature, QgsVector
 from qgis.core import *
 
 from .layer_utils import add_layer_to_group
+from .utility.coordinates.Coordinates import Coordinates
 
 import processing
 import copy
@@ -153,18 +154,23 @@ class Network(QObject):
             return total
         if log is not None:
             log.log("self.streets_layer: " + str(self.streets_layer.name()))
-        parameters = {'INPUT': self.streets_layer,
-                      'OUTPUT': 'TEMPORARY_OUTPUT',
-                      'TARGET_CRS': QgsCoordinateReferenceSystem('EPSG:3035')}
-        p = processing.run('qgis:reprojectlayer', parameters)
+        # parameters = {'INPUT': layer,
+        #               'OUTPUT': 'TEMPORARY_OUTPUT',
+        #           'TARGET_CRS': QgsCoordinateReferenceSystem('EPSG:3035')}
+        # p = processing.run('qgis:reprojectlayer', parameters)
 
+        # if log is not None:
+        #     log.log("parameters: " + str(parameters))
+        for f in self.streets_layer.getFeatures():
+            try:
+                street_length = float(f.attribute("length"))
+                total = total + street_length
+                if log is not None:
+                    log.log("street feature id - total length: " + str(f.id()) + " - " + str(total))
+            except:
+                total += Coordinates.haversine_line_length(f)
         if log is not None:
-            log.log("parameters: " + str(parameters))
-        for f in p['OUTPUT'].getFeatures():
-            total = total + f.geometry().length()
-            if log is not None:
-                log.log("id strada - total length: " + str(f.id()) + " - " + str(total))
-        print("Netowrok.pipes_length:", total)
+            log.log("Network.pipes_length:", total)
         return total
 
     def get_residential_factor(self):
@@ -174,7 +180,7 @@ class Network(QObject):
             layer = self.buildings_layer
         if layer is None:
             layer = self.search_and_fix_layers()
-        if layer.name().startswith ("selected_buildings_"):
+        if layer.name().startswith("selected_buildings_"):
             status = None
         else:
             status = 2
@@ -240,8 +246,6 @@ class Network(QObject):
             return None
         except:
             traceback.print_exc()
-
-
 
     def remove_group(self):
         root = QgsProject.instance().layerTreeRoot()
@@ -333,17 +337,19 @@ class Network(QObject):
             return
         layers = group.findLayers()
         for layer in layers:
-            if layer.name().startswith("old_network_edges_"):
+            if layer.name().startswith("selected_edges_"):
                 if log is not None:
                     log.log("self.streets_layer found: " + str(layer.layer().name()))
                 self.streets_layer = layer.layer()
                 break
         else:
             for layer in layers:
-                if layer.name().startswith("selected_edges_"):
+                if layer.name().startswith("old_network_edges_"):
                     if log is not None:
                         log.log("self.streets_layer found: " + str(layer.layer().name()))
                     self.streets_layer = layer.layer()
+                    break
+
 
     def search_and_fix_layers(self, ovveride_layer=True):
         print("Network.search_and_fix_layers() fired")
@@ -401,6 +407,14 @@ class Network(QObject):
         data = {}
         data["id"] = self.get_ID()
         data["efficiency"] = self.get_efficiency()
+        return data
 
     def is_building_connected(self, building_id):
         pass
+
+    def get_coordinates(self):
+        self.search_and_fix_layers(ovveride_layer=True)
+        crs = self.optimized_buildings_layer.crs()
+        geom_as_point = self.optimized_buildings_layer.getFeature(0).geometry().centroid().asPoint()
+        lon, lat = Coordinates.convert_to_EPSG4326(crs, geom_as_point)
+        return [lat, lon]

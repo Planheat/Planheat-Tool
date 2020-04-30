@@ -1,13 +1,17 @@
-include("local_optimizer.jl")
-if !isdefined(:FCFP)
-    include("FCFP.jl")
+include(joinpath(@__DIR__, "local_optimizer.jl"))
+if !isdefined(Main, :FCFP)
+    include(joinpath(@__DIR__, "FCFP.jl"))
 end
+
+
 module DSSP
 
+    using Printf
     using JuMP
     using Clp
-    import FCFP.FCFPInstance
-    import LocalOptimizer.optimize_locally
+    using Random
+    import Main.FCFP.FCFPInstance
+    import Main.LocalOptimizer.optimize_locally
 
     # Debug Data
     #= network_objective = 450
@@ -31,7 +35,7 @@ module DSSP
 
     function write_optimization_LP_model(inst::FCFPInstance)
         ### Create model ###
-        m = Model(solver = ClpSolver())
+        m = Model(with_optimizer(Clp.Optimizer, LogLevel=0))
         ### Variables
         @variable(m, 0 <= x[inst.all_edges] <= inst.network_objective)
         # Capacities of old pipes
@@ -98,7 +102,7 @@ module DSSP
         simulated_annealing = false
         simulated_annealing_max_iterations = 30
         simulated_annealing_it = 0
-        srand(0)
+        Random.seed!(0)
         max_iter_without_improvement = 20
         inst = FCFPInstance(network_objective, V, costs, heat_demand, production, capacities, old_buildings)
         m, x = write_optimization_LP_model(inst)
@@ -123,9 +127,10 @@ module DSSP
                 # Set new objective
                 @objective(m, Min, sum(x[e] * edge_costs[e] for e=inst.all_edges))
                 # Solve current problem
-                status = solve(m)
-                current_solution = Dict(e => getvalue(x[e]) for e=inst.all_edges)
-                current_cost = getobjectivevalue(m)
+                optimize!(m)
+                status = termination_status(m)
+                current_solution = Dict(e => value(x[e]) for e=inst.all_edges)
+                current_cost = objective_value(m)
                 # Update costs
                 edge_costs, history_costs, nb_modified = update_costs(inst, current_solution, last_solution, edge_costs, history_costs, tol, schema)
                 nb_iter_without_improvement += 1
